@@ -1,12 +1,14 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import Root from './client/Root';
 import reportWebVitals from './reportWebVitals';
+import { BrowserRouter } from 'react-router-dom'
+import App from './shared/App';
 import './index.css';
 
 
 ReactDOM.render(
-  <Root />,
+  <BrowserRouter> <App/></BrowserRouter>
+  ,
   document.getElementById('root')
 );
 
