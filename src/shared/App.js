@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Route } from 'react-router-dom';
 import { ClientHomePage, ManagerHomePage } from '../pages';
-import { HeaderElement } from '../components/elements';
+import { HeaderElement , ManagerMenu } from '../components/elements';
+
 
 class App extends Component{
     render()
@@ -12,6 +13,10 @@ class App extends Component{
                 <Route exact path ="/" component ={ClientHomePage}/>
                 <Route path ="/manager" component ={ ManagerHomePage} />
                
+                <ManagerMenu/>
+
+                
+            
                 
             </div>
         );
