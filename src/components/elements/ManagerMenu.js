@@ -1,5 +1,5 @@
-import React, { Component, useState} from 'react';
-import { Nav, Menu, MenuItem ,MenuLink } from '../styles/ManagerMenuStyle';
+import React from 'react';
+import { Nav, Menu, MenuItem ,MenuLink } from '../../styles/ManagerMenuStyle';
 const ManagerMenu = () =>
 {
     return (
