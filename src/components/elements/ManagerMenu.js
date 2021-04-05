@@ -1,6 +1,5 @@
-import React, { Component, useState} from 'react';
-import { NoticeEvent } from '../../pages';
-import { Nav, Menu, MenuItem ,MenuLink, Logout } from '../styles/ManagerMenuStyle';
+import React from 'react';
+import { Nav, Menu, MenuItem ,MenuLink } from '../../styles/ManagerMenuStyle';
 const ManagerMenu = () =>
 {
     return (
@@ -8,8 +7,8 @@ const ManagerMenu = () =>
         <Nav>
             <Menu>
                 <MenuItem >
-                    <MenuLink exact to= '/Event' activeStyle>
-                    공지/이벤트
+                    <MenuLink exact to= '/event' activeStyle>
+                    이벤트/공지
                     </MenuLink>
                     
                 </MenuItem>
@@ -25,12 +24,9 @@ const ManagerMenu = () =>
             </Menu>
             <Menu>
                 <MenuItem>
-                    
-                    <Logout to ='/'>
-                        로그아웃
-                    </Logout>
-                    
-              
+                    <MenuLink to ='/logout' activeStyle>
+                    로그아웃
+                    </MenuLink>
 
                 </MenuItem>
                 
