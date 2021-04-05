@@ -3,7 +3,7 @@ import styled from 'styled-components'
 
 // TODO: 로고 제작 이후 img로 변경
 const StyledLogo = styled.div`
-  color: ${({ theme }) => theme.color.primary};
+  color: ${props => props.theme.color[props.color] || props.theme.color.primary};
   font-size: 48px;
   font-family: ${({ theme }) => theme.font.medium};
 `

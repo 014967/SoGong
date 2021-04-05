@@ -40,6 +40,9 @@ const Category = styled.button`
   font-size: 64px;
   font-family: ${({ theme }) => theme.font.medium};
   color: ${({ theme }) => theme.color.secondary};
+  border: none;
+  background: none;
+  cursor: pointer;
   &:hover {
     color: ${({ theme }) => theme.color.primary};
   }

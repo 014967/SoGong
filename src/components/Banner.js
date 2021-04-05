@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components'
 
 const Container = styled.div`
-  margin-top: 218px;
+  margin: 218px 0 64px;
 `
 
 const Banner = () => {

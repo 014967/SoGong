@@ -14,6 +14,9 @@ const GlobalStyle = createGlobalStyle`
     font-family: ${({ theme }) => theme.font.light};
     background: ${({ theme }) => theme.color.background};
   }
+  h1, h2, h3, h4 {
+    font-weight: 500;
+  }
 `;
 
 export default GlobalStyle;
