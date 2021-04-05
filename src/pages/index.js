@@ -1,2 +1,2 @@
-export { default as ClientHomePage} from './ClientHomePage';
-export { default as ManagerHomePage} from './ManagerHomePage';
+export { default as NoticeEvent} from './NoticeEvent';
+export { default as Product} from './Product';
