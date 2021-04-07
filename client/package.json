@@ -35,7 +35,7 @@
     "eject": "react-scripts eject",
     "starts": "node index.js",
     "backend": "nodemon index.js",
-    "dev": "concurrently \"npm run backend\" \"npm run start --prefix client\""
+    "dev": "concurrently \"npm run backend\" \"npm run starts --prefix client\""
   },
   "eslintConfig": {
     "extends": [
