@@ -6,7 +6,6 @@ import SearchBar from './elements/SearchBar'
 const Header = () => {
     return (
       <>
-        <div>(Header)</div>
         <SearchBar />
       </>
     )

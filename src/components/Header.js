@@ -32,6 +32,7 @@ const ExtensionContainer = styled.div`
 
 const Categories = styled.nav`
   display: flex;
+  margin-right: 64px;
   & > * + * {
     margin-left: 64px;
   }
