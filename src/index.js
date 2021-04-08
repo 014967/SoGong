@@ -9,4 +9,9 @@ ReactDOM.render(
     <App />
   </ThemeProvider>,
   document.getElementById('root')
+<<<<<<< HEAD
 );
+=======
+);
+
+>>>>>>> feature/3

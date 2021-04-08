@@ -10,7 +10,10 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+<<<<<<< HEAD
   z-index: 999;
+=======
+>>>>>>> feature/3
 
   padding: 32px 64px;
   width: 100%;
@@ -33,7 +36,10 @@ const ExtensionContainer = styled.div`
 
 const Categories = styled.nav`
   display: flex;
+<<<<<<< HEAD
   margin-right: 64px;
+=======
+>>>>>>> feature/3
   & > * + * {
     margin-left: 64px;
   }
