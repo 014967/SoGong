@@ -14,13 +14,9 @@ const theme = {
     primary: "#B20A2C",
     secondary: "#DF988F",
     background: "#FFFFFC",
-<<<<<<< HEAD
     disabled: "#D3D3D3",
     gradient: "#FFFBD5",
 
-=======
-    disabled: "#FFFBD5",
->>>>>>> feature/3
   },
   size: {
     mobileS: `(max-width: ${size.mobileS})`,
