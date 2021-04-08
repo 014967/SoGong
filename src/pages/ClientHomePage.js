@@ -1,13 +1,20 @@
-import React from 'react';
+import React from 'react'
+import styled from 'styled-components'
+import Banner from '../components/Banner'
+import HomeContents from '../components/HomeContents'
+
+const Wrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+`
 
 const ClientHomePage = () => {
     return (
-        <div>
-            <h2>
-                17팀 김주안, 김현국 , 이승우, 권철, 전준형!!
-                
-            </h2>
-        </div>
+        <Wrapper>
+            <Banner />
+            <HomeContents />
+        </Wrapper>
     );
 };
 export default ClientHomePage;
