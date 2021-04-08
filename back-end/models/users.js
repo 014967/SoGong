@@ -26,7 +26,13 @@ token:{
 rule:{
     type:Boolean,
     default: false
-}//관리자계정인지 여부
+},//관리자계정인지 여부
+plist:{
+    type:Array
+},
+wishlist:{
+    type:Array
+}
 });
 
 const User = mongoose.model('user', UserSchema);
@@ -41,5 +47,7 @@ module.exports = User;
 "pw":"test_user01_pw",
 "name":"홍길동",
 "email":"test_user01@naver.com"
+"plist":"[1,2,3]"
+"wishlist":"[4,5,6]"
 }
 */

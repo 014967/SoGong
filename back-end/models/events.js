@@ -20,8 +20,18 @@ due: {
     required: [true]
 },//유효기간
 date:{
-    type:String,
-    required: [true]
+    type:Date,
+    default: k_date = () => {
+    let date = new Date();
+    let year = date.getFullYear();
+    let month = date.getMonth();
+    let today = date.getDate();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    let milliseconds = date.getMilliseconds();
+    return new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds));
+}
 },//업로드날짜
 img:{
     type:String,
@@ -41,7 +51,9 @@ bannerNo:{
 
 const Event = mongoose.model('event', EventSchema);
 
+
 module.exports = Event;
+
 /*
 [JSON FORMAT]
 
@@ -49,8 +61,8 @@ module.exports = Event;
 "title":"test_event01",
 "detail":"test_event01_details",
 "available":"true",
-"due":"2020-06-25",
-"date":"2020-04-05",
+"due": "2021-06-25T23:59:59" ,
+"date":"",
 "img":"link_of_image",
 "thumbnail":"link_of_thumbnail_image",
 "token":"false",

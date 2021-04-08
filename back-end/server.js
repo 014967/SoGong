@@ -1,4 +1,4 @@
-// app.js
+// server.js
 
 // [LOAD PACKAGES]
 const express     = require('express');

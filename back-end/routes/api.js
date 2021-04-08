@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/users');
 const Event = require('../models/events');
+const Product = require('../models/products');
 const router = express.Router();
 
 // [USER API]
@@ -15,6 +16,7 @@ router.post('/users', function(req, res, next){
     res.send(user);
    }).catch(next);
 });
+
 
 router.put('/users/:id', function(req, res){
     User.findByIdAndUpdate({_id: req.params.id}, req.body).then(function(user){
@@ -32,10 +34,10 @@ router.delete('/users/:id', function(req, res){
     
 });
 
-// [EVENT API]
+// [EVENTS API]
 router.get('/events', function(req, res){
-    Event.find({}).then(function(event){
-        res.send(event);
+    Event.find({}).then(function(events){
+        res.send(events);
     });
 });
 
@@ -57,6 +59,36 @@ router.put('/events/:id', function(req, res){
 router.delete('/events/:id', function(req, res){
     Event.findByIdAndRemove({_id: req.params.id}).then(function(event){
         res.send(event);
+        });
+    
+});
+
+
+// [PRODUCTS API]
+router.get('/products', function(req, res){
+    Product.find({}).then(function(product){
+        res.send(product);
+    });
+});
+
+router.post('/products', function(req, res, next){
+    Product.create(req.body).then(function(products){
+    res.send(products);
+   }).catch(next);
+});
+
+router.put('/products/:id', function(req, res){
+    Product.findByIdAndUpdate({_id: req.params.id}, req.body).then(function(product){
+        Product.findOne({_id: req.params.id}).then(function(product){
+            res.send(product); 
+        })
+        
+    })
+});
+
+router.delete('/products/:id', function(req, res){
+    Product.findByIdAndRemove({_id: req.params.id}).then(function(product){
+        res.send(product);
         });
     
 });
