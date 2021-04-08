@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Stylebtn} from './Button';
+import GetProductData from './GetProductData';
 
 const handleWidth = width =>
 {
@@ -73,12 +74,14 @@ const Product = () =>
               <StyleTitle width = "normal">가격</StyleTitle>
             </Stylediv>
             <PinkBars/>
+            <PinkBars/>
+
+            <Stylediv>
 
 
 
-
-
-<PinkBars/>
+                <GetProductData/>
+            </Stylediv>
 
 
 

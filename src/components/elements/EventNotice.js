@@ -1,6 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import {Stylebtn} from './Button';
+import GetEventData from './GetEventData';
+
 
 
 const handleWidth = width =>
@@ -33,6 +36,7 @@ padding : 10px;
 
 
  const StyleCB = styled.input`
+margin-left : 31px;
 width: 164px;
 height: 40px;
 border: 15px solid #DF988F;
@@ -56,7 +60,7 @@ const EventNotice= ()=>
 
     return(
     <NoticeComponent>
-    <>
+    <div>
     
       <Stylediv>
 
@@ -88,13 +92,19 @@ const EventNotice= ()=>
             </Stylediv>
             <PinkBars/>
            
+           <Stylediv>
+              <GetEventData/>
+
+
+
+           </Stylediv>
 
         
       
         
        
      
-     </>
+     </div>
      </NoticeComponent>
 
 

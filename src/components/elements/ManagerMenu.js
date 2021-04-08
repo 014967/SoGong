@@ -1,6 +1,5 @@
 import {React, useState, useEffect} from 'react';
 import styled from 'styled-components';
-import { Router, Route ,NavLink as Link } from 'react-router-dom';
 import EventNotice from './EventNotice';
 import Title from './Title';
 import Product from './Product';
@@ -38,8 +37,8 @@ background : none;
   &:focus{
       outline: none;
   }
-  
 `
+
 
 
 const ManagerMenu = ()=>
@@ -47,8 +46,11 @@ const ManagerMenu = ()=>
   const [MenuName, setMenuName] = useState("event");
   const handleItemClick = e =>
   {
+
       setMenuName(e.target.value);
   };
+
+
     
     return (
     

@@ -1,0 +1,27 @@
+{
+    "product":[
+        {
+            "id" : 1,
+            "selected" : false,
+            "img" : "/Users/boris/sogonproject/src/testData/product1.jpeg",
+            "productTitle" : "남성 저고리",
+            "price"  : "69000"
+        }
+        ,
+        {
+            "id" : 2,
+            "selected" : false,
+            "img" : "/Users/boris/sogonproject/src/testData/product2.jpeg",
+            "productTitle" : "여성 저고리",
+            "price"  : "69000"
+        }
+
+
+
+
+
+
+
+
+    ]
+}

@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from 'styled-components'
-import Banner from '../components/Banner'
 import ManagerMenu from '../components/elements/ManagerMenu'
 
 
