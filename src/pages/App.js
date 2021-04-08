@@ -5,6 +5,10 @@ import GlobalStyle from '../styles/GlobalStyle'
 import ClientHomePage from './ClientHomePage'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import ManagerHomePage from './ManagerHomePage';
+
+
+
 
 const Wrapper = styled.div`
     display: flex;
@@ -19,6 +23,7 @@ const App = () => {
             <Router>
                 <Header />
                 <Route exact path="/" component={ClientHomePage} />
+                <Route exact path="/Manager" component={ManagerHomePage}/>
                 <Footer />
             </Router>
         </>
