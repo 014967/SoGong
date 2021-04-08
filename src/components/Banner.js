@@ -38,21 +38,14 @@ const settings = {
    pauseOnHover: true,
    arrows: true,
    dots: true,
-   //prevArrow : "<button type='button' class='slick-prev'>Previous</button>",		// html 설정 가능
-   //nextArrow : "<button type='button' class='slick-next'>Next</button>",
-   //dotsClass : "slick-dots",//css class 지정도 지정 가능
 };
 
 const Banner = () => {
-
-   const onMouseEnter = (e) => {
-      console.log('asdf')
-   }
    return (
       <>
          <Container>
-            <Slider {...settings} onMouseEnter={onMouseEnter}>
-               <BannerContent img="/src/assets/images/banner1.PNG" onMouseEnter={onMouseEnter}/>
+            <Slider {...settings}>
+               <BannerContent img="/src/assets/images/banner1.PNG" />
                <BannerContent img="/src/assets/images/banner2.PNG" />
                <BannerContent img="/src/assets/images/banner3.PNG" />
             </Slider>
