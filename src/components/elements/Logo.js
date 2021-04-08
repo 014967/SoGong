@@ -9,7 +9,7 @@ const StyledLogo = styled.div`
 `
 const Logo = () => (
   <StyledLogo>
-    LOGO
+    K-SINSA
   </StyledLogo>
 )
 
