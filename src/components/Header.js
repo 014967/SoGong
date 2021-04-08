@@ -10,6 +10,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
+  z-index: 999;
 
   padding: 32px 64px;
   width: 100%;

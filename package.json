@@ -15,8 +15,10 @@
     "react-icons": "^4.2.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "react-slick": "^0.28.1",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^2.0.3",
+    "slick-carousel": "^1.8.1",
     "styled": "^1.0.0",
     "styled-components": "^5.2.3",
     "web-vitals": "^1.1.1"
