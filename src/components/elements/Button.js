@@ -1,35 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
 
-export const Stylebtn = styled.button`
-width: 200px;
-height: 40px;
-margin-right : 10px;
-background : ${({background}) => handleBackGroundType(background)}; 
-color : #FFFFFF;
-border-radius: 50px;
-opacity: 1;
-border-style : none;
-&:focus{
-  outline: none;
-}
+const Button = styled.button`
+  width: 164px;
+  height: 48px;
+  color: white;
+  background: ${(props) => props.theme.color[props.background] || props.theme.color.secondary};
+  border: none;
+  border-radius: 32px;
+  font-size: 20px;
+  font-family: ${({ theme }) => theme.font.light};
+  &:focus{
+    outline: none;
+  }
 `
 
-  export const handleBackGroundType = background =>
-  {
-    switch (background) 
-      {
-        case "primary":
-          return "#D3D3D3";
-        case "second":
-          return "#DF988F";
-        case "third":
-          return "#B20A2C";
-  
-      }
-  };
-
-
-
-
-
+export default Button

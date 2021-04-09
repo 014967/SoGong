@@ -9,7 +9,6 @@ const Container = styled.div`
 
    margin: 218px 0 64px;
    width: 100%;
-   height: 560px;
    z-index: 1;
 
    & .slick-dots {

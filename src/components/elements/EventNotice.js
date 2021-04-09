@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import {Stylebtn} from './Button';
+import Button from './Button';
 import GetEventData from './GetEventData';
 
 
@@ -65,13 +65,13 @@ const EventNotice= ()=>
       <Stylediv>
 
           <StyleCB type="checkbox" />
-          <Stylebtn background="primary">선택 비활성화</Stylebtn>
-          <Stylebtn background="primary">선택 활성화</Stylebtn>
-          <Stylebtn background="primary">선택 삭제</Stylebtn>
-          <Stylebtn background="second">정렬하기</Stylebtn>
-          <Stylebtn background="second">필터링</Stylebtn>
+          <Button background="primary">선택 비활성화</Button>
+          <Button background="primary">선택 활성화</Button>
+          <Button background="primary">선택 삭제</Button>
+          <Button background="second">정렬하기</Button>
+          <Button background="second">필터링</Button>
           <Bars/>
-          <Stylebtn background="third">등록</Stylebtn>
+          <Button background="third">등록</Button>
           
         </Stylediv>
           
