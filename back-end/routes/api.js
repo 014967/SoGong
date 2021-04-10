@@ -1,8 +1,40 @@
 const express = require('express');
-const User = require('../models/users');
+const { User } = require('../models/users');
 const Event = require('../models/events');
 const Product = require('../models/products');
+const { auth } = require('../middleware/auth');
 const router = express.Router();
+
+//role 1 관리자
+//role 0 일반유저
+router.get("/auth", auth, (req, res) => {
+    res.status(200).json({
+        _id: req.user._id,
+        isAdmin: req.user.role === 0 ? false : true,
+        isAuth: true,
+        email: req.user.email,
+        name: req.user.name,
+        role: req.user.role,
+    });
+});
+
+
+router.post('/users', (req, res) => {
+
+    //회원 가입 할떄 필요한 정보들을  client에서 가져오면 
+    //그것들을  데이터 베이스에 넣어준다.
+
+    const user = new User(req.body);
+
+    user.save((err, userInfo) => {
+        if(err) return res.json({success: false, err});
+        return res.status(200).json({
+            success: true
+        })
+    })
+
+});
+
 
 // [USER API]
 router.get('/users', function(req, res){
