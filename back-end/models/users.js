@@ -9,6 +9,8 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
 id:{
     type:String,
+    unique:1,
+    maxlength:15,
     required: [true]
 },
 password: {
