@@ -1,9 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
-
-import {Stylebtn} from './Button';
+import {Link} from 'react-router-dom';
+import {Stylebtn , Bars, PinkBars} from './Button';
 import GetEventData from './GetEventData';
-
+import EnterEventNotice from './EnterEventNotice';
 
 
 const handleWidth = width =>
@@ -44,17 +44,13 @@ border-radius: 8px;
 opacity: 1;
 `
 
-const Bars = styled.div` 
-      width : 30%;
-`
+const EnterClick = ()=>
+{
+
+}
 
 
-const PinkBars = styled.div`
-background: #DF988F;
-height : 0.1px;
-width: 100%;
 
-`
 const EventNotice= ()=>
 {
 
@@ -70,8 +66,10 @@ const EventNotice= ()=>
           <Stylebtn background="primary">선택 삭제</Stylebtn>
           <Stylebtn background="second">정렬하기</Stylebtn>
           <Stylebtn background="second">필터링</Stylebtn>
-          <Bars/>
+          <Bars width="30"/>
+          <Link to={EnterEventNotice}>
           <Stylebtn background="third">등록</Stylebtn>
+          </Link>
           
         </Stylediv>
           
@@ -79,7 +77,7 @@ const EventNotice= ()=>
          
      
       
-        <PinkBars/>
+        <PinkBars width="100"/>
       
            
           
@@ -90,7 +88,7 @@ const EventNotice= ()=>
               <StyleTitle width ="normal">활성화/비활성화</StyleTitle>
               <StyleTitle width = "middle">진행기간</StyleTitle>
             </Stylediv>
-            <PinkBars/>
+            <PinkBars width="100"/>
            
            <Stylediv>
               <GetEventData/>

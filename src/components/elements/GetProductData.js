@@ -64,7 +64,7 @@ const GetProductData = () =>
                         <Stylediv>
                             <StyleCB type="checkbox"/>
                             <StyleTitle width= "normal">
-                            <StyleImg src={s.img}></StyleImg>
+                            <StyleImg></StyleImg>
                             </StyleTitle>
                             <StyleTitle width="primary">{s.productTitle}</StyleTitle>
                             <StyleTitle width="normal">{s.price}</StyleTitle>

@@ -1,8 +1,10 @@
-import {React, useState, useEffect} from 'react';
+import {React, useState,useEffect} from 'react';
 import styled from 'styled-components';
 import EventNotice from './EventNotice';
 import Title from './Title';
 import Product from './Product';
+import { SelectAllRounded } from '@material-ui/icons';
+import { Select } from '@material-ui/core';
 const LeftMenu = styled.div`
     id : LeftMenu;
 `
@@ -20,9 +22,10 @@ const Menu = styled.ul`
 const MenuItem = styled.li`
 display : inline-block;
 `
-
 const MenuLink = styled.button`
-color: #DF988F;
+
+
+color : #B20A2C;
 background : none;
   top: 17px;
   left: 64px;
@@ -31,7 +34,7 @@ background : none;
   font-size: 1.7em;
   text-align : left;
   border : none;
-  &:hover {
+  &:hover{
     color: ${({ theme }) => theme.color.primary};
   }
   &:focus{
@@ -41,23 +44,32 @@ background : none;
 
 
 
-const ManagerMenu = ()=>
+const ManagerMenu = () =>
+{ 
+    const [MenuName, setMenuName] = useState("event");
+
+    useEffect(()=>
+    {
+    console.log(MenuName);
+        
+    },[MenuName]);
+  
+
+  
+            
+ const handleItemClick =  e  =>
 {
-  const [MenuName, setMenuName] = useState("event");
-  const handleItemClick = e =>
-  {
+        setMenuName(e.target.value); 
+}
+            
+  
 
-      setMenuName(e.target.value);
-  };
-
-
-    
     return (
     
        
     
          
-        <>
+        <div>
         <Title />
         <Nav>
             <LeftMenu>
@@ -66,7 +78,7 @@ const ManagerMenu = ()=>
                         <MenuLink
                         value = "event"
                         //default 생성해야함
-                        onClick={handleItemClick}>
+                        onClick={(handleItemClick)}>
                         공지/이벤트 관리
                         </MenuLink>
                         
@@ -94,22 +106,31 @@ const ManagerMenu = ()=>
                 </Menu>
             </LeftMenu>
             <div>
-                {
-                    MenuName ==='event' && (
+                {   
+                 MenuName ? (
+                    
+                     MenuName ==='event'  &&
+                     (
+                         
                         <EventNotice/>
                     )
-                }
-                {
+                    || 
                     MenuName ==='product' && (
                         <Product/>
-                    )
+                    )        
+                          
+                    ) : null 
+
+
+
                 }
+                
             
             </div>
         </Nav>
-        
+        </div>
       
-        </>
+        
        
     
     
@@ -123,5 +144,6 @@ const ManagerMenu = ()=>
 
     )
 }
+
 
 export default ManagerMenu;

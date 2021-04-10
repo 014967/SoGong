@@ -8,6 +8,8 @@ import Data from './Data'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 
+
+
 const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
