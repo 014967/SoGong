@@ -1,36 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import axios from 'axios'
+import CheckBox from './elements/CheckBox'
+import Button from './elements/Button'
 
 const Container = styled.div`
   display: flex;
-
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 64px;
+`
+const Row = styled.div`
+  display: flex;
+  align-items: center;
   width: 100%;
   height: 112px;
+  padding: 0 16px;
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+  & > *:first-child {
+    margin-right: 64px;
+  }
+  & > *:last-child {
+    margin-left: 64px;
+  }
+`
+const Title = styled.div`
+  width: 619px;
+  text-align: center;
 `
 
-const handleWidth = width =>
-{
-  switch(width)
-  {
-    case "primary":
-      return "40%";
-    case "normal":
-      return "20%";
-    case "middle":
-      return "50%";
-  }
-};
-const StyleTitle = styled.div`
-text-align : center;
-width : ${({width}) => handleWidth(width)};
-font: normal normal 300 20px/29px Spoqa Han Sans Neo;
+const Available = styled.div`
+  width: 201px;
+  text-align: center;
 `
+
+const Date = styled.div`
+  width: 185px;
+  text-align: center;
+`
+
+const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').replace('-', '.').slice(2)
 
 const GetEventData = () => {
 
-  const [eventList, setEventList] = useState('vvv')
+  const [eventList, setEventList] = useState(null)
   const [isLoading, setIsLoading] = useState(true)
 
   const getEvents = async () => {
@@ -46,12 +59,14 @@ const GetEventData = () => {
 
     return (
       <Container>
-        {isLoading ? 'Loading...' : eventList.map(v => (
-            <>
-              <div>{v.title}</div>
-              <div>{v.available ? '활성화' : '비활성화'}</div>
-              <div>{v.date}~{v.due}</div>
-            </>
+        {isLoading ? 'Loading...' : eventList.map((data, index) => (
+            <Row key={index}>
+              <CheckBox />
+              <Title>{data.title}</Title>
+              <Available>{data.available ? '활성화' : '비활성화'}</Available>
+              <Date>{regDate(data.date)}<br />~<br />{regDate(data.due)}</Date>
+              <Button background="primary">수정</Button>
+            </Row>
           )
         )}
       </Container>

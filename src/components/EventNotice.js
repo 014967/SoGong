@@ -12,7 +12,6 @@ const Container = styled.div`
 
 const Header = styled.div`
   display: flex;
-  justify-content: space-between;
   width: 100%;
   height: 64px;
   padding: 0 16px;
@@ -20,7 +19,7 @@ const Header = styled.div`
 `
 const ButtonsContainer = styled.div`
   display: flex;
-  width: 100%;
+  margin-right: 186px;
   padding-left: 64px;
   & > * + * {
     margin-left: 16px;
