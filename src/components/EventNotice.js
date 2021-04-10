@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from './elements/Button';
-import GetEventData from './elements/GetEventData';
+import GetEventData from './GetEventData';
 import CheckBox from './elements/CheckBox'
 
 const Container = styled.div`

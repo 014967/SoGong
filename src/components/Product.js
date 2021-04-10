@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import Button from './elements/Button';
-import GetProductData from './elements/GetProductData';
+import GetProductData from './GetProductData';
 
 const handleWidth = width =>
 {
