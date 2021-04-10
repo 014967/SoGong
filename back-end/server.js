@@ -7,6 +7,7 @@ const mongoose     = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors         = require('cors');
 
+
 // [SETUP EXPRESS APP]
 const app          = express();
 

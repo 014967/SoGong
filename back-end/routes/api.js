@@ -4,6 +4,7 @@ const Event = require('../models/events');
 const Product = require('../models/products');
 const { auth } = require('../middleware/auth');
 const router = express.Router();
+const path = require("path");
 
 //role 1 관리자
 //role 0 일반유저
@@ -97,6 +98,11 @@ router.get('/events', function(req, res){
         res.send(events);
     });
 });
+
+const rPostEvents = require(
+    path.join(__dirname, "post-eventImg.js"))
+router.post('/events/post/:id', rPostEvents) //upload image
+
 
 router.post('/events', function(req, res, next){
     Event.create(req.body).then(function(event){
