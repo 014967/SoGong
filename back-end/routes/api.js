@@ -27,7 +27,7 @@ router.post('/users', (req, res) => {
 
     const user = new User(req.body);
 
-    user.save((err, userInfo) => {
+    user.save((err, doc) => {
         if(err) return res.json({success: false, err});
         return res.status(200).json({
             success: true
@@ -37,7 +37,7 @@ router.post('/users', (req, res) => {
 });
 
 
-router.post("/users", (req, res) => {
+router.post("/login", (req, res) => {
     User.findOne({ id: req.body.id }, (err, user) => {
         if (!user)
             return res.json({
@@ -74,18 +74,6 @@ router.get("/logout", auth, (req, res) => {
 
 
 // [USER API]
-router.get('/users', function(req, res){
-    User.find({}).then(function(users){
-        res.send(users);
-    });
-});
-
-router.post('/users', function(req, res, next){
-   User.create(req.body).then(function(user){
-    res.send(user);
-   }).catch(next);
-});
-
 
 router.put('/users/:id', function(req, res){
     User.findByIdAndUpdate({_id: req.params.id}, req.body).then(function(user){
