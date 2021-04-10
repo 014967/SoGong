@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const jwt = require('jsonwebtoken');
+const moment = require('moment');
 const Schema = mongoose.Schema;
 
 //create users Schema & model
@@ -24,13 +25,15 @@ email:{
     required: [true]
 },
 token:{
-    type:Boolean,
-    default: false
-},//로그인했는지 여부
+    type:String,
+}, // 유저가 로그인시 토큰 발급
+tokenExp: {
+    type: Number
+}, // 토큰의 유효시간
 rule:{
-    type:Boolean,
-    default: false
-},//관리자계정인지 여부
+    type:Number,
+    default: 0
+}, // 관리자 : 1, 일반유저 : 0
 plist:{
     type:Array
 },
@@ -68,10 +71,27 @@ UserSchema.methods.comparePassword = function(plainPassword,cb){
     })
 }
 
+UserSchema.methods.generateToken = function(cb) {
+    var user = this;
+    // console.log('user._id', user._id)
+
+    // jsonwebtoken을 이용해서 token을 생성하기 
+    console.log('user',user)
+    console.log('UserSchema', UserSchema)
+    var token =  jwt.sign(user._id.toHexString(),'secret')
+    var oneHour = moment().add(1, 'hour').valueOf();
+
+    user.tokenExp = oneHour;
+    user.token = token;
+    user.save(function (err, user){
+        if(err) return cb(err)
+        cb(null, user);
+    })
+}
+
 UserSchema.statics.findByToken = function(token, cb){
     var user = this;
     
-
     // decode token
     jwt.verify(token, 'secretToken', function(err,decoded){
         // 유저 아이디를 이용하여 유저를 찾은 다음에
