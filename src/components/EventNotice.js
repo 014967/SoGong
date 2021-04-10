@@ -54,6 +54,7 @@ const EventNotice = () => {
           <Button background="secondary">정렬하기</Button>
           <Button background="secondary">필터링</Button>
         </ButtonsContainer>
+        <Button background="primary">등록</Button>
       </Header>
       <TableHeader>
         <TableHeaderContent width="619px">제목</TableHeaderContent>
