@@ -43,7 +43,7 @@ router.get('/events', function(req, res){
 });
 
 const postEventImage = require(path.join(__dirname, "post-eventImg.js"))
-router.post('/events/post/:id', postEventImage) //upload image
+router.post('/events/image/:id', postEventImage) //upload image
 
 
 router.post('/events', function(req, res, next){
