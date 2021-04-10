@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import {Route, Link} from 'react-router-dom';
 import styled from 'styled-components';
 import Button from './elements/Button';
-import GetEventData from './elements/GetEventData';
+import GetEventData from './GetEventData';
 import CheckBox from './elements/CheckBox'
-
+import EnterEventNotice from './EnterEventNotice';
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  width: 100%;
+  width:900px;
 `
 
 const Header = styled.div`
@@ -42,9 +43,26 @@ const TableHeaderContent = styled.div`
   text-align: center;
 `
 
+
+
 const EventNotice = () => {
+
+  const [enter, setEnter] = useState("");
+
+  const ClickEnter = () =>
+  {
+  setEnter("Enter");
+  }
+  useEffect(() => 
+  {
+      console.log(enter);
+  },[enter]);
+
+  
   return (
-    <Container>
+    <div>{
+      enter ? (<EnterEventNotice/>) :
+      <Container>
       <Header>
         <CheckBox />
         <ButtonsContainer>
@@ -53,16 +71,25 @@ const EventNotice = () => {
           <Button background="disabled">선택 삭제</Button>
           <Button background="secondary">정렬하기</Button>
           <Button background="secondary">필터링</Button>
+          <Button background="primary" onClick={ClickEnter}>등록</Button>
         </ButtonsContainer>
-        <Button background="primary">등록</Button>
+        
+        
+        
       </Header>
-      <TableHeader>
+      <TableHeader>     
         <TableHeaderContent width="619px">제목</TableHeaderContent>
         <TableHeaderContent width="201px">활성화/비활성화</TableHeaderContent>
         <TableHeaderContent width="185px">진행기간</TableHeaderContent>
       </TableHeader>
+      
       <GetEventData />
+      
     </Container>
+
+    }</div>
+    
+    
   )
 }
 

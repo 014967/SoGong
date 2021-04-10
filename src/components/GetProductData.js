@@ -1,6 +1,6 @@
 import react from 'react';
 import styled from 'styled-components';
-import product from '../../testData/product.json';
+import product from '../testData/product.json';
 const PinkBars = styled.div`
 background: #DF988F;
 height : 0.1px;

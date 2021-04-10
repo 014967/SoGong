@@ -1,6 +1,6 @@
 import react from 'react';
 import styled from 'styled-components';
-import event from '../../testData/event.json';
+import event from '../testData/event.json';
 
 
 const ListComponent = styled.div`
