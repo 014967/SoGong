@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components';
-import {Stylebtn, Bars} from './Button';
+import { Bars} from './Button';
 const EnterEventNotice = () =>
 {
 
@@ -9,7 +9,7 @@ const EnterEventNotice = () =>
         <div>
             <div id='top'>
                 <Bars width="90"/>
-                <Stylebtn background="third"/>
+                
                 
 
             </div>
