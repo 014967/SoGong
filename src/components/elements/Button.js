@@ -10,7 +10,8 @@ const Button = styled.button`
   border-radius: 32px;
   font-size: 20px;
   font-family: ${({ theme }) => theme.font.light};
-  &:focus{
+  cursor: pointer;
+  &:focus {
     outline: none;
   }
 `

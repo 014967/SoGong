@@ -7,7 +7,7 @@ import BannerContent from './BannerContent'
 
 const Container = styled.div`
 
-   margin: 218px 0 64px;
+   margin-bottom: 64px;
    width: 100%;
    z-index: 1;
 
