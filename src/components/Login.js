@@ -1,11 +1,14 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Button from './elements/Button'
+import axios from 'axios'
+import Cookies from 'js-cookie'
 
 const Container = styled.div`
   display: flex;
   justify-content: flex-end;
-  & > * + * {
+  align-items: center;
+  & > * > * + *, & > *:last-child {
     margin-left: 16px;
   }
 `;
@@ -24,15 +27,74 @@ const Input = styled.input`
   }
 `;
 
-//아디 비번 값 받기
-//값없으면 disabled
 const Login = () => {
+
+  const [ID, setID] = useState('')
+  const [PW, setPW] = useState('')
+  const [success, setSuccess] = useState(false)
+
+  const handleLogin = async () => {
+    const { data: response } = await axios.post('/api/login',
+      {
+        id: ID,
+        password: PW
+      }
+    )
+    setSuccess(response.loginSuccess)
+    if (!response.loginSuccess) {
+      alert(response.message)
+    }
+  }
+
+  const handleLogOut = async () => {
+    const { data } = await axios.get('/api/logout')
+    if (data.success) {
+      Cookies.remove('w_auth')
+      setSuccess(false)
+      setID('')
+      setPW('')
+    }
+  }
+
+  const handleIDChange = e => {
+    setID(e.target.value)
+  }
+
+  const handlePWChange = e => {
+    setPW(e.target.value)
+  }
+
+  const auth = async () => {
+    const { data } = await axios.get('/api/auth')
+    setSuccess(true)
+    setID(data.id)
+  }
+
+  useEffect(() => {
+    const session = Cookies.get('w_auth')
+    if (session) {
+      auth()
+    }
+  }, [])
+
   return (
     <Container>
-      <Input placeholder="ID" />
-      <Input type="password" placeholder="PW" />
-      <Button>SIGN IN</Button>
-      <Button background="primary">SIGN UP</Button>
+      {
+        success ? 
+        <>
+          <div>{ID}님 환영합니다.</div>
+          <Button onClick={handleLogOut}>SIGN OUT</Button>
+        </>
+        : 
+        <>
+          <form onSubmit={handleLogin}>
+            <Input placeholder="ID" onChange={handleIDChange} />
+            <Input type="password" placeholder="PW" onChange={handlePWChange} />
+            <Button type="submit">SIGN IN</Button>
+          </form>
+          <Button background="primary">SIGN UP</Button>
+        </>
+      }
     </Container>
   );
 }

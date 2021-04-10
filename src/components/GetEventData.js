@@ -48,7 +48,6 @@ const GetEventData = () => {
 
   const getEvents = async () => {
     const { data: events } = await axios.get("/api/events")
-    console.log(events)
     setEventList(events)
     setIsLoading(false)
   }
@@ -70,32 +69,7 @@ const GetEventData = () => {
           )
         )}
       </Container>
-        // <ListComponent>
-        // <div>
-        //         {
-        //           eventList.map((s) =>{
-        //             return (
-        //               <Stylediv>
-        //                 <StyleCB type="checkbox"/>
-        //                 <StyleTitle width="primary">{s.title}</StyleTitle>
-        //                 <StyleTitle width="normal">{s.active}</StyleTitle>
-        //                 <StyleTitle width="middle">{s.Date}</StyleTitle>
-                       
-                       
-        //               </Stylediv>
-        //             )
-        //           })
-
-
-
-        //         }
-
-        // </div>
-        // </ListComponent>
     )
-
-
-
-
 }
+
 export default GetEventData;
