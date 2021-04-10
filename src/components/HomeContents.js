@@ -1,16 +1,8 @@
 import React from 'react';
 import styled from 'styled-components'
 import Title from './elements/Title'
+import ContentsWrapper from './elements/ContentsWrapper'
 import HomeContentCards from './HomeContentCards'
-
-const Container = styled.div`
-  width: 100%;
-  max-width: 1200px;
-  padding: 64px 64px 0;
-  margin-bottom: 128px;
-  box-shadow: 0px 10px 40px #00000029;
-  border-radius: 32px;
-`
 
 const dummyData1 = [
   {
@@ -50,12 +42,12 @@ const dummyData2 = [
 
 const HomeContents = () => {
     return (
-        <Container>
+        <ContentsWrapper>
           <Title>BEST</Title>
           <HomeContentCards data={dummyData1} />
           <Title>NEW</Title>
           <HomeContentCards data={dummyData2} />
-        </Container>
+        </ContentsWrapper>
     );
 }
 
