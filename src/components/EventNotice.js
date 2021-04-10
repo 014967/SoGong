@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import {Route, Link} from 'react-router-dom';
 import styled from 'styled-components';
-import Button from './elements/Button';
+import {Button} from './elements/Button';
+
 import GetEventData from './GetEventData';
 import CheckBox from './elements/CheckBox'
 import EnterEventNotice from './EnterEventNotice';
