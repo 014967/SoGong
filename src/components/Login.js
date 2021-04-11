@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import Button from './elements/Button'
+import {Button} from './elements/Button'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
