@@ -19,6 +19,7 @@ const Menu = styled.nav`
   display: flex;
   flex-direction: column;
   align-content: flex-start;
+  min-width: 232px;
   & > * + * {
     margin-top: 16px;
   }

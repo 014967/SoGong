@@ -1,18 +1,22 @@
 // server.js
 
 // [LOAD PACKAGES]
-const express     = require('express');
-const bodyParser  = require('body-parser'); 
-const mongoose    = require('mongoose');
+const express      = require('express');
+const bodyParser   = require('body-parser'); 
+const mongoose     = require('mongoose');
+const cookieParser = require('cookie-parser');
+const cors         = require('cors');
 
 // [SETUP EXPRESS APP]
-const app         = express();
+const app          = express();
 
 // [CONFIGURE SERVER PORT]
 const port = process.env.PORT || 8080;
 
 // [initialize routes]
 app.use(express.json());
+app.use(cookieParser());
+app.use(cors());
 app.use('/api',require('./routes/api'));
 app.use((err,req,res,next)=>{
     //console.log(err);
@@ -34,5 +38,5 @@ db.once('open', function(){
     console.log("Connected to mongod server");
 });
 
-mongoose.connect('mongodb+srv://Junhyong:Junhyong@cluster0.bm9aa.mongodb.net/TeamDB?retryWrites=true&w=majority', { useNewUrlParser: true });
+mongoose.connect('mongodb+srv://Junhyong:Junhyong@cluster0.bm9aa.mongodb.net/TeamDB?retryWrites=true&w=majority', { useUnifiedTopology: true, useCreateIndex: true, useNewUrlParser: true });
 mongoose.Promise = global.Promise;
