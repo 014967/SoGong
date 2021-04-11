@@ -33,8 +33,9 @@ date:{
     return new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds));
 }
 },//업로드날짜
-img:{
-    type:String,
+images:{
+    type: Array,
+    default: []
 },//원본이미지
 thumbnail:{
     type:String, 
@@ -47,12 +48,12 @@ bannerNo:{
     type: Number,
     default: 0
 }//배너 보여지는 차례 배너에띄우지않을경우 0
-});
+}, { timestamps: true });
 
 const Event = mongoose.model('event', EventSchema);
 
 
-module.exports = Event;
+module.exports = { Event };
 
 /*
 [JSON FORMAT]

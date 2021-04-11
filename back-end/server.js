@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors());
 app.use('/api',require('./routes/api'));
+app.use('/product', require('./routes/product'));
 app.use((err,req,res,next)=>{
     //console.log(err);
     res.status(422).send({error:err.message});
