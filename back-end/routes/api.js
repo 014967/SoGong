@@ -4,6 +4,7 @@ const Event = require('../models/events');
 const Product = require('../models/products');
 const { auth } = require('../middleware/auth');
 const router = express.Router();
+const path = require("path");
 
 //role 1 관리자
 //role 0 일반유저
@@ -19,22 +20,6 @@ router.get("/auth", auth, (req, res) => {
     });
 });
 
-
-router.post('/users', (req, res) => {
-
-    //회원 가입 할떄 필요한 정보들을  client에서 가져오면 
-    //그것들을  데이터 베이스에 넣어준다.
-
-    const user = new User(req.body);
-
-    user.save((err, doc) => {
-        if(err) return res.json({success: false, err});
-        return res.status(200).json({
-            success: true
-        })
-    })
-
-});
 
 
 router.post("/login", (req, res) => {
@@ -75,6 +60,18 @@ router.get("/logout", auth, (req, res) => {
 
 // [USER API]
 
+router.get('/users', function(req, res){
+    User.find({}).then(function(users){
+        res.send(users);
+    });
+});
+
+router.post('/users', function(req, res, next){
+    User.create(req.body).then(function(user){
+     res.send(user);
+    }).catch(next);
+ });
+
 router.put('/users/:id', function(req, res){
     User.findByIdAndUpdate({_id: req.params.id}, req.body).then(function(user){
         User.findOne({_id: req.params.id}).then(function(user){
@@ -97,6 +94,9 @@ router.get('/events', function(req, res){
         res.send(events);
     });
 });
+
+const postEventImage = require(path.join(__dirname, "post-eventImg.js"))
+router.post('/events/image/:id', postEventImage) //upload image
 
 router.post('/events', function(req, res, next){
     Event.create(req.body).then(function(event){
