@@ -3,7 +3,22 @@ import styled from "styled-components";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import BannerContent from './BannerContent'
+
+const BannerContent = styled.img`
+   width: 100%;
+`
+
+const importAll = r => {
+   let images = []
+   r.keys().forEach((item, index) => {
+      if (r(item).default.includes('banner')) {
+         images.push(r(item).default)
+      }
+   })
+   return images
+}
+
+const images = importAll(require.context('../assets/images', false, /\.(png|jpe?g|PNG|JPE?G)$/))
 
 const Container = styled.div`
 
@@ -40,13 +55,16 @@ const settings = {
 };
 
 const Banner = () => {
+
    return (
       <>
          <Container>
             <Slider {...settings}>
-               <BannerContent img="/src/assets/images/banner1.PNG" />
-               <BannerContent img="/src/assets/images/banner2.PNG" />
-               <BannerContent img="/src/assets/images/banner3.PNG" />
+               {
+                  images.map(image => (
+                     <BannerContent src={image} />
+                  ))
+               }
             </Slider>
          </Container>
       </>
