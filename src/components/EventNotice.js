@@ -54,7 +54,7 @@ const EventNotice = () => {
   return (
     <>
       {
-        enter ? (<EnterEventNotice />) : (
+        enter ? (<EnterEventNotice  />) : (
           <Container>
             <Header>
               <CheckBox />

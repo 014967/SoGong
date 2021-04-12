@@ -1,12 +1,14 @@
 import styled from 'styled-components'
 import Button from './elements/Button';
 
+import {format} from "date-fns";
 import DatePicker from "react-datepicker";
 import {useState} from 'react';
 import "react-datepicker/dist/react-datepicker.css";
 import { Dropdown, Selection } from 'react-dropdown-now';
 import 'react-dropdown-now/style.css';
 import axios from 'axios';
+import { CollectionsBookmarkRounded } from '@material-ui/icons';
 
 const Container = styled.div`
   display: flex;
@@ -42,7 +44,7 @@ const EnterEventNotice =() =>
     const [ImgFile, setImgFile] = useState(null);
     const [priority , setPriority] = useState("");
 
-
+    console.log(priority);
 
     const handleTitle = e =>
     {
@@ -61,10 +63,22 @@ const EnterEventNotice =() =>
     const submit = async () => {
       const formData = new FormData();
       formData.append('file', ImgFile);
+      const StringEndDate = format(endDate, "yyyy-MM-dd'T'HH:mm:ss");
       console.log(ImgFile)
       console.log('~~~~')
-      const response = await axios.post('/api/events/image/:id', formData)
+      const response = await axios.post("api/events" , 
+      {
+          title : title,
+          available : false,
+          token : false,
+          detail :description,
+          date :startDate,
+          due : StringEndDate,
+          bannerNo : priority.label,
+      })
+      const responseImg = await axios.post('/api/events/image/:id', formData)
       console.log(response)
+      console.log(responseImg)
         // return axios.post("", title, description, formData , startDate, endDate, priority).then(res => {
         //     alert('성공')
         //   }).catch(err => {
