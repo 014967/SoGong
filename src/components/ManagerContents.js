@@ -19,11 +19,17 @@ const Menu = styled.nav`
   display: flex;
   flex-direction: column;
   align-content: flex-start;
+  margin-top: 64px;
   min-width: 232px;
   & > * + * {
     margin-top: 16px;
   }
 `
+
+const title = {
+  event: '공지/이벤트 관리',
+  product: '상품 관리'
+}
 
 const ManagerContents = () => {
   const [selected, setSelected] = useState('event');
@@ -34,7 +40,7 @@ const ManagerContents = () => {
 
     return (
         <ContentsWrapper wide>
-          <Title>공지/이벤트 관리</Title>
+          <Title>{title[selected]}</Title>
           <Container>
             <Menu>
               <ManagerMenuButton

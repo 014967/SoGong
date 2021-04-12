@@ -1,138 +1,215 @@
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Button from './elements/Button';
-
 import {format} from "date-fns";
 import DatePicker from "react-datepicker";
-import {useState} from 'react';
 import "react-datepicker/dist/react-datepicker.css";
-import { Dropdown, Selection } from 'react-dropdown-now';
+import { Dropdown } from 'react-dropdown-now';
 import 'react-dropdown-now/style.css';
 import axios from 'axios';
 import { CollectionsBookmarkRounded } from '@material-ui/icons';
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  width:900px;
-`
 const Header = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   width: 100%;
   height: 64px;
   padding: 0 16px;
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
-  justify-content: flex-end;
 `
-const Table = styled.div`
-display : flex;
+const Container = styled.div`
+    display: flex;
+    flex-direction: column;
+    padding: 64px 32px 0;
+    margin-bottom: 64px;
+    width: 100%;
+    & > * + * {
+        margin-top: 64px;
+    }
 `
-const ImgTitle = styled.div
+
+const InputContainer = styled.div`
+    display: flex;
+    max-width: 1094px;
 `
-display : flex;
+const Title = styled.div`
+    display: flex;
+    align-items: center;
+    width: 200px;
+    height: 47px;
+    font-size: 32px;
+    font-family: ${({ theme }) => theme.font.regular};
+    color: ${({ theme }) => theme.color.secondary};
+`
+
+const Input = styled.input`
+    border: 1px solid ${({ theme }) => theme.color.primary};
+    &:focus {
+        outline: none;
+    }
+    font-size: 20px;
+    font-family: ${({ theme }) => theme.font.light};
+    height: 48px;
+    width: 894px;
+    max-width: 894px;
+    padding-left: 8px;
+`
+
+const Textarea = styled.textarea`
+    border: 1px solid ${({ theme }) => theme.color.primary};
+    &:focus {
+        outline: none;
+    }
+    font-size: 20px;
+    font-family: ${({ theme }) => theme.font.light};
+    height: 640px;
+    width: 894px;
+    max-width: 894px;
+    padding: 8px;
+    resize: none;
+`
+
+const FileInput = styled.input`
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip:rect(0,0,0,0);
+    border: 0;
+`
+
+const LabelButton = styled.label`
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 164px;
+    height: 48px;
+    color: white;
+    background: ${(props) => props.theme.color[props.background] || props.theme.color.secondary};
+    border: none;
+    border-radius: 32px;
+    font-size: 20px;
+    font-family: ${({ theme }) => theme.font.light};
+    cursor: pointer;
+    &:focus {
+    outline: none;
+    }
+`
+const FileName = styled.div`
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    height: 48px;
+    padding-left: 8px;
+`
+
+const DateText = styled.div`
+    display: flex;
+    align-items: center;
+    font-size: 24px;
+    height: 48px;
+    padding: 0 16px 0 8px;
+`
+const StyledDatePicker = styled(DatePicker)`
+    border: 1px solid ${({ theme }) => theme.color.primary};
+    font-size: 20px;
+    font-family: ${({ theme }) => theme.font.light};
+    height: 48px;
+    width: 200px;
+    padding-left: 8px;
+    cursor: pointer;
 `
 
 
+const EnterEventNotice = ({ setEnter }) => {
 
-const EnterEventNotice =() =>
-{
+    const [startDate, setStartDate] = useState(new Date())
+    const [endDate, setEndDate] = useState(new Date())
+    const [title, setTitle] = useState('')
+    const [description, setDiscription] = useState('')
+    const [imgFile, setImgFile] = useState(null)
+    const [priority , setPriority] = useState('1')
+    const [imgFileName, setImgFileName] = useState('*배너로 사용할 이미지의 가로/세로 비율은 고정해주세요.')
 
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
-    const [title, setTitle] = useState("");
-    const [description, setDiscription] = useState("");
-    const [ImgFile, setImgFile] = useState(null);
-    const [priority , setPriority] = useState("");
-
-    console.log(priority);
-
-    const handleTitle = e =>
-    {
-        setTitle(e.target.value);
+    const handleTitle = e => {
+        setTitle(e.target.value)
     }
-    const handleDiscription = e =>
-    {
-        setDiscription(e.target.value);
+    const handleDiscription = e => {
+        setDiscription(e.target.value)
     }
 
-    const getImg = e=>
-    {
-        setImgFile(e.target.files[0]);
+    const getImg = e => {
+        setImgFile(e.target.files[0])
+        setImgFileName(e.target.files[0].name)
     }
 
-    const submit = async () => {
-      const formData = new FormData();
-      formData.append('file', ImgFile);
-      const StringEndDate = format(endDate, "yyyy-MM-dd'T'HH:mm:ss");
-      console.log(ImgFile)
-      console.log('~~~~')
-      const response = await axios.post("api/events" , 
-      {
-          title : title,
-          available : false,
-          token : false,
-          detail :description,
-          date :startDate,
-          due : StringEndDate,
-          bannerNo : priority.label,
-      })
-      const responseImg = await axios.post('/api/events/image/:id', formData)
-      console.log(response)
-      console.log(responseImg)
-        // return axios.post("", title, description, formData , startDate, endDate, priority).then(res => {
-        //     alert('성공')
-        //   }).catch(err => {
-        //     alert('실패')
-        //   })
 
-
+    const handleSubmit = async () => {
+        if (!title || !description || !imgFile) {
+            alert('필수 입력 사항을 입력하지 않으셨습니다.')
+            return
+        }
+        setEnter(false)
+        const formData = new FormData()
+        formData.append('file', imgFile)
+        const StringEndDate = format(endDate, "yyyy-MM-dd'T'HH:mm:ss")
+        const response = await axios.post("api/events", {
+            title: title,
+            available: true,
+            token: false,
+            detail: description,
+            date: startDate,
+            due: StringEndDate,
+            bannerNo: priority.label,
+        })
+        const responseImg = await axios.post('/api/events/image/:id', formData)
     }
+
     return (
-        <Container>
+        <>
             <Header>
-                <Button background ="primary" onClick={submit}>
-                    등록하기
+                <Button background ="primary" onClick={handleSubmit}>
+                    등록
                 </Button>
             </Header>
-            <Table>
-            <div>
-                <div>제목 *</div>
-                <div>설명 *</div>
-                <div>배너 이미지*</div>
-                <div>진행기간 *</div>
-                <div>표시 순서 *</div>
-            </div>
-            <div>
-                <div>
-                    <textarea placeholder="제목입력" onChange={handleTitle}></textarea>
-                </div>
-                <div>
-                    <textarea placeholder="설명" onChange={handleDiscription}></textarea>
-                </div>
-                <ImgTitle>
-                    <input type="file" accept="image/x-png,image/jpeg" name ="img" onChange={getImg}/>
-                </ImgTitle>
-                    <div>
-                        <DatePicker selected={startDate} onChange={date => setStartDate(date)} />
-                        부터
-                        <DatePicker selected={endDate} onChange={date => setEndDate(date)} />
-                        까지
-                    </div>
-                <div>
-                <Dropdown
-                    placeholder="Select an option"
-                    className="my-className"
-                    options={['1', '2', '3', '4','5','6','7','8','9','10']}
-                    value="1"
-                    onChange={(value) => setPriority(value)}
-                    onSelect={(value) => setPriority(value)} // always fires once a selection happens even if there is no change
-                    onClose={(closedBySelection) => console.log('closedBySelection?:', closedBySelection)}
-                    onOpen={() => console.log('open!')}
-                />
-                </div>
-            </div>
-            </Table>
-        </Container>
+            <Container>
+                <InputContainer>
+                    <Title>제목*</Title>
+                    <Input placeholder="제목 입력" onChange={handleTitle}></Input>
+                </InputContainer>
+                <InputContainer>
+                    <Title>설명*</Title>
+                    <Textarea placeholder="설명 입력" onChange={handleDiscription}></Textarea>
+                </InputContainer>
+                <InputContainer>
+                    <Title>배너 이미지*</Title>
+                    <LabelButton for="file_input">이미지 업로드</LabelButton>
+                    <FileInput type="file" accept="image/x-png,image/jpeg" id ="file_input" name="img" onChange={getImg} />
+                    <FileName>{imgFileName}</FileName>
+                </InputContainer>
+                <InputContainer>
+                    <Title>진행 기간*</Title>
+                    <StyledDatePicker selected={startDate} onChange={date => setStartDate(date)} />
+                    <DateText>부터</DateText>
+                    <StyledDatePicker selected={endDate} onChange={date => setEndDate(date)} />
+                    <DateText>까지</DateText>
+                </InputContainer>
+                <InputContainer>
+                    <Title>표시 순서</Title>
+                    <Dropdown
+                        disabled
+                        placeholder="Select an option"
+                        className="my-className"
+                        options={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
+                        value="1"
+                        onChange={(value) => setPriority(value)}
+                        onSelect={(value) => setPriority(value)}
+                    />
+                </InputContainer>
+            </Container>
+        </>
     )
 }
 

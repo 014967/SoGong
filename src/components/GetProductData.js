@@ -57,10 +57,10 @@ const GetProductData = () =>
         <ListComponent>
             <div>
             {
-                productList.map((s) =>
+                productList.map((s, i) =>
                 {
                     return (
-                        <div>
+                        <div key={i}>
                         <Stylediv>
                             <StyleCB type="checkbox"/>
                             <StyleTitle width= "normal">

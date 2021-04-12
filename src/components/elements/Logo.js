@@ -1,5 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 
 // TODO: 로고 제작 이후 img로 변경
 const StyledLogo = styled.div`
@@ -8,9 +9,11 @@ const StyledLogo = styled.div`
   font-family: ${({ theme }) => theme.font.medium};
 `
 const Logo = () => (
-  <StyledLogo>
-    K-SINSA
-  </StyledLogo>
+  <Link to="/" style={{textDecoration: 'none'}}>
+    <StyledLogo>
+      K-SINSA
+    </StyledLogo>
+  </Link>
 )
 
 

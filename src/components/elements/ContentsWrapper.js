@@ -8,6 +8,7 @@ const ContentsWrapper = styled.div`
   margin-bottom: 128px;
   box-shadow: 0px 10px 40px #00000029;
   border-radius: 32px;
+  background: white;
 `
 
 export default ContentsWrapper

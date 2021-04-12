@@ -45,38 +45,40 @@ const TableHeaderContent = styled.div`
 
 const EventNotice = () => {
 
-  const [enter, setEnter] = useState(false);
+  const [enter, setEnter] = useState(false)
 
   const handleEnter = () => {
     setEnter(true);
   }
 
   return (
-    <>
-      {
-        enter ? (<EnterEventNotice  />) : (
-          <Container>
-            <Header>
-              <CheckBox />
-              <ButtonsContainer>
-                <Button background="disabled">선택 비활성화</Button>
-                <Button background="disabled">선택 활성화</Button>
-                <Button background="disabled">선택 삭제</Button>
-                <Button background="secondary">정렬하기</Button>
-                <Button background="secondary">필터링</Button>
-              </ButtonsContainer>
-              <Button background="primary" onClick={handleEnter}>등록</Button>
-            </Header>
-            <TableHeader>
-              <TableHeaderContent width="619px">제목</TableHeaderContent>
-              <TableHeaderContent width="201px">활성화/비활성화</TableHeaderContent>
-              <TableHeaderContent width="185px">진행기간</TableHeaderContent>
-            </TableHeader>
-          <GetEventData />
-        </Container>
-        )
-      }
-    </>
+      <Container>
+          {
+            enter ? (
+              <EnterEventNotice setEnter={setEnter} />
+            ) : (
+              <>
+                <Header>
+                  <CheckBox />
+                  <ButtonsContainer>
+                    <Button background="disabled">선택 비활성화</Button>
+                    <Button background="disabled">선택 활성화</Button>
+                    <Button background="disabled">선택 삭제</Button>
+                    <Button background="secondary">정렬하기</Button>
+                    <Button background="secondary">필터링</Button>
+                  </ButtonsContainer>
+                  <Button background="primary" onClick={handleEnter}>등록</Button>
+                </Header>
+                <TableHeader>
+                  <TableHeaderContent width="619px">제목</TableHeaderContent>
+                  <TableHeaderContent width="201px">활성화/비활성화</TableHeaderContent>
+                  <TableHeaderContent width="185px">진행기간</TableHeaderContent>
+                </TableHeader>
+                <GetEventData />
+              </>
+            )
+          }
+      </Container>
   )
 }
 
