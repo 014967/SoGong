@@ -20,19 +20,19 @@ module.exports = (req, res) => {
        // console.log(files.img.name)
        // console.log(files.img.path)
 
-        detect.fromFile(files.img.path, (err, result)=>{
+        detect.fromFile(files.file.path, (err, result)=>{
 
             //console.log(result)
             // console.log(imgName)
 
-            const imgName = files.img.name
+            const imgName = files.file.name
             const allowedImageTypes = ["jpg","jpeg","png"]
            if( ! allowedImageTypes.includes(result.ext) ){
 
                return res.send("Image not allowed")
 
            }
-           const oldPath = files.img.path
+           const oldPath = files.file.path
            const newPath = path.join(__dirname,"..","..","src","assets","images", imgName)
            
            fs.copyFile(oldPath, newPath, (err) => {
@@ -49,7 +49,7 @@ module.exports = (req, res) => {
                 })
             
             })
-
+            
         })
      })
  })

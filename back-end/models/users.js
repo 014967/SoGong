@@ -77,9 +77,7 @@ UserSchema.methods.generateToken = function(cb) {
     var user = this;
     // console.log('user._id', user._id)
 
-    // jsonwebtoken을 이용해서 token을 생성하기 
-    console.log('user',user)
-    console.log('UserSchema', UserSchema)
+    // jsonwebtoken을 이용해서 token을 생성하기
     var token =  jwt.sign(user._id.toHexString(),'secret')
     var oneHour = moment().add(1, 'hour').valueOf();
 

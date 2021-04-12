@@ -1,4 +1,4 @@
-import react from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import product from '../testData/product.json';
 const PinkBars = styled.div`
