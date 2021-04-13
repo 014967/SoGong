@@ -7,6 +7,10 @@ import ManagerHomePage from './ManagerHomePage'
 import Data from './Data'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import ManagerHomePage from './ManagerHomePage';
+
+
+
 
 const App = () => {
     return (
@@ -22,5 +26,7 @@ const App = () => {
         </>
     );
 }
+
+
 
 export default App
