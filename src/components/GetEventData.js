@@ -43,7 +43,7 @@ const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').r
 
 const GetEventData = () => {
 
-  const [eventList, setEventList] = useState(null)
+  const [eventList, setEventList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
   const getEvents = async () => {
