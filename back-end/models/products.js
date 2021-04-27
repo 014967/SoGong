@@ -30,9 +30,9 @@ token:{
     type: Boolean,
     default: 0
 }//체크박스 선택 여부
-});
+},{ timestamps: true });
 
-const Product = mongoose.model('product', ProductSchema);
+const Product = mongoose.model('Product', ProductSchema);
 
 module.exports = Product;
 /*

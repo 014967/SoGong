@@ -56,7 +56,7 @@ router.post("/login", (req, res) => {
                     .cookie("w_auth", user.token)
                     .status(200)
                     .json({
-                        loginSuccess: true, userId: user._id, accesstoken: user.token
+                        loginSuccess: true, userId: user._id, accessToken: user.token
                     });
             });
         });

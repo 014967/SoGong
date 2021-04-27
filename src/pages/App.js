@@ -7,6 +7,7 @@ import ManagerHomePage from './ManagerHomePage'
 import Data from './Data'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import DetailProductPage from './DetailProductPage'
 
 const Wrapper = styled.div`
     display: flex;
@@ -23,6 +24,7 @@ const App = () => {
                 <Route exact path="/" component={ClientHomePage} />
                 <Route exact path="/manager" component={ManagerHomePage} />
                 <Route exact path="/data" component={Data} />
+                <Route exact path="/product/:productId" component={DetailProductPage} />
                 <Footer />
             </Router>
         </>
