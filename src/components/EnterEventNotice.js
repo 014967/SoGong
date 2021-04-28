@@ -146,14 +146,14 @@ const EnterEventNotice = ({ setEnter }) => {
     }
 
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault()
         if (!title || !description || !imgFile) {
             alert('필수 입력 사항을 입력하지 않으셨습니다.')
             return
         }
-        setEnter(false)
         const formData = new FormData()
-        formData.append('file', imgFile)
+        formData.append('img', imgFile)
         const StringEndDate = format(endDate, "yyyy-MM-dd'T'HH:mm:ss")
         const response = await axios.post("api/events", {
             title: title,
@@ -164,7 +164,9 @@ const EnterEventNotice = ({ setEnter }) => {
             due: StringEndDate,
             bannerNo: priority.label,
         })
-        const responseImg = await axios.post('/api/events/image/:id', formData)
+        .catch((err) => console.log('error'))
+        const responseImg = await axios.post(`/eventImg/${response.data._id}`, formData)
+        .then(setEnter(false))
     }
 
     return (

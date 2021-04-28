@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import Slider from "react-slick";
+import axios from 'axios'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { TabletMacSharp } from "@material-ui/icons";
 
 const BannerContent = styled.img`
    width: 100%;
@@ -18,7 +20,7 @@ const importAll = r => {
    return images
 }
 
-const images = importAll(require.context('../assets/images', false, /\.(png|jpe?g|PNG|JPE?G)$/))
+// const images = importAll(require.context('../assets/images', false, /\.(png|jpe?g|PNG|JPE?G)$/))
 
 const Container = styled.div`
 
@@ -56,13 +58,26 @@ const settings = {
 
 const Banner = () => {
 
+   const [images, setImages] = useState([])
+
+   const getImages = async () => {
+      const { data: events } = await axios.get("/api/events")
+      setImages(events.map(event => event.img))
+   }
+
+   useEffect(() => {
+      getImages()
+   }, [])
+
    return (
       <>
          <Container>
             <Slider {...settings}>
                {
                   images.map(image => (
-                     <BannerContent src={image} />
+                     <>
+                     <BannerContent src={require('../assets/images/banners/' + image).default} />
+                     </>
                   ))
                }
             </Slider>
