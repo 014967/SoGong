@@ -29,7 +29,7 @@ const server = app.listen(port, function(){
 });
 
 // [ CONFIGURE mongoose ]
-
+const mongoURI = 'mongodb+srv://Junhyong:Junhyong@cluster0.bm9aa.mongodb.net/TeamDB?retryWrites=true&w=majority';
 // CONNECT TO MONGODB SERVER
 const db = mongoose.connection;
 db.on('error', console.error);
@@ -37,36 +37,65 @@ db.once('open', function(){
     // CONNECTED TO MONGODB SERVER
     console.log("Connected to mongod server");
 });
-
+const conn = mongoose.createConnection(mongoURI);
 mongoose.connect('mongodb+srv://Junhyong:Junhyong@cluster0.bm9aa.mongodb.net/TeamDB?retryWrites=true&w=majority', { useUnifiedTopology: true, useCreateIndex: true, useNewUrlParser: true });
 mongoose.Promise = global.Promise;
 
-
-
-const fs = require('fs');
-const router = express.Router();
+// [GRIDFS STORAGE ENGINE]
+const GridFsStorage = require('multer-gridfs-storage');
+const Grid = require('gridfs-stream')
+const crypto = require('crypto');
 const multer = require('multer');
-const storage = multer.diskStorage({
-    destination: function (req, res, cb) {
-        cb(null, 'uploads/')
+const path = require('path');
+
+ let gfs;
+ conn.once('open', () => {
+    // Init stream
+    gfs = Grid(conn.db, mongoose.mongo);
+    gfs.collection('uploads');
+  });
+
+  // Create storage engine
+const storage = new GridFsStorage({
+    url: mongoURI,
+    file: (req, file) => {
+      return new Promise((resolve, reject) => {
+        crypto.randomBytes(16, (err, buf) => {
+          if (err) {
+            return reject(err);
+          }
+          const filename = buf.toString('hex') + path.extname(file.originalname);
+          const fileInfo = {
+            filename: filename,
+            bucketName: 'uploads'
+          };
+          resolve(fileInfo);
+        });
+      });
     }
-});
+  });
 
-const upload = multer({ storage: storage });
-router.route('/img_data')
-.post(upload.single('file'), function(req, res) {
-    var new_img = new Img;
-    new_img.img.data = fs.readFileSync(req.file.path)
-    new_img.img.contentType = 'image/png';  // or 'image/png'
-    new_img.save();
-res.json({ message: 'New image added to the db!' });
-}).get(function(req, res) {
-    Img.findOne({}, 'img createdAt', function(err, img) {
-        if (err)
-            res.send(err);
+  const upload = multer({ storage });
 
-        console.log(img);    
-        res.contentType('json');
-        res.send(img);
-    }).sort({ createdAt: 'desc' });
-})
+  // @route POST /upload
+// @desc  Uploads file to DB
+app.post('/upload', upload.single('file'), (req, res) => {
+    // res.json({ file: req.file });
+    res.redirect('/');
+  });
+  
+  // @route GET /files
+  // @desc  Display all files in JSON
+  app.get('/upload', (req, res) => {
+    gfs.files.find().toArray((err, files) => {
+      // Check if files
+      if (!files || files.length === 0) {
+        return res.status(404).json({
+          err: 'No files exist'
+        });
+      }
+  
+      // Files exist
+      return res.json(files);
+    });
+  });
