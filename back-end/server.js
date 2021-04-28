@@ -189,7 +189,7 @@ const Product = require('./models/products');
       }
     }),
   });
-  
+
 app.post('/eventImg/:id', mupload.single('img'), (req, res) => {
   console.log(req.file);
   const imgName = req.file.originalname
@@ -197,8 +197,7 @@ app.post('/eventImg/:id', mupload.single('img'), (req, res) => {
     {_id: req.params.id}, {img: imgName}).then(function(event){
 
     Event.findOne({_id: req.params.id}).then(function(event){
-    })
-            
+    })  
   })
 });
     
