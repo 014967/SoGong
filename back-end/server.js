@@ -77,15 +77,13 @@ const storage = new GridFsStorage({
 
   const upload = multer({ storage });
 
-  // @route POST /upload
-// @desc  Uploads file to DB
+ 
 app.post('/upload', upload.single('file'), (req, res) => {
     // res.json({ file: req.file });
     res.redirect('/');
   });
   
-  // @route GET /files
-  // @desc  Display all files in JSON
+  
   app.get('/upload', (req, res) => {
     gfs.files.find().toArray((err, files) => {
       // Check if files
@@ -99,3 +97,78 @@ app.post('/upload', upload.single('file'), (req, res) => {
       return res.json(files);
     });
   });
+
+ 
+app.get('/upload/:filename', (req, res) => {
+    gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+      // Check if file
+      if (!file || file.length === 0) {
+        return res.status(404).json({
+          err: 'No file exists'
+        });
+      }
+      // File exists
+      return res.json(file);
+    });
+  });
+
+  app.get('/upload64/:filename', (req, res) => {
+    gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+      // Check if file
+      if (!file || file.length === 0) {
+        return res.status(404).json({
+          err: 'No file exists'
+        });
+      }
+      // File exists
+      const readstream = gfs.createReadStream(file.filename);
+      
+      const bufs = [];
+      readstream.on('data', function (chunk) {
+        bufs.push(chunk);
+      });
+      readstream.on('end', function () {
+        const fbuf = Buffer.concat(bufs);
+        const base64 = fbuf.toString('base64');
+        return res.json(base64);
+      });
+      
+    });
+  });
+
+
+  
+  
+  app.get('/upload/display/:filename', (req, res) => {
+    gfs.files.findOne({ filename: req.params.filename }, (err, file) => {
+      // Check if file
+      if (!file || file.length === 0) {
+        return res.status(404).json({
+          err: 'No file exists'
+        });
+      }
+  
+      // Check if image
+      if (file.contentType === 'image/jpeg' || file.contentType === 'image/png') {
+        // Read output to browser
+        const readstream = gfs.createReadStream(file.filename);
+        readstream.pipe(res);
+      } else {
+        res.status(404).json({
+          err: 'Not an image'
+        });
+      }
+    });
+  });
+  
+  
+  app.delete('/upload/:id', (req, res) => {
+    gfs.remove({ _id: req.params.id, root: 'uploads' }, (err, gridStore) => {
+      if (err) {
+        return res.status(404).json({ err: err });
+      }
+  
+      res.redirect('/');
+    });
+  });
+  
