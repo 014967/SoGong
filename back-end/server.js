@@ -170,4 +170,35 @@ app.get('/upload/:filename', (req, res) => {
       res.redirect('/');
     });
   });
+
+
+
+// [SERVERSIDE UPLOAD WITH MULTER]
+
+const { User } = require('./models/users');
+const Event = require('./models/events');
+const Product = require('./models/products');
+
+  const mupload = multer({
+    storage: multer.diskStorage({
+      destination: function (req, file, cb) {
+        cb(null, 'uploads/');
+      },
+      filename: function (req, file, cb) {
+        cb(null, new Date().valueOf() + file.originalname);
+      }
+    }),
+  });
   
+app.post('/eventImg/:id', mupload.single('img'), (req, res) => {
+  console.log(req.file);
+  const imgName = req.file.originalname
+  Event.findByIdAndUpdate(
+    {_id: req.params.id}, {img: imgName}).then(function(event){
+
+    Event.findOne({_id: req.params.id}).then(function(event){
+    })
+            
+  })
+});
+    
