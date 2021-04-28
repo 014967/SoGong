@@ -130,9 +130,9 @@ app.get('/upload/:filename', (req, res) => {
       readstream.on('end', function () {
         const fbuf = Buffer.concat(bufs);
         const base64 = fbuf.toString('base64');
-        return res.json(base64);
+        
       });
-      
+      return res.json(file);
     });
   });
 
