@@ -1,98 +1,82 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from './elements/Button';
-import GetProductData from './GetProductData';
+import GetEventData from './GetEventData';
+import CheckBox from './elements/CheckBox'
+import EnterEventNotice from './EnterEventNotice'
 
-const handleWidth = width =>
-{
-  switch(width)
-  {
-    case "primary":
-      return "40%";
-    case "normal":
-      return "20%";
-    case "middle":
-      return "50%";
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
+
+const Header = styled.div`
+  display: flex;
+  width: 100%;
+  height: 64px;
+  padding: 0 16px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+`
+const ButtonsContainer = styled.div`
+  display: flex;
+  margin-right: 186px;
+  padding-left: 64px;
+  & > * + * {
+    margin-left: 16px;
   }
-};
-const StyleTitle = styled.div`
-text-align : center;
-width : ${({width}) => handleWidth(width)};
-font: normal normal 300 20px/29px Spoqa Han Sans Neo;
 `
 
-const ProductComponent = styled.div`
-width: 900px;
-`
-const Stylediv = styled.div`
-width : 100;
-display : flex;
-padding : 10px;
-`
-
-
- const StyleCB = styled.input`
-width: 164px;
-height: 40px;
-border: 15px solid #DF988F;
-border-radius: 8px;
-opacity: 1;
+const TableHeader = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  padding: 0 242px 0 120px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
 `
 
-const Bars = styled.div` 
-      width : 30%;
+const TableHeaderContent = styled.div`
+  width: ${(props) => props.width};
+  font-size: 20px;
+  text-align: center;
 `
 
+const EventNotice = () => {
 
-const PinkBars = styled.div`
-background: #DF988F;
-height : 0.1px;
-width: 100%;
-`
+  const [enter, setEnter] = useState(false)
 
-const Product = () =>
-{
-    return (
-        <ProductComponent>
-            <>
+  const handleEnter = () => {
+    setEnter(true);
+  }
 
-            <Stylediv>
-
-                <StyleCB type="checkbox" />
-                <Button background="primary">선택 삭제</Button>
-                <Button background="primary">정렬하기</Button>
-                <Button background="primary">필터링</Button>
-                <Bars/>
-                <Bars/>
-                <Button background="third">등록</Button>
-
-            </Stylediv>
-            <PinkBars/>
-            <Stylediv>
-              <Bars/>
-              <StyleTitle width = "primary">상품명</StyleTitle>
-              <StyleTitle width = "normal">가격</StyleTitle>
-            </Stylediv>
-            <PinkBars/>
-            <PinkBars/>
-
-            <Stylediv>
-
-
-
-                <GetProductData/>
-            </Stylediv>
-
-
-
-
-
-
-
-
-            </>
-        </ProductComponent>
-    )
+  return (
+      <Container>
+          {
+            enter ? (
+              <EnterEventNotice setEnter={setEnter} />
+            ) : (
+              <>
+                <Header>
+                  <CheckBox />
+                  <ButtonsContainer>
+                    <Button background="disabled">선택 삭제</Button>
+                    <Button background="secondary">정렬하기</Button>
+                    <Button background="secondary">필터링</Button>
+                  </ButtonsContainer>
+                  <Button background="primary" onClick={handleEnter}>등록</Button>
+                </Header>
+                <TableHeader>
+                  <TableHeaderContent width="192px"></TableHeaderContent>
+                  <TableHeaderContent width="704px">상품명</TableHeaderContent>
+                  <TableHeaderContent width="140px">가격</TableHeaderContent>
+                </TableHeader>
+                {/* <GetEventData /> */}
+              </>
+            )
+          }
+      </Container>
+  )
 }
 
-export default Product;
+export default EventNotice

@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Route, Link } from 'react-router-dom'
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Button from './elements/Button';
 import GetEventData from './GetEventData';
 import CheckBox from './elements/CheckBox'
@@ -25,6 +24,14 @@ const ButtonsContainer = styled.div`
   padding-left: 64px;
   & > * + * {
     margin-left: 16px;
+  };
+  & > * {
+    /* ${props => 
+    props.background === 'primary' && 
+    css`
+      width: 500px !important;
+      margin-left: auto;
+    `} */
   }
 `
 
@@ -66,8 +73,8 @@ const EventNotice = () => {
                     <Button background="disabled">선택 삭제</Button>
                     <Button background="secondary">정렬하기</Button>
                     <Button background="secondary">필터링</Button>
+                    <Button background="primary" right onClick={handleEnter}>등록</Button>
                   </ButtonsContainer>
-                  <Button background="primary" onClick={handleEnter}>등록</Button>
                 </Header>
                 <TableHeader>
                   <TableHeaderContent width="619px">제목</TableHeaderContent>

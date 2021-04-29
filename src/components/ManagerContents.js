@@ -65,12 +65,12 @@ const ManagerContents = () => {
             </Menu>
             {
               selected === 'event' && (
-                <EventNotice/>
+                <EventNotice />
               )
             }
             {
               selected === 'product' && (
-                <Product/>
+                <Product />
               )
             }
           </Container>
