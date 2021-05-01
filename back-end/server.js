@@ -190,6 +190,17 @@ const Product = require('./models/products');
     }),
   });
 
+  const pupload = multer({
+    storage: multer.diskStorage({
+      destination: function (req, file, cb) {
+        cb(null, '../src/assets/images/products/');
+      },
+      filename: function (req, file, cb) {
+        cb(null, new Date().valueOf() + '_' + file.originalname);
+      }
+    }),
+  });
+
 app.post('/eventImg/:id', mupload.single('img'), (req, res) => {
   console.log(req.file);
   const imgName = req.file.filename
@@ -197,6 +208,17 @@ app.post('/eventImg/:id', mupload.single('img'), (req, res) => {
     {_id: req.params.id}, {img: imgName}).then(function(event){
 
     Event.findOne({_id: req.params.id}).then(function(event){
+    })  
+  })
+});
+
+app.post('/productImg/:id', pupload.single('img'), (req, res) => {
+  console.log(req.file);
+  const imgName = req.file.filename
+  Product.findByIdAndUpdate(
+    {_id: req.params.id}, {img: imgName}).then(function(event){
+
+    Product.findOne({_id: req.params.id}).then(function(event){
     })  
   })
 });
