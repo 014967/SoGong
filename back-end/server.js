@@ -170,8 +170,6 @@ app.get('/upload/:filename', (req, res) => {
       res.redirect('/');
     });
   });
-
-
 // [SERVERSIDE UPLOAD WITH MULTER]
 
 const { User } = require('./models/users');
