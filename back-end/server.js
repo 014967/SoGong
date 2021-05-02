@@ -172,7 +172,6 @@ app.get('/upload/:filename', (req, res) => {
   });
 
 
-
 // [SERVERSIDE UPLOAD WITH MULTER]
 
 const { User } = require('./models/users');
