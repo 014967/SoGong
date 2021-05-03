@@ -45,6 +45,7 @@ const Category = styled.button`
   border: none;
   background: none;
   cursor: pointer;
+  outline: 0;
   &:hover {
     color: ${({ theme }) => theme.color.primary};
   }

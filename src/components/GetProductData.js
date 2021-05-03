@@ -1,6 +1,6 @@
-import react from 'react';
+import React from 'react';
 import styled from 'styled-components';
-import product from '../../testData/product.json';
+import product from '../testData/product.json';
 const PinkBars = styled.div`
 background: #DF988F;
 height : 0.1px;
@@ -57,10 +57,10 @@ const GetProductData = () =>
         <ListComponent>
             <div>
             {
-                productList.map((s) =>
+                productList.map((s, i) =>
                 {
                     return (
-                        <div>
+                        <div key={i}>
                         <Stylediv>
                             <StyleCB type="checkbox"/>
                             <StyleTitle width= "normal">

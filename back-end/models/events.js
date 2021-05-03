@@ -34,10 +34,10 @@ date:{
 }
 },//업로드날짜
 img:{
-    type:String,
+    type:String
 },//원본이미지
 thumbnail:{
-    type:String, 
+    type:String
 },//썸네일
 token:{
     type:Boolean,
