@@ -20,11 +20,11 @@ const Header = styled.div`
 `
 const ButtonsContainer = styled.div`
   display: flex;
-  margin-right: 186px;
+  width: 100%;
   padding-left: 64px;
   & > * + * {
     margin-left: 16px;
-  }
+  };
 `
 
 const TableHeader = styled.div`

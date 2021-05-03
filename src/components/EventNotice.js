@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled, { css } from 'styled-components';
-import Button from './elements/Button';
+import HeaderButton from './elements/HeaderButton';
 import GetEventData from './GetEventData';
 import CheckBox from './elements/CheckBox'
 import EnterEventNotice from './EnterEventNotice'
@@ -20,19 +20,11 @@ const Header = styled.div`
 `
 const ButtonsContainer = styled.div`
   display: flex;
-  margin-right: 186px;
+  width: 100%;
   padding-left: 64px;
   & > * + * {
     margin-left: 16px;
   };
-  & > * {
-    /* ${props => 
-    props.background === 'primary' && 
-    css`
-      width: 500px !important;
-      margin-left: auto;
-    `} */
-  }
 `
 
 const TableHeader = styled.div`
@@ -68,12 +60,12 @@ const EventNotice = () => {
                 <Header>
                   <CheckBox />
                   <ButtonsContainer>
-                    <Button background="disabled">선택 비활성화</Button>
-                    <Button background="disabled">선택 활성화</Button>
-                    <Button background="disabled">선택 삭제</Button>
-                    <Button background="secondary">정렬하기</Button>
-                    <Button background="secondary">필터링</Button>
-                    <Button background="primary" right onClick={handleEnter}>등록</Button>
+                    <HeaderButton background="disabled">선택 비활성화</HeaderButton>
+                    <HeaderButton background="disabled">선택 활성화</HeaderButton>
+                    <HeaderButton background="disabled">선택 삭제</HeaderButton>
+                    <HeaderButton background="secondary">정렬하기</HeaderButton>
+                    <HeaderButton background="secondary">필터링</HeaderButton>
+                    <HeaderButton background="primary" right onClick={handleEnter}>등록</HeaderButton>
                   </ButtonsContainer>
                 </Header>
                 <TableHeader>
