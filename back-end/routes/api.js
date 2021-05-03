@@ -57,6 +57,83 @@ router.get("/logout", auth, (req, res) => {
     });
 });
 
+//id=123123123,324234234,324234234  type=array
+router.get('/products_by_id', (req, res) => {
+
+    let type = req.query.type
+    let productIds = req.query.id
+
+    if (type === "array") {
+        //id=123123123,324234234,324234234 이거를 
+        //productIds = ['123123123', '324234234', '324234234'] 이런식으로 바꿔주기
+        let ids = req.query.id.split(',')
+        productIds = ids.map(item => {
+            return item
+        })
+
+    }
+
+    //productId를 이용해서 DB에서  productId와 같은 상품의 정보를 가져온다.
+
+    Product.find({ _id: { $in: productIds } })
+    
+        .exec((err, product) => {
+            if (err) return res.status(400).send(err)
+            return res.status(200).send(product)
+        })
+
+})
+
+router.post("/addTowishlist", auth, (req, res) => {
+
+    //먼저  User Collection에 해당 유저의 정보를 가져오기 
+    User.findOne({ _id: req.user._id },
+        (err, userInfo) => {
+
+            // 가져온 정보에서 카트에다 넣으려 하는 상품이 이미 들어 있는지 확인 
+
+            let duplicate = false;
+            userInfo.wishlist.forEach((item) => {
+                if (item.id === req.body.productId) {
+                    duplicate = true;
+                }
+            })
+
+            //상품이 이미 있을때
+            if (duplicate) {
+                User.findOneAndUpdate(
+                    { _id: req.user._id, "wishlist.id": req.body.productId},
+                    { $inc: { "wishlist.$.quantity": 1 } },
+                    { new: true },
+                    (err, userInfo) => {
+                        if (err) return res.status(200).json({ success: false, err })
+                        res.status(200).send(userInfo.wishlist)
+                    }
+                )
+            }
+            //상품이 이미 있지 않을때 
+            else {
+                User.findOneAndUpdate(
+                    { _id: req.user._id },
+                    {
+                        $push: {
+                            wishlist: {
+                                id: req.body.productId,
+                                quantity: 1,
+                                date: Date.now()
+                            }
+                        }
+                    },
+                    { new: true },
+                    (err, userInfo) => {
+                        if (err) return res.status(400).json({ success: false, err })
+                        res.status(200).send(userInfo.wishlist)
+                    }
+                )
+            }
+        })
+});
+
 
 // [USER API]
 
