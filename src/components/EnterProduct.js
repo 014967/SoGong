@@ -108,33 +108,32 @@ const PriceText = styled.div`
 
 
 
-const EnterProduct = ({setEnterProduct}) =>
+const EnterProduct = ({ setEnter }) =>
 {
 
-    const [ProductTitle ,setProductTitle] =useState('');
-    const [ProductDescription , setProductDescription] = useState('');
-    const [ProductImg , setProductImg] = useState(null);
+    const [productTitle ,setProductTitle] =useState('');
+    const [productDescription , setProductDescription] = useState('');
+    const [productImg , setProductImg] = useState(null);
     const [imgFileName, setImgFileName] = useState("이미지는 정사각형으로 표시됩니다");
     const [price, setPrice] = useState();
     const handleSubmit = async (e) =>
     {
         e.preventDefault()
-        if(!ProductTitle || !ProductDescription || !ProductImg || !price)
+        if(!productTitle || !productDescription || !productImg || !price)
         {
             alert("필수 입력 사항을 입력하지 않으셨습니다");
             return
         }
         const formData = new FormData()
-        formData.append('img', ProductImg)
+        formData.append('img', productImg)
         const response = await axios.post("api/products", {
-            ProductTitle: ProductTitle,
-            ProductDescription : ProductDescription,
-            Price : price,
-
+            name: productTitle,
+            detail: productDescription,
+            price: price,
         }) 
         .catch((err) => console.log('error'))
         const responseImg = await axios.post(`/productImg/${response.data._id}` , formData)
-        .then(setEnterProduct(false))
+        .then(setEnter(false))
     }
     const handleProductTitle = e =>
     {
@@ -146,8 +145,8 @@ const EnterProduct = ({setEnterProduct}) =>
     }
     const getImg = e =>
     {
-        setProductImg(e.target.files[0].name);
-        setImgFileName(e.target.files[0]);
+        setProductImg(e.target.files[0]);
+        setImgFileName(e.target.files[0].name);
     }
     const handlePrice = e =>
     {
@@ -177,7 +176,7 @@ const EnterProduct = ({setEnterProduct}) =>
             </InputContainer>
             <InputContainer>
             <Title>상품 가격</Title>
-            <Input placeholder="상품 가격 입력" type='number' onchange={handlePrice}></Input>
+            <Input placeholder="상품 가격 입력" type='number' onChange={handlePrice}></Input>
             <PriceText>원</PriceText>
 
             
