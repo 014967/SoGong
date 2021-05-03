@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from './elements/Button';
-import GetEventData from './GetEventData';
+import GetProductData from './GetProductData';
 import CheckBox from './elements/CheckBox'
 import EnterProduct from './EnterProduct'
 
@@ -71,7 +71,7 @@ const Product = () => {
                   <TableHeaderContent width="704px">상품명</TableHeaderContent>
                   <TableHeaderContent width="140px">가격</TableHeaderContent>
                 </TableHeader>
-                {/* <GetEventData /> */}
+                {<GetProductData /> }
               </>
             )
           }

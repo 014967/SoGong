@@ -133,6 +133,7 @@ const EnterProduct = ({setEnterProduct}) =>
 
         }) 
         .catch((err) => console.log('error'))
+        const responseImg = await axios.post(`/productImg/${response.data._id}` , formData)
         .then(setEnterProduct(false))
     }
     const handleProductTitle = e =>
