@@ -10,10 +10,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-<<<<<<< HEAD
   z-index: 999;
-=======
->>>>>>> feature/3
 
   padding: 32px 64px;
   width: 100%;
@@ -36,10 +33,7 @@ const ExtensionContainer = styled.div`
 
 const Categories = styled.nav`
   display: flex;
-<<<<<<< HEAD
   margin-right: 64px;
-=======
->>>>>>> feature/3
   & > * + * {
     margin-left: 64px;
   }
@@ -73,50 +67,6 @@ const Header = () => {
           <HeaderSearchBar />
         </ExtensionContainer>
       </Container>
-      // <>
-      //   <Nav >
-      //   <NavLink to ="/">
-      //         logo 
-      //   </NavLink>
-      //   <Bars />
-      //   <SignBtn>
-      //         <SignLink to = "/signIn" activeStyle>
-      //             SIGN UP
-      //         </SignLink>
-              
-      //   </SignBtn>
-      //   <SignBox placeholder="ID"/>
-      //   <SignBox placeholder="PW"/>
-
-      //   </Nav>
-      //   <Nav> 
-      //     <NavMenu>
-      //       <NavLink to = '/new' activeStyle>
-      //           NEW
-      //       </NavLink> 
-      //       <NavLink to = '/men' activeStyle>
-            
-      //           MEN
-
-              
-      //       </NavLink> 
-      //       <NavLink to = '/women' activeStyle>
-            
-      //           WOMEN
-
-              
-      //       </NavLink> 
-      //       <NavLink to = '/kid' activeStyle>
-          
-      //           KIDS
-
-              
-      //       </NavLink> 
-
-            
-      //     </NavMenu>
-      //   </Nav>
-      // </>
     )
 }
 

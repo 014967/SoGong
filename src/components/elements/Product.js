@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Stylebtn} from './Button';
+import Button from './Button';
 import GetProductData from './GetProductData';
 
 const handleWidth = width =>
@@ -59,12 +59,12 @@ const Product = () =>
             <Stylediv>
 
                 <StyleCB type="checkbox" />
-                <Stylebtn background="primary">선택 삭제</Stylebtn>
-                <Stylebtn background="primary">정렬하기</Stylebtn>
-                <Stylebtn background="primary">필터링</Stylebtn>
+                <Button background="primary">선택 삭제</Button>
+                <Button background="primary">정렬하기</Button>
+                <Button background="primary">필터링</Button>
                 <Bars/>
                 <Bars/>
-                <Stylebtn background="third">등록</Stylebtn>
+                <Button background="third">등록</Button>
 
             </Stylediv>
             <PinkBars/>

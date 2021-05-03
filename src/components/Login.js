@@ -1,58 +1,40 @@
 import React from 'react'
-import styled from "styled-components"
+import styled from 'styled-components'
+import Button from './elements/Button'
 
 const Container = styled.div`
-  margin-top: 100px;
-  padding: 20px;
+  display: flex;
+  justify-content: flex-end;
+  & > * + * {
+    margin-left: 16px;
+  }
 `;
 
 const Input = styled.input`
   position: relative;
-  overflow: hidden;
-  width: 100%;
-  height: 40px;
-  margin: 0 0 8px;
-  padding: 5px 39px 5px 11px;
-  border: solid 1px #dadada;
-  background: #fff;
-  box-sizing: border-box;
+  width: 192px;
+  height: 48px;
+  border: solid 1px ${({ theme }) => theme.color.primary};
+  background: ${({ theme }) => theme.color.background};
+  font-size: 20px;
+  font-family: ${({ theme }) => theme.font.light};
+  padding-left: 8px;
+  &:focus {
+    outline: none;
+  }
 `;
 
-const Button = styled.div`
-  font-size: 18px;
-  font-weight: 700;
-  line-height: 49px;
-  display: block;
-  width: 100%;
-  height: 49px;
-  margin: 16px 0 7px;
-  cursor: pointer;
-  text-align: center;
-  color: #fff;
-  border: none;
-  border-radius: 0;
-  background-color: #03c75a;
-  ${({ disabled }) =>
-    disabled &&
-    `
-    background-color: #efefef;
-  `}
-`;
 //아디 비번 값 받기
 //값없으면 disabled
-function Header() {
+const Login = () => {
   return (
     <Container>
-      <Input id="id" name="id" placeholder="아이디를 입력해주세요" />
-      <Input
-        id="password"
-        name="password"
-        type="password"
-        placeholder="비밀번호를 입력해주세요"
-      />
-      <Button>로그인</Button>
+      <Input placeholder="ID" />
+      <Input type="password" placeholder="PW" />
+      <Button>SIGN IN</Button>
+      <Button background="primary">SIGN UP</Button>
     </Container>
   );
 }
 
-export default Header
+export default Login

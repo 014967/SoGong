@@ -3,8 +3,7 @@ import styled from 'styled-components'
 import Img1 from '../assets/images/banner1.PNG'
 
 const Image = styled.img`
-  width: 1920px;
-  height: 560px;
+  width: 100%;
 `
 
 // ERROR: windows 환경에서는 require의 경로를 인식을 못한다고 함
