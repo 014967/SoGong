@@ -1,7 +1,6 @@
 import axios from 'axios';
 
 const ADD_TO_WISHLIST = 'add_to_wishlist';
-
 const SERVER = '/api';
 
 export function addTowishlist(id) {
@@ -16,3 +15,6 @@ export function addTowishlist(id) {
         payload: request
     }
 }
+
+
+export default wishlist

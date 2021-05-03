@@ -40,7 +40,8 @@ plist:{
     type:Array
 },
 wishlist:{
-    type:Array
+    type:Array,
+    default: []
 }
 });
 
