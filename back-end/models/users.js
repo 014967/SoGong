@@ -117,7 +117,7 @@ module.exports = { User }
 "pw":"test_user01_pw",
 "name":"홍길동",
 "email":"test_user01@naver.com"
-"plist":"[1,2,3]"
-"wishlist":"[4,5,6]"
+"plist":["1","2","3"]
+"wishlist":["4","5","6"]
 }
 */

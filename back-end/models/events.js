@@ -34,11 +34,13 @@ date:{
 }
 },//업로드날짜
 img:{
-    type:String
-},//원본이미지
-thumbnail:{
-    type:String
-},//썸네일
+    type:String,
+    default: 'no image'
+},//이미지
+imgPath:{
+    type:String,
+    default: 'no image'
+},//이미지경로
 token:{
     type:Boolean,
     default: false
@@ -58,15 +60,12 @@ module.exports = Event;
 [JSON FORMAT]
 
 {
-"title":"test_event01",
-"detail":"test_event01_details",
+"title":"특가세일이벤트",
+"detail":"특가세일",
 "available":"true",
 "due": "2021-06-25T23:59:59" ,
-"date":"",
-"img":"link_of_image",
-"thumbnail":"link_of_thumbnail_image",
 "token":"false",
-"bannerNo":"1"
+"bannerNo":"0"
 }
 
 */

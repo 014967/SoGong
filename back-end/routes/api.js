@@ -6,6 +6,7 @@ const { auth } = require('../middleware/auth');
 const router = express.Router();
 const path = require("path");
 
+
 // [ Initial connect back to front ]
 
 router.get('/', (req, res)=>{
@@ -100,13 +101,13 @@ router.delete('/users/:id', function(req, res){
 
 // [EVENTS API]
 router.get('/events', function(req, res){
-    Event.find({}).then(function(events){
+    Event.find({}).sort({date: -1}).then(function(events){
         res.send(events);
     });
 });
 
 const postEventImage = require(path.join(__dirname, "post-eventImg.js"))
-router.post('/events/image/:id', postEventImage) //upload image
+router.post('/events/image/:id', postEventImage) //upload image by formidable
 
 router.post('/events', function(req, res, next){
     Event.create(req.body).then(function(event){
@@ -129,6 +130,24 @@ router.delete('/events/:id', function(req, res){
         });
     
 });
+
+router.post('/events/delete', function(req, res){
+    Event.deleteMany(
+        {
+        _id : {
+                $in: req.body.eventIds
+              }
+        }).then(function(event){
+        res.send(event);
+        });
+    });
+    /* [ JSON FORMAT of request to '/events/delete' ]
+{
+    "eventIds" : ["116t4sdfi0315", "013532hf8dsa093"]
+}
+eventIds: 삭제할 이벤트id의 배열
+*/
+
 
 
 // [PRODUCTS API]
@@ -160,30 +179,84 @@ router.delete('/products/:id', function(req, res){
     
 });
 
-router.post('/products/sort', function(req, res){
-    Product.find({price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order}).then(function(product){
+
+
+router.post('/products/sorted', function(req, res){
+    let page = req.body.page
+    if(page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
+    .limit(5)
+   .then(function(product){
+        res.send(product);
+    });
+
+    if(page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
+    .skip( (page-1) * 5 - 1 )
+    .limit(5)
+   .then(function(product){
         res.send(product);
     });
 });
 /*
  JSON FORMAT of request to '/products/sorts'
+
 {
-    "key": "/string/i",
+    "search": "/string/i",
     "min": "0",
     "max": "1000000",
-    "order": "asc"
+    "order": "asc",
+    "page" : "1"
 }
-key: 
+
+search: 해당 단어를 포함.
 min, max : 가격 범위
 order : 오름차순=asc 내림차순=-1
-
+page : 1페이지당 20개씩. 2면 21~40번 3이면 41~60 ....
+Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
 */
 
 
+
+
+
+router.post('/products/unsorted', function(req, res){
+    if(req.body.page == 1) Product.find({}).sort({date: -1})
+    .limit(5)
+   .then(function(product){
+        res.send(product);
+    });
+
+    if(req.body.page!=1) Product.find({}).sort({date: -1})
+    .skip( (req.body.page-1) * 5 - 1 )
+    .limit(5)
+   .then(function(product){
+        res.send(product);
+    });
+});
+
+/* [ JSON FORMAT of request to '/products/unsorted' ]
+{
+    "page" : "1"
+}
+page: 페이지 limit(n) n= 한페이지에 표시할 개수
+*/
+
 router.post('/products/delete', function(req, res){
-    Product.deleteMany({token : 1}).then(function(product){
+    Product.deleteMany(
+        {
+        _id : {
+                $in: req.body.productIds
+              }
+        }).then(function(product){
         res.send(product);
         });
     });
+    /* [ JSON FORMAT of request to '/products/delete' ]
+{
+    "productIds" : ["116t4sdfi0315", "013532hf8dsa093"]
+}
+productIds: 삭제할 상품id의 배열
+*/
 
 module.exports = router;
