@@ -1,28 +1,42 @@
-import React from 'react';
+import React ,{useState, useEffect} from 'react';
 import styled from 'styled-components';
 import product from '../testData/product.json';
-const PinkBars = styled.div`
-background: #DF988F;
-height : 0.1px;
-width: 100%;
-margin-bottom : 5px;
+import axios from 'axios';
+import CheckBox from './elements/CheckBox';
+import Button from './elements/Button';
 
+const Container = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 64px;
+`
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 112px;
+  padding: 0 16px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+  & > *:first-child {
+    margin-right: 64px;
+  }
+  & > *:last-child {
+    margin-left: 64px;
+  }
+`
+const Title = styled.div`
+  width: 619px;
+  text-align: center;
 `
 
-const ListComponent = styled.div`
-width: 900px;
+const Price = styled.div`
+  width: 201px;
+  text-align: center;
 `
-const StyleCB = styled.input`
-margin-top : 30px;
-width: 90px;
-height: 40px;
-border: 15px solid #DF988F;
-border-radius: 8px;
-opacity: 1;
-`
-const Stylediv = styled.div`
-width : 100%;
-display : flex;
+const StyleImg = styled.img`
+width : 100px;
+height : 100px;
 `
 
 const handleWidth = width =>
@@ -44,51 +58,59 @@ vertical-align : middle;
 width : ${({width}) => handleWidth(width)};
 font: normal normal 300 20px/29px Spoqa Han Sans Neo;
 `
-const StyleImg = styled.img`
-width : 100px;
-height : 100px;
-`
+
 
 var productList = product.product;
 
-const GetProductData = () =>
+const GetProductData = ({setEnter}) =>
 {
+
+  const [productList , setProductList] = useState([]);
+  const [isLoading , setIsLoading] = useState(true);
+  const [images , setImages]= useState([]);
+
+  const getProductList = async () => 
+  {
+    const {data : products} = await axios.get("/api/products")
+    setProductList(products)
+    setIsLoading(false)
+    setImages(products.map(product => product.img))
+  }
+
+  const clickButton = ({productList}) =>
+  {
+    setEnter(true);
+
+
+  }
+
+  useEffect(()=>
+  {
+    getProductList()
+  } , [])
+
+  console.log(images);
     return (
-        <ListComponent>
-            <div>
-            {
-                productList.map((s, i) =>
-                {
-                    return (
-                        <div key={i}>
-                        <Stylediv>
-                            <StyleCB type="checkbox"/>
-                            <StyleTitle width= "normal">
-                            <StyleImg src={s.img}></StyleImg>
-                            </StyleTitle>
-                            <StyleTitle width="primary">{s.productTitle}</StyleTitle>
-                            <StyleTitle width="normal">{s.price}</StyleTitle>
-                            
-                        </Stylediv>
-                        <PinkBars/>
-                        </div>
-                        
-                    )
-                }
-                )
-                
-            }
-          
-
-
-            </div>
-
-
-
-
-
-
-        </ListComponent>
+        <Container>
+          {
+            isLoading ? 'Loading...' : productList.map((data,index) =>
+            (
+              
+              <Row key={index}>
+              <CheckBox />
+              <StyleImg src={require('../assets/images/products/' + data.img).default}/>
+            
+              <Title>{data.name}</Title>
+              <Price>{data.price}</Price>
+              <Button background="secondary">확인</Button>
+              <Button background="primary">수정</Button>
+              </Row>
+            )
+            )
+            
+          }
+    
+        </Container>
 
     )
 }

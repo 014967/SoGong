@@ -5,7 +5,6 @@ const Schema = mongoose.Schema;
 const ProductSchema = new Schema({
 productNo:{
     type:Number,
-    required: [true]
 },//상품번호
 name:{
     type:String,
@@ -24,7 +23,6 @@ price: {
 },//가격
 stock:{
     type:Number,
-    required: [true]
 },//수량
 token:{
     type: Boolean,

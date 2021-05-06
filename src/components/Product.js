@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
 import Button from './elements/Button';
-import GetEventData from './GetEventData';
+import GetProductData from './GetProductData';
 import CheckBox from './elements/CheckBox'
-import EnterEventNotice from './EnterEventNotice'
+import EnterProduct from './EnterProduct'
 
 const Container = styled.div`
   display: flex;
@@ -42,19 +42,19 @@ const TableHeaderContent = styled.div`
   text-align: center;
 `
 
-const EventNotice = () => {
+const Product = () => {
 
-  const [enter, setEnter] = useState(false)
+  const [enterProduct, setEnterProduct] = useState(false)
 
   const handleEnter = () => {
-    setEnter(true);
+    setEnterProduct(true);
   }
 
   return (
       <Container>
           {
-            enter ? (
-              <EnterEventNotice setEnter={setEnter} />
+            enterProduct ? (
+              <EnterProduct setEnter={setEnterProduct} />
             ) : (
               <>
                 <Header>
@@ -71,7 +71,7 @@ const EventNotice = () => {
                   <TableHeaderContent width="704px">상품명</TableHeaderContent>
                   <TableHeaderContent width="140px">가격</TableHeaderContent>
                 </TableHeader>
-                {/* <GetEventData /> */}
+                {<GetProductData setEnter= {setEnterProduct} /> }
               </>
             )
           }
@@ -79,4 +79,4 @@ const EventNotice = () => {
   )
 }
 
-export default EventNotice
+export default Product
