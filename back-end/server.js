@@ -172,7 +172,7 @@ app.get('/upload/:filename', (req, res) => {
   });
 // [SERVERSIDE UPLOAD WITH MULTER]
 
-const { User } = require('./models/users');
+
 const Event = require('./models/events');
 const Product = require('./models/products');
 
@@ -218,4 +218,10 @@ app.post('/productImg/:id', pupload.single('img'), (req, res) => {
     Product.findOne({_id: req.params.id}).then(function(event){
     })  
   })
+});
+
+// [ Initial connect back to front ]
+
+app.get('/', (req, res)=>{
+  console.log("back-end loaded")
 });
