@@ -48,6 +48,7 @@ const EventNotice = () => {
   const [checked, setChecked] = useState([])
   const [checkedAll, setCheckedAll] = useState(false)
   const [buttonColor, setButtonColor] = useState('disabled')
+  const [eventList, setEventList] = useState([])
 
   const handleEnter = () => {
     setEnter(true)
@@ -61,6 +62,7 @@ const EventNotice = () => {
   useEffect(() => {
     setCheckedAll(checked.every(v => v))
     setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
+    console.log(eventList)
   }, [checked])
 
   return (
@@ -86,7 +88,7 @@ const EventNotice = () => {
                   <TableHeaderContent width="201px">활성화/비활성화</TableHeaderContent>
                   <TableHeaderContent width="185px">진행기간</TableHeaderContent>
                 </TableHeader>
-                <GetEventData checked={checked} setChecked={setChecked} />
+                <GetEventData eventList={eventList} setEventList={setEventList} checked={checked} setChecked={setChecked} />
               </>
             )
           }

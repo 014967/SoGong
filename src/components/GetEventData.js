@@ -41,9 +41,8 @@ const Date = styled.div`
 
 const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').replace('-', '.').slice(2)
 
-const GetEventData = ({ checked, setChecked }) => {
+const GetEventData = ({ eventList, setEventList, checked, setChecked }) => {
 
-  const [eventList, setEventList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
   const getEvents = async () => {
