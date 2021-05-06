@@ -6,6 +6,15 @@ const { auth } = require('../middleware/auth');
 const router = express.Router();
 const path = require("path");
 
+// [ Initial connect back to front ]
+
+router.get('/', (req, res)=>{
+    console.log("back-end initialized")
+    res.send('back-end initialized')
+  });
+
+  
+
 //role 1 관리자
 //role 0 일반유저
 router.get("/auth", auth, (req, res) => {
@@ -88,6 +97,7 @@ router.delete('/users/:id', function(req, res){
     
 });
 
+
 // [EVENTS API]
 router.get('/events', function(req, res){
     Event.find({}).then(function(events){
@@ -149,5 +159,31 @@ router.delete('/products/:id', function(req, res){
         });
     
 });
+
+router.post('/products/sort', function(req, res){
+    Product.find({price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order}).then(function(product){
+        res.send(product);
+    });
+});
+/*
+ JSON FORMAT of request to '/products/sorts'
+{
+    "key": "/string/i",
+    "min": "0",
+    "max": "1000000",
+    "order": "asc"
+}
+key: 
+min, max : 가격 범위
+order : 오름차순=asc 내림차순=-1
+
+*/
+
+
+router.post('/products/delete', function(req, res){
+    Product.deleteMany({token : 1}).then(function(product){
+        res.send(product);
+        });
+    });
 
 module.exports = router;

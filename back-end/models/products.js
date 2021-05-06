@@ -5,6 +5,7 @@ const Schema = mongoose.Schema;
 const ProductSchema = new Schema({
 productNo:{
     type:Number,
+    default:0
 },//상품번호
 name:{
     type:String,
@@ -15,7 +16,8 @@ detail:{
     required: [true]
 },//상세정보
 img: {
-    type:String
+    type:String,
+    default:'No image'
 }, //이미지
 price: {
     type:Number,
@@ -23,6 +25,7 @@ price: {
 },//가격
 stock:{
     type:Number,
+    default:0
 },//수량
 token:{
     type: Boolean,
