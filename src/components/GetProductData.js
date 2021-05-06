@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import product from '../testData/product.json';
 import axios from 'axios';
 import CheckBox from './elements/CheckBox';
+import Button from './elements/Button';
 
 const Container = styled.div`
   display: flex;
@@ -61,7 +62,7 @@ font: normal normal 300 20px/29px Spoqa Han Sans Neo;
 
 var productList = product.product;
 
-const GetProductData = () =>
+const GetProductData = ({setEnter}) =>
 {
 
   const [productList , setProductList] = useState([]);
@@ -75,6 +76,14 @@ const GetProductData = () =>
     setIsLoading(false)
     setImages(products.map(product => product.img))
   }
+
+  const clickButton = ({productList}) =>
+  {
+    setEnter(true);
+
+
+  }
+
   useEffect(()=>
   {
     getProductList()
@@ -93,6 +102,8 @@ const GetProductData = () =>
             
               <Title>{data.name}</Title>
               <Price>{data.price}</Price>
+              <Button background="secondary">확인</Button>
+              <Button background="primary">수정</Button>
               </Row>
             )
             )

@@ -71,7 +71,7 @@ const Product = () => {
                   <TableHeaderContent width="704px">상품명</TableHeaderContent>
                   <TableHeaderContent width="140px">가격</TableHeaderContent>
                 </TableHeader>
-                {<GetProductData /> }
+                {<GetProductData setEnter= {setEnterProduct} /> }
               </>
             )
           }
