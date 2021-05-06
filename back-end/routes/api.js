@@ -179,6 +179,7 @@ order : 오름차순=asc 내림차순=-1
 
 */
 
+
 router.post('/products/delete', function(req, res){
     Product.deleteMany({token : 1}).then(function(product){
         res.send(product);
