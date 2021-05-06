@@ -4,7 +4,7 @@ import Nickname from "./Nickname";
 import Password from "./Password";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 ​
-class Signup extends React.Component {
+class SignUp extends React.Component {
   constructor(props) {
     super(props);
 ​
@@ -152,50 +152,6 @@ class Signup extends React.Component {
       }
     }
   };
-  //서버로 가입 양식 제출
-  handleSubmit = e => {
-    e.preventDefault();
-    const {
-      email,
-      emailCheck,
-      nickname,
-      nicknameCheck,
-      pwCheck,
-      pw,
-      re_pw
-    } = this.state;
-​
-    const signupInfo = {
-      email: this.state.emailCheck,
-      pw: this.state.pwCheck,
-      nickname: this.state.nicknameCheck
-    };
-​
-    const signup_info = {
-      method: "POST",
-      body: JSON.stringify(signupInfo),
-      headers: {
-        "Content-Type": "application/json"
-      }
-    };
-​
-    if (
-      email &&
-      nickname &&
-      pw &&
-      re_pw &&
-      email === emailCheck &&
-      nickname === nicknameCheck &&
-      pw === re_pw &&
-      re_pw === pwCheck
-    ) {
-      fetch("http://localhost:9089/user", signup_info)
-        .then(alert("가입이 완료되었습니다."))
-        .then(this.props.history.push("/login"));
-    } else {
-      alert("입력값을 확인해주세요");
-    }
-  };
 ​
   render() {
     return (
@@ -221,7 +177,7 @@ class Signup extends React.Component {
             value2={this.state.re_pw}
           />
           <div>
-            <button onClick={this.handleSubmit}>가입하기</button>
+            <button>가입하기</button>
           </div>
         </div>
       </div>
@@ -229,5 +185,5 @@ class Signup extends React.Component {
   }
 }
 ​
-export default Signup;
+export default SignUp;
 ​
