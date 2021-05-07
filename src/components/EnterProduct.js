@@ -166,7 +166,7 @@ const EnterProduct = ({enter, setEnter, alter}) =>
     {
         e.preventDefault()
         const formData = new FormData()
-        const response = await axios.put("api/products/" +`ObjectId("${enter.data.data._id}")`,
+        const response = await axios.put("api/products/" +`${enter.data.data._id}`,
         
         {
             name : productTitle,
