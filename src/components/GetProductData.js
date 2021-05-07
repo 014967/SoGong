@@ -62,7 +62,8 @@ font: normal normal 300 20px/29px Spoqa Han Sans Neo;
 
 var productList = product.product;
 
-const GetProductData = ({setEnter}) =>
+
+const GetProductData = ({setEnter, setAlter}) =>
 {
 
   const [productList , setProductList] = useState([]);
@@ -77,24 +78,28 @@ const GetProductData = ({setEnter}) =>
     setImages(products.map(product => product.img))
   }
 
-  const clickButton = ({productList}) =>
-  {
-    setEnter(true);
-
-
-  }
-
   useEffect(()=>
   {
     getProductList()
+    
+
   } , [])
 
-  console.log(images);
+  const clickButton = (data, index) => ()  =>
+  {
+    console.log(data, index);
+    setEnter({ enter: true, data: data , index: index});
+    setAlter(true);
+   
+  }
+
+
     return (
         <Container>
           {
             isLoading ? 'Loading...' : productList.map((data,index) =>
             (
+              
               
               <Row key={index}>
               <CheckBox />
@@ -103,13 +108,14 @@ const GetProductData = ({setEnter}) =>
               <Title>{data.name}</Title>
               <Price>{data.price}</Price>
               <Button background="secondary">확인</Button>
-              <Button background="primary">수정</Button>
+              <Button background="primary" onClick={clickButton({data,index})}>수정</Button>
               </Row>
             )
+            
             )
             
           }
-    
+        
         </Container>
 
     )

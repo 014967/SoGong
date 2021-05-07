@@ -108,14 +108,40 @@ const PriceText = styled.div`
 
 
 
-const EnterProduct = ({ setEnter }) =>
+const EnterProduct = ({enter, setEnter, alter}) =>
 {
 
+    
+    
     const [productTitle ,setProductTitle] =useState('');
     const [productDescription , setProductDescription] = useState('');
     const [productImg , setProductImg] = useState(null);
     const [imgFileName, setImgFileName] = useState("이미지는 정사각형으로 표시됩니다");
     const [price, setPrice] = useState();
+
+    useEffect(()=>
+    {
+        
+      
+        if(enter.data != null)
+        {
+        console.log(enter.data);  // 이것도 댐
+        console.log(enter.data.data.name); // 이거 된다 ㅋㅋ
+        console.log(enter.data.index); // 이건 댐
+
+
+
+        setProductTitle(enter.data.data.name);
+        setProductDescription(enter.data.data.detail);
+        setPrice(enter.data.data.price);
+        setProductImg(enter.data.data.img);
+        }
+
+    },[enter])
+    
+    
+    
+
     const handleSubmit = async (e) =>
     {
         e.preventDefault()
@@ -133,7 +159,23 @@ const EnterProduct = ({ setEnter }) =>
         }) 
         .catch((err) => console.log('error'))
         const responseImg = await axios.post(`/productImg/${response.data._id}` , formData)
-        .then(setEnter(false))
+        .then(setEnter({enter : false}))
+    }
+
+    const alterSubmit = async (e) =>
+    {
+        e.preventDefault()
+        const formData = new FormData()
+        const response = await axios.put("api/products/" +`ObjectId("${enter.data.data._id}")`,
+        
+        {
+            name : productTitle,
+            detail : productDescription,
+            price : price,
+        }
+        ).catch((err)=> console.log('error'))
+        .then(setEnter({enter:false}))
+        
     }
     const handleProductTitle = e =>
     {
@@ -154,7 +196,40 @@ const EnterProduct = ({ setEnter }) =>
     }
     return(
         <>
-        <Header>
+       {
+           alter ? (
+           <div>
+               <Header>
+            <Button background = "primary" onClick= { alterSubmit}>
+                상품 등록
+            </Button>
+        </Header>
+        <Container>
+            <InputContainer>
+            <Title>상품명</Title>
+            <Input value={productTitle} onChange={handleProductTitle}></Input>
+            </InputContainer>
+            <InputContainer>
+                    <Title>설명*</Title>
+                    <Textarea value={productDescription} onChange={handleDiscription}></Textarea>
+            </InputContainer>
+            <InputContainer>
+                    <Title>대표 이미지*</Title>
+                    <LabelButton for="file_input">이미지 업로드</LabelButton>
+                    <FileInput type="file" accept="image/x-png,image/jpeg" id ="file_input" name="img" onChange={getImg} />
+                    <FileName>{imgFileName}</FileName>
+            </InputContainer>
+            <InputContainer>
+            <Title>상품 가격</Title>
+            <Input  value={price} type='number' onChange={handlePrice}></Input>
+            <PriceText>원</PriceText>
+
+            
+            </InputContainer>
+        </Container>
+           </div>)
+           : (<div>
+               <Header>
             <Button background = "primary" onClick= { handleSubmit}>
                 상품 등록
             </Button>
@@ -182,6 +257,9 @@ const EnterProduct = ({ setEnter }) =>
             
             </InputContainer>
         </Container>
+           </div>)
+       }
+        
         
         
 

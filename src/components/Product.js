@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Button from './elements/Button';
 import GetProductData from './GetProductData';
@@ -44,17 +44,37 @@ const TableHeaderContent = styled.div`
 
 const Product = () => {
 
-  const [enterProduct, setEnterProduct] = useState(false)
+  const [enterProduct, setEnterProduct] = useState(
+    {
+      enter : false,
+      data : null,
+      index : null,
+    })
+
+  const [alter , setAlter] = useState(false);
+
+  
 
   const handleEnter = () => {
-    setEnterProduct(true);
+    setEnterProduct({...enterProduct, enter: true});
+    
   }
+
+  useEffect(() =>
+  {
+    console.log(enterProduct);
+    
+  },[enterProduct])
+
 
   return (
       <Container>
+        
           {
-            enterProduct ? (
-              <EnterProduct setEnter={setEnterProduct} />
+            
+            enterProduct.enter ? (
+              
+              <EnterProduct enter ={enterProduct} setEnter={setEnterProduct} alter={alter} />
             ) : (
               <>
                 <Header>
@@ -71,7 +91,7 @@ const Product = () => {
                   <TableHeaderContent width="704px">상품명</TableHeaderContent>
                   <TableHeaderContent width="140px">가격</TableHeaderContent>
                 </TableHeader>
-                {<GetProductData setEnter= {setEnterProduct} /> }
+                {<GetProductData setEnter= {setEnterProduct} setAlter = {setAlter}/> }
               </>
             )
           }
