@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 const Button = styled.button`
@@ -10,7 +9,7 @@ const Button = styled.button`
   border-radius: 32px;
   font-size: 20px;
   font-family: ${({ theme }) => theme.font.light};
-  cursor: pointer;
+  cursor: ${({ background }) => background === 'disabled' ? 'arrow' : 'pointer'};
   &:focus {
     outline: none;
   }

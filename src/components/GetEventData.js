@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 import axios from 'axios'
 import CheckBox from './elements/CheckBox'
@@ -41,15 +41,21 @@ const Date = styled.div`
 
 const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').replace('-', '.').slice(2)
 
-const GetEventData = () => {
+const GetEventData = ({ eventList, setEventList, checked, setChecked }) => {
 
-  const [eventList, setEventList] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
   const getEvents = async () => {
     const { data: events } = await axios.get("/api/events")
     setEventList(events)
     setIsLoading(false)
+    setChecked([...Array(events.length).fill(false)])
+  }
+
+  const handleChecked = index => () => {
+    setChecked(prev => [...prev.map((v, i) => 
+      i === index ? !v : v
+    )])
   }
 
   useEffect(() => {
@@ -60,7 +66,7 @@ const GetEventData = () => {
       <Container>
         {isLoading ? 'Loading...' : eventList.map((data, index) => (
             <Row key={index}>
-              <CheckBox />
+              <CheckBox checked={checked[index]} onClick={handleChecked(index)}/>
               <Title>{data.title}</Title>
               <Available>{data.available ? '활성화' : '비활성화'}</Available>
               <Date>{regDate(data.date)}<br />~<br />{regDate(data.due)}</Date>

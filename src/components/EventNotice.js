@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import Button from './elements/Button';
+import HeaderButton from './elements/HeaderButton';
 import GetEventData from './GetEventData';
 import CheckBox from './elements/CheckBox'
 import EnterEventNotice from './EnterEventNotice'
@@ -20,19 +20,11 @@ const Header = styled.div`
 `
 const ButtonsContainer = styled.div`
   display: flex;
-  margin-right: 186px;
+  width: 100%;
   padding-left: 64px;
   & > * + * {
     margin-left: 16px;
   };
-  & > * {
-    /* ${props => 
-    props.background === 'primary' && 
-    css`
-      width: 500px !important;
-      margin-left: auto;
-    `} */
-  }
 `
 
 const TableHeader = styled.div`
@@ -53,10 +45,25 @@ const TableHeaderContent = styled.div`
 const EventNotice = () => {
 
   const [enter, setEnter] = useState(false)
+  const [checked, setChecked] = useState([])
+  const [checkedAll, setCheckedAll] = useState(false)
+  const [buttonColor, setButtonColor] = useState('disabled')
+  const [eventList, setEventList] = useState([])
 
   const handleEnter = () => {
-    setEnter(true);
+    setEnter(true)
   }
+
+  const handleCheckedAll = () => {
+    setCheckedAll(prev => !prev)
+    setChecked(prev => [...prev.fill(!checkedAll)])
+  }
+
+  useEffect(() => {
+    setCheckedAll(checked.every(v => v))
+    setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
+    console.log(eventList)
+  }, [checked])
 
   return (
       <Container>
@@ -66,14 +73,14 @@ const EventNotice = () => {
             ) : (
               <>
                 <Header>
-                  <CheckBox />
+                  <CheckBox checked={checkedAll} onClick={handleCheckedAll} />
                   <ButtonsContainer>
-                    <Button background="disabled">선택 비활성화</Button>
-                    <Button background="disabled">선택 활성화</Button>
-                    <Button background="disabled">선택 삭제</Button>
-                    <Button background="secondary">정렬하기</Button>
-                    <Button background="secondary">필터링</Button>
-                    <Button background="primary" right onClick={handleEnter}>등록</Button>
+                    <HeaderButton background={buttonColor}>선택 비활성화</HeaderButton>
+                    <HeaderButton background={buttonColor}>선택 활성화</HeaderButton>
+                    <HeaderButton background={buttonColor}>선택 삭제</HeaderButton>
+                    <HeaderButton background="secondary">정렬하기</HeaderButton>
+                    <HeaderButton background="secondary">필터링</HeaderButton>
+                    <HeaderButton background="primary" right onClick={handleEnter}>등록</HeaderButton>
                   </ButtonsContainer>
                 </Header>
                 <TableHeader>
@@ -81,7 +88,7 @@ const EventNotice = () => {
                   <TableHeaderContent width="201px">활성화/비활성화</TableHeaderContent>
                   <TableHeaderContent width="185px">진행기간</TableHeaderContent>
                 </TableHeader>
-                <GetEventData />
+                <GetEventData eventList={eventList} setEventList={setEventList} checked={checked} setChecked={setChecked} />
               </>
             )
           }
