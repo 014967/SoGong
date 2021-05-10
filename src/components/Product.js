@@ -4,6 +4,7 @@ import Button from './elements/Button';
 import GetProductData from './GetProductData';
 import CheckBox from './elements/CheckBox'
 import EnterProduct from './EnterProduct'
+import SearchBar from './elements/SearchBar';
 
 const Container = styled.div`
   display: flex;
@@ -83,6 +84,7 @@ const Product = () => {
                     <Button background="disabled">선택 삭제</Button>
                     <Button background="secondary">정렬하기</Button>
                     <Button background="secondary">필터링</Button>
+                    <SearchBar/>
                   </ButtonsContainer>
                   <Button background="primary" onClick={handleEnter}>등록</Button>
                 </Header>
