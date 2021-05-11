@@ -6,6 +6,7 @@ const bodyParser   = require('body-parser');
 const mongoose     = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors         = require('cors');
+const fs = require('fs');
 
 // [SETUP EXPRESS APP]
 const app          = express();
@@ -170,9 +171,8 @@ app.get('/upload/:filename', (req, res) => {
       res.redirect('/');
     });
   });
+
 // [SERVERSIDE UPLOAD WITH MULTER]
-
-
 const Event = require('./models/events');
 const Product = require('./models/products');
 
@@ -201,8 +201,9 @@ const Product = require('./models/products');
 app.post('/eventImg/:id', mupload.single('img'), (req, res) => {
   console.log(req.file);
   const imgName = req.file.filename
+  const imgPath = req.file.destination
   Event.findByIdAndUpdate(
-    {_id: req.params.id}, {img: imgName}).then(function(event){
+    {_id: req.params.id}, {img: imgName, imgPath: imgPath+imgName}).then(function(event){
 
     Event.findOne({_id: req.params.id}).then(function(event){
     })  
@@ -212,16 +213,53 @@ app.post('/eventImg/:id', mupload.single('img'), (req, res) => {
 app.post('/productImg/:id', pupload.single('img'), (req, res) => {
   console.log(req.file);
   const imgName = req.file.filename
+  const imgPath = req.file.destination
   Product.findByIdAndUpdate(
-    {_id: req.params.id}, {img: imgName}).then(function(event){
+    {_id: req.params.id}, {img: imgName, imgPath: imgPath+imgName}).then(function(product){
 
-    Product.findOne({_id: req.params.id}).then(function(event){
+    Product.findOne({_id: req.params.id}).then(function(product){
     })  
   })
 });
 
-// [ Initial connect back to front ]
-
-app.get('/', (req, res)=>{
-  console.log("back-end loaded")
+app.post('/eventImgDel', (req, res) => {
+  var a = 0
+  var b = Object.keys(req.body.imgPaths).length
+  while(a<b){
+    fs.unlink(Object.values(req.body.imgPaths)[a++], (err) => {
+      if (err) {
+          console.log("failed to delete local image:"+err);
+      } else {
+          console.log('successfully deleted local image');                                
+      }
+    })
+  }
 });
+/*
+{
+  "imgPaths" : ["../src/assets/images/banner/image1.png",
+"../src/assets/images/banner/image2.png"]
+}
+삭제할 이벤트의 imgPath 의 배열.
+*/
+
+app.post('/productImgDel', (req, res) => {
+  var a = 0
+  var b = Object.keys(req.body.imgPaths).length
+  while(a<b){
+    fs.unlink(Object.values(req.body.imgPaths)[a++], (err) => {
+      if (err) {
+          console.log("failed to delete local image:"+err);
+      } else {
+          console.log('successfully deleted local image');                                
+      }
+    })
+  }
+});
+/*
+{
+  "imgPaths" : ["../src/assets/images/banner/image1.png",
+"../src/assets/images/banner/image2.png"]
+}
+삭제할 상품의 imgPath 의 배열.
+*/

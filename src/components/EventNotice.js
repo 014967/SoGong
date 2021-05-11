@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled, { css } from 'styled-components';
+import axios from 'axios'
 import HeaderButton from './elements/HeaderButton';
 import GetEventData from './GetEventData';
 import CheckBox from './elements/CheckBox'
@@ -59,10 +60,24 @@ const EventNotice = () => {
     setChecked(prev => [...prev.fill(!checkedAll)])
   }
 
+  const handleDelete = async () => {
+    const ids = []
+    const paths = []
+    checked.forEach((isChecked, i) => {
+      if (isChecked) {
+        ids.push(eventList[i]._id)
+        paths.push(eventList[i].imgPath)
+      }
+    })
+    const res = await axios.post('/api/events/delete', { eventIds: ids })
+      .catch((err) => console.log('error'))
+    const resImg = await axios.post('/eventImgDel', { imgPaths: paths })
+      .catch((err) => console.log('error'))
+  }
+
   useEffect(() => {
     setCheckedAll(checked.every(v => v))
     setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
-    console.log(eventList)
   }, [checked])
 
   return (
@@ -77,7 +92,7 @@ const EventNotice = () => {
                   <ButtonsContainer>
                     <HeaderButton background={buttonColor}>선택 비활성화</HeaderButton>
                     <HeaderButton background={buttonColor}>선택 활성화</HeaderButton>
-                    <HeaderButton background={buttonColor}>선택 삭제</HeaderButton>
+                    <HeaderButton background={buttonColor} onClick={handleDelete}>선택 삭제</HeaderButton>
                     <HeaderButton background="secondary">정렬하기</HeaderButton>
                     <HeaderButton background="secondary">필터링</HeaderButton>
                     <HeaderButton background="primary" right onClick={handleEnter}>등록</HeaderButton>

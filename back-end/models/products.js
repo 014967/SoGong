@@ -19,6 +19,10 @@ img: {
     type:String,
     default:'No image'
 }, //이미지
+imgPath: {
+    type:String,
+    default:'No image'
+}, //이미지경로
 price: {
     type:Number,
     required: [true]
@@ -30,7 +34,21 @@ stock:{
 token:{
     type: Boolean,
     default: 0
-}//체크박스 선택 여부
+},//체크박스 선택 여부
+date:{
+    type:Date,
+    default: k_date = () => {
+    let date = new Date();
+    let year = date.getFullYear();
+    let month = date.getMonth();
+    let today = date.getDate();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    let seconds = date.getSeconds();
+    let milliseconds = date.getMilliseconds();
+    return new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds));
+    }
+}
 });
 
 const Product = mongoose.model('product', ProductSchema);
