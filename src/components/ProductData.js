@@ -1,7 +1,7 @@
 import react , {useState, useEffect } from 'react'
 import styled from 'styled-components'
 import axios from 'axios'
-
+import ContentsWrapper from './elements/ContentsWrapper'
 
 
 
@@ -30,14 +30,20 @@ const Img=  styled.img`
   width : 500px;
   height : 500px; 
 `
-const TopComponent = styled.div`
+const TopContainer = styled.div`
     display : flex;
     width :100 %;
+    padding : 64px 64px 0;
+    max-width: 1792px;
+    margin-top : 200px;
+
 
 `
 
-const BottomComponent = styled.div`
+const BottomContainer = styled.div`
     width : 100%;
+    padding : 64px 64px 0;
+    max-width :1792px;
 `
 
 
@@ -46,29 +52,42 @@ const BottomComponent = styled.div`
 const ProductData = (props) =>
 { 
 
-    console.log(props.location.state.data);
+  
+
+
+
     const [category, setCategory] = useState();
     const [img , setImg] = useState();
     const [name , setName] = useState();
     const [price, setPrice] = useState();
     const [description, setDescription] = useState();
 
+    console.log(props);
     useEffect(() => {
+        setImg(props.location.state.data.img);
         setName(props.location.state.data.name);
         setPrice(props.location.state.data.price);
         setDescription(props.location.state.data.detail);
+        setCategory(props.location.state.data.category);
 
-      }, []);
+      }, [props]);
 
+
+
+      console.log(img);
     return (
 
-        <Container>
+        <ContentsWrapper wide>
 
-        <TopComponent id= 'topmenu'>
-            <div id='ctg, img'>
-            <Category>{name}</Category>
+        <TopContainer id= 'topmenu'>
+            <div>
+            <Category>{category}</Category>
+      
+            {img ? <Img src={require('../assets/images/products/' + img).default} /> : 
+             '...loading'}
+             
+           
             
-            <Img />
             </div>
 
             <div id='name, price , etc'>
@@ -88,15 +107,15 @@ const ProductData = (props) =>
             </div>
             
         </div>
-    </TopComponent>    
-    <BottomComponent id='product detail description'>
+    </TopContainer>    
+    <BottomContainer id='product detail description'>
     {description}
     
     
-    </BottomComponent>    
+    </BottomContainer>    
 
 
-    </Container>
+    </ContentsWrapper>
     )
 
 

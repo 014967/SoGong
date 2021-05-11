@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import React, {useEffect, useState} from 'react';
 import Button from './elements/Button';
 import axios from 'axios'
+import { Dropdown } from 'react-dropdown-now';
+import MultiSelect from 'react-multi-select-component';
 
 const Header = styled.div`
   display: flex;
@@ -112,22 +114,31 @@ const EnterProduct = ({enter, setEnter, alter}) =>
 {
 
     
-    
+    const options = [
+        
+            {label : "Man Top", value : "남성 상의"},
+            {label : "Man Bottom", value : "남성 하의"},
+            {label : "Woman Top", value : "여성 상의"},
+            {label : "Woman Bottom", value : "여성 하의"},
+            {label : "Child", value : "아동"},
+        
+    ];
+
+
     const [productTitle ,setProductTitle] =useState('');
     const [productDescription , setProductDescription] = useState('');
     const [productImg , setProductImg] = useState(null);
     const [imgFileName, setImgFileName] = useState("이미지는 정사각형으로 표시됩니다");
     const [price, setPrice] = useState();
-
+    const [category, setCategory] = useState([]);
     useEffect(()=>
     {
         
       
+        
         if(enter.data != null)
         {
-        console.log(enter.data);  // 이것도 댐
-        console.log(enter.data.data.name); // 이거 된다 ㅋㅋ
-        console.log(enter.data.index); // 이건 댐
+        
 
 
 
@@ -135,6 +146,8 @@ const EnterProduct = ({enter, setEnter, alter}) =>
         setProductDescription(enter.data.data.detail);
         setPrice(enter.data.data.price);
         setProductImg(enter.data.data.img);
+        setCategory(enter.data.data.category);
+        
         }
 
     },[enter])
@@ -144,8 +157,12 @@ const EnterProduct = ({enter, setEnter, alter}) =>
 
     const handleSubmit = async (e) =>
     {
+
+        console.log(category)
+        console.log(category[0])
+        console.log(category[0].value)
         e.preventDefault()
-        if(!productTitle || !productDescription || !productImg || !price)
+        if(!productTitle || !productDescription || !productImg || !price || !category[0].value)
         {
             alert("필수 입력 사항을 입력하지 않으셨습니다");
             return
@@ -156,14 +173,19 @@ const EnterProduct = ({enter, setEnter, alter}) =>
             name: productTitle,
             detail: productDescription,
             price: price,
+            category : category[0].value,
+           
+            
         }) 
         .catch((err) => console.log('error'))
         const responseImg = await axios.post(`/productImg/${response.data._id}` , formData)
         .then(setEnter({enter : false}))
+        
     }
 
     const alterSubmit = async (e) =>
     {
+        
         e.preventDefault()
         const formData = new FormData()
         const response = await axios.put("api/products/" +`${enter.data.data._id}`,
@@ -172,9 +194,12 @@ const EnterProduct = ({enter, setEnter, alter}) =>
             name : productTitle,
             detail : productDescription,
             price : price,
+            category : category,
         }
         ).catch((err)=> console.log('error'))
-        .then(setEnter({enter:false}))
+        .then(setEnter({enter:false}), alter=false)
+        
+
         
     }
     const handleProductTitle = e =>
@@ -194,6 +219,7 @@ const EnterProduct = ({enter, setEnter, alter}) =>
     {
         setPrice(e.target.value);
     }
+    
     return(
         <>
        {
@@ -208,6 +234,17 @@ const EnterProduct = ({enter, setEnter, alter}) =>
             <InputContainer>
             <Title>상품명</Title>
             <Input value={productTitle} onChange={handleProductTitle}></Input>
+            </InputContainer>
+            <InputContainer>
+                    <Title>카테고리</Title>
+                    <MultiSelect
+                    width="200px"
+                    options={options}
+                    value={category}
+                    onChange={setCategory}
+                    labelledBy={"카테고리"}
+                    />
+                    
             </InputContainer>
             <InputContainer>
                     <Title>설명*</Title>
@@ -238,6 +275,14 @@ const EnterProduct = ({enter, setEnter, alter}) =>
             <InputContainer>
             <Title>상품명</Title>
             <Input placeholder="상품명 입력" onChange={handleProductTitle}></Input>
+            </InputContainer>
+            <InputContainer>
+                    <Title>카테고리</Title>
+                    <MultiSelect
+                    options={options}
+                    value={category}
+                    onChange={setCategory}
+                    labelledBy={"카테고리"}/>
             </InputContainer>
             <InputContainer>
                     <Title>설명*</Title>
