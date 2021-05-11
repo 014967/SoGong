@@ -61,6 +61,32 @@ const EventNotice = () => {
     setChecked(prev => [...prev.fill(!checkedAll)])
   }
 
+  const handleAvailable = async () => {
+    const eventIds = []
+    checked.forEach((isChecked, i) => {
+      if (isChecked) {
+        eventIds.push(eventList[i]._id)
+      }
+    })
+    const res = await axios.post('/api/events/available', { eventIds })
+      .catch((err) => console.log('error'))
+    .then(setEventList([]))
+    .then(setModifiedFlag(true))
+  }
+
+  const handleUnavailable = async () => {
+    const eventIds = []
+    checked.forEach((isChecked, i) => {
+      if (isChecked) {
+        eventIds.push(eventList[i]._id)
+      }
+    })
+    const res = await axios.post('/api/events/unavailable', { eventIds: eventIds })
+      .catch((err) => console.log('error'))
+    .then(setEventList([]))
+    .then(setModifiedFlag(true))
+  }
+
   const handleDelete = async () => {
     if (window.confirm('삭제하시겠습니까?')) {
       const ids = []
@@ -95,8 +121,8 @@ const EventNotice = () => {
                 <Header>
                   <CheckBox checked={checkedAll} onClick={handleCheckedAll} />
                   <ButtonsContainer>
-                    <HeaderButton background={buttonColor}>선택 비활성화</HeaderButton>
-                    <HeaderButton background={buttonColor}>선택 활성화</HeaderButton>
+                    <HeaderButton background={buttonColor} onClick={handleAvailable}>선택 활성화</HeaderButton>
+                    <HeaderButton background={buttonColor} onClick={handleUnavailable}>선택 비활성화</HeaderButton>
                     <HeaderButton background={buttonColor} onClick={handleDelete}>선택 삭제</HeaderButton>
                     <HeaderButton background="secondary">정렬하기</HeaderButton>
                     <HeaderButton background="secondary">필터링</HeaderButton>
