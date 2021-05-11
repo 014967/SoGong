@@ -107,8 +107,8 @@ const GetProductData = ({setEnter, setAlter}) =>
               <Row key={index}>
               <CheckBox />
               {
-                images ? <StyleImg src={require('../assets/images/products/' + data.img).default}/>
-                : '...loading'
+                images ?
+                '이미지 준비중' : <StyleImg src={require('../assets/images/products/' + data.img).default}/>
               }
               
             
