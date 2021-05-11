@@ -148,6 +148,74 @@ router.post('/events/delete', function(req, res){
 eventIds: 삭제할 이벤트id의 배열
 */
 
+router.post('/events/available', function(req, res){
+    var a = 0
+  var b = Object.keys(req.body.eventIds).length
+  while(a<b){
+    Event.findByIdAndUpdate({_id: Object.values(req.body.eventIds)[a++]},  { available: true } ,(err) => {
+      if (err) {
+          console.log("failed to update:"+err);
+      } else {
+          console.log('successfully updated available events');                                
+      }
+    })
+  }
+});
+   /* [ JSON FORMAT of request to '/events/available' ]
+{
+    "eventIds" : ["116t4sdfi0315", "013532hf8dsa093"]
+}
+eventIds: 활성화할 이벤트id의 배열
+*/
+
+router.post('/events/unavailable', function(req, res){
+    var a = 0
+  var b = Object.keys(req.body.eventIds).length
+  while(a<b){
+    Event.findByIdAndUpdate({_id: Object.values(req.body.eventIds)[a++]},  { available: false } ,(err) => {
+      if (err) {
+          console.log("failed to update:"+err);
+      } else {
+          console.log('successfully updated unavailable events');                                
+      }
+    })
+  }
+});
+   /* [ JSON FORMAT of request to '/events/available' ]
+{
+    "eventIds" : ["116t4sdfi0315", "013532hf8dsa093"]
+}
+eventIds: 활성화할 이벤트id의 배열
+*/
+
+router.post('/events/sorted', function(req, res){
+    let page = req.body.page
+    if(page == 1) Event.find({'title': {'$regex': req.body.search,'$options': 'i' }})
+    .sort({date: -1})
+    .limit(5)
+   .then(function(event){
+        res.send(event);
+    });
+
+    if(page!=1) Event.find({'title': {'$regex': req.body.search,'$options': 'i' }})
+    .sort({date: -1})
+    .skip( (page-1) * 5 - 1 )
+    .limit(5)
+   .then(function(event){
+        res.send(event);
+    });
+});
+
+
+/* [ JSON FORMAT of request to '/events/sorted' ]
+{
+    "search" : "string",
+    "page" : "1"
+}
+search : 검색할 키워드
+page: 페이지 limit(n) n= 한페이지에 표시할 개수
+*/
+
 
 
 // [PRODUCTS API]
@@ -185,32 +253,32 @@ router.post('/products/sorted', function(req, res){
     let page = req.body.page
     if(page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
-    .limit(5)
+    .limit(10)
    .then(function(product){
         res.send(product);
     });
 
     if(page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
-    .skip( (page-1) * 5 - 1 )
-    .limit(5)
+    .skip( (page-1) * 10 - 1 )
+    .limit(10)
    .then(function(product){
         res.send(product);
     });
 });
 /*
- JSON FORMAT of request to '/products/sorts'
+ JSON FORMAT of request to '/products/sorted'
 
 {
-    "search": "/string/i",
+    "search": "string",
     "min": "0",
     "max": "1000000",
     "order": "asc",
     "page" : "1"
 }
 
-search: 해당 단어를 포함.
-min, max : 가격 범위
+search: 해당 단어를 포함.(빈칸이면 모두 검색)
+min, max : 가격 범위 (빈칸이거나 누락되어선 안됨)
 order : 오름차순=asc 내림차순=-1
 page : 1페이지당 20개씩. 2면 21~40번 3이면 41~60 ....
 Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
@@ -221,15 +289,18 @@ Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
 
 
 router.post('/products/unsorted', function(req, res){
+    console.log(req.body.category)
+    
+    
     if(req.body.page == 1) Product.find({}).sort({date: -1})
-    .limit(5)
+    .limit(10)
    .then(function(product){
         res.send(product);
     });
 
     if(req.body.page!=1) Product.find({}).sort({date: -1})
-    .skip( (req.body.page-1) * 5 - 1 )
-    .limit(5)
+    .skip( (req.body.page-1) * 10 - 1 )
+    .limit(10)
    .then(function(product){
         res.send(product);
     });
@@ -238,8 +309,10 @@ router.post('/products/unsorted', function(req, res){
 /* [ JSON FORMAT of request to '/products/unsorted' ]
 {
     "page" : "1"
+    "category" : "string"
 }
 page: 페이지 limit(n) n= 한페이지에 표시할 개수
+Category : 표시할 카데고리. all 입력 또는 빈칸시 전부 표기.
 */
 
 router.post('/products/delete', function(req, res){
