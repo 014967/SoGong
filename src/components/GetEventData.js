@@ -41,7 +41,7 @@ const Date = styled.div`
 
 const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').replace('-', '.').slice(2)
 
-const GetEventData = ({ eventList, setEventList, checked, setChecked }) => {
+const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFlag, setModifiedFlag }) => {
 
   const [isLoading, setIsLoading] = useState(true)
 
@@ -61,6 +61,14 @@ const GetEventData = ({ eventList, setEventList, checked, setChecked }) => {
   useEffect(() => {
     getEvents()
 	}, [])
+
+  useEffect(() => {
+    if (modifiedFlag) {
+      setIsLoading(true)
+      getEvents()
+      setModifiedFlag(false)
+    }
+	}, [modifiedFlag])
 
     return (
       <Container>

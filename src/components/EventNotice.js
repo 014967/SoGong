@@ -50,6 +50,7 @@ const EventNotice = () => {
   const [checkedAll, setCheckedAll] = useState(false)
   const [buttonColor, setButtonColor] = useState('disabled')
   const [eventList, setEventList] = useState([])
+  const [modifiedFlag, setModifiedFlag] = useState(false)
 
   const handleEnter = () => {
     setEnter(true)
@@ -61,18 +62,22 @@ const EventNotice = () => {
   }
 
   const handleDelete = async () => {
-    const ids = []
-    const paths = []
-    checked.forEach((isChecked, i) => {
-      if (isChecked) {
-        ids.push(eventList[i]._id)
-        paths.push(eventList[i].imgPath)
-      }
-    })
-    const res = await axios.post('/api/events/delete', { eventIds: ids })
-      .catch((err) => console.log('error'))
-    const resImg = await axios.post('/eventImgDel', { imgPaths: paths })
-      .catch((err) => console.log('error'))
+    if (window.confirm('삭제하시겠습니까?')) {
+      const ids = []
+      const paths = []
+      checked.forEach((isChecked, i) => {
+        if (isChecked) {
+          ids.push(eventList[i]._id)
+          paths.push(eventList[i].imgPath)
+        }
+      })
+      const res = await axios.post('/api/events/delete', { eventIds: ids })
+        .catch((err) => console.log('error'))
+      const resImg = await axios.post('/eventImgDel', { imgPaths: paths })
+        .catch((err) => console.log('error'))
+      .then(setEventList([]))
+      .then(setModifiedFlag(true))
+    }
   }
 
   useEffect(() => {
@@ -103,7 +108,9 @@ const EventNotice = () => {
                   <TableHeaderContent width="201px">활성화/비활성화</TableHeaderContent>
                   <TableHeaderContent width="185px">진행기간</TableHeaderContent>
                 </TableHeader>
-                <GetEventData eventList={eventList} setEventList={setEventList} checked={checked} setChecked={setChecked} />
+                <GetEventData eventList={eventList} setEventList={setEventList}
+                  checked={checked} setChecked={setChecked}
+                  modifiedFlag={modifiedFlag} setModifiedFlag={setModifiedFlag} />
               </>
             )
           }
