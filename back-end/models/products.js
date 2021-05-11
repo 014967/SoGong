@@ -7,6 +7,10 @@ productNo:{
     type:Number,
     default:0
 },//상품번호
+category:{
+    type:String,
+    default:'No category'
+},// 카테고리
 name:{
     type:String,
     required: [true]
@@ -59,6 +63,7 @@ module.exports = Product;
 
 {
 "productNo":"1",
+"category":"category01",
 "name":"product name",
 "detail":"product detail",
 "img":"link of image",
