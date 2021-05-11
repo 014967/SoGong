@@ -181,11 +181,11 @@ router.post('/events/unavailable', function(req, res){
     })
   }
 });
-   /* [ JSON FORMAT of request to '/events/available' ]
+   /* [ JSON FORMAT of request to '/events/unavailable' ]
 {
     "eventIds" : ["116t4sdfi0315", "013532hf8dsa093"]
 }
-eventIds: 활성화할 이벤트id의 배열
+eventIds: 비활성화할 이벤트id의 배열
 */
 
 router.post('/events/sorted', function(req, res){
@@ -289,16 +289,15 @@ Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
 
 
 router.post('/products/unsorted', function(req, res){
-    console.log(req.body.category)
     
     
-    if(req.body.page == 1) Product.find({}).sort({date: -1})
+    if(req.body.page == 1) Product.find({category: req.body.category}).sort({date: -1})
     .limit(10)
    .then(function(product){
         res.send(product);
     });
 
-    if(req.body.page!=1) Product.find({}).sort({date: -1})
+    if(req.body.page!=1) Product.find({category: req.body.category}).sort({date: -1})
     .skip( (req.body.page-1) * 10 - 1 )
     .limit(10)
    .then(function(product){
@@ -309,11 +308,74 @@ router.post('/products/unsorted', function(req, res){
 /* [ JSON FORMAT of request to '/products/unsorted' ]
 {
     "page" : "1"
-    "category" : "string"
 }
 page: 페이지 limit(n) n= 한페이지에 표시할 개수
-Category : 표시할 카데고리. all 입력 또는 빈칸시 전부 표기.
 */
+
+router.post('/products/sorted/:category', function(req, res){
+    let page = req.body.page
+    console.log(req.params.category)
+    if(page == 1) Product.find({'category' : req.params.category, 'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
+    .limit(10)
+   .then(function(product){
+        res.send(product);
+    });
+
+    if(page!=1) Product.find({'category' : req.params.category, 'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
+    .skip( (page-1) * 10 - 1 )
+    .limit(10)
+   .then(function(product){
+        res.send(product);
+    });
+});
+/*
+ JSON FORMAT of request to '/products/sorted/:category'
+
+{
+    "search": "string",
+    "min": "0",
+    "max": "1000000",
+    "order": "asc",
+    "page" : "1"
+}
+
+search: 해당 단어를 포함.(빈칸이면 모두 검색)
+min, max : 가격 범위 (빈칸이거나 누락되어선 안됨)
+order : 오름차순=asc 내림차순=-1
+page : 1페이지당 20개씩. 2면 21~40번 3이면 41~60 ....
+Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
+*/
+
+
+
+
+
+router.post('/products/unsorted/:category', function(req, res){
+    
+    
+    if(req.body.page == 1) Product.find({category: req.params.category}).sort({date: -1})
+    .limit(10)
+   .then(function(product){
+        res.send(product);
+    });
+
+    if(req.body.page!=1) Product.find({category: req.params.category}).sort({date: -1})
+    .skip( (req.body.page-1) * 10 - 1 )
+    .limit(10)
+   .then(function(product){
+        res.send(product);
+    });
+});
+
+/* [ JSON FORMAT of request to '/products/unsorted/:category' ]
+{
+    "page" : "1"
+}
+page: 페이지 limit(n) n= 한페이지에 표시할 개수
+*/
+
 
 router.post('/products/delete', function(req, res){
     Product.deleteMany(
