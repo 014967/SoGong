@@ -62,7 +62,6 @@ font: normal normal 300 20px/29px Spoqa Han Sans Neo;
 `
 
 
-var productList = product.product;
 
 
 const GetProductData = ({setEnter, setAlter}) =>
@@ -90,7 +89,6 @@ const GetProductData = ({setEnter, setAlter}) =>
 
   const clickButton = (data, index) => ()  =>
   {
-    console.log(data, index);
     setEnter({ enter: true, data: data , index: index});
     setAlter(true);
   }
@@ -99,6 +97,7 @@ const GetProductData = ({setEnter, setAlter}) =>
 
 
     return (
+   
         <Container>
           {
             isLoading ? 'Loading...' : productList.map((data,index) =>
@@ -107,7 +106,11 @@ const GetProductData = ({setEnter, setAlter}) =>
               
               <Row key={index}>
               <CheckBox />
-              <StyleImg src={require('../assets/images/products/' + data.img).default}/>
+              {
+                images ? <StyleImg src={require('../assets/images/products/' + data.img).default}/>
+                : '...loading'
+              }
+              
             
               <Title>{data.name}</Title>
               <Price>{data.price}</Price>
