@@ -21,6 +21,10 @@ price: {
     type:Number,
     required: [true]
 },//가격
+category : {
+    type : String,
+    required: [true]
+},//카테고리
 stock:{
     type:Number,
 },//수량
