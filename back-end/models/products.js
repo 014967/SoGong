@@ -9,7 +9,7 @@ productNo:{
 },//상품번호
 category:{
     type:String,
-    default:'No category'
+    default:'uncategorized'
 },// 카테고리
 name:{
     type:String,
