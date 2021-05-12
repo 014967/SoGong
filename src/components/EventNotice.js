@@ -42,6 +42,7 @@ const TableHeaderContent = styled.div`
   font-size: 20px;
   text-align: center;
 `
+const regDate = date => date.split('.')[0].replace('T', '').replace('-', '').replace('-', '').replace(':', '').replace(':', '').slice(2)
 
 const EventNotice = () => {
 
@@ -118,11 +119,9 @@ const EventNotice = () => {
 
   useEffect(() => {
     if (order) {
-      console.log(order)
-      console.log(eventList)
+      setEventList(prev => [...prev.sort((h, t) => regDate(h.date) - regDate(t.date))])
     } else {
-      console.log(order)
-      console.log(eventList)
+      setEventList(prev => [...prev.sort((h, t) => regDate(t.date) - regDate(h.date))])
     }
   }, [order])
 

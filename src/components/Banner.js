@@ -62,7 +62,7 @@ const Banner = () => {
 
    const getImages = async () => {
       const { data: events } = await axios.get("/api/events")
-      setImages(events.map(event => event.img))
+      setImages(events.filter(event => event.available).map(event => event.img))
    }
 
    useEffect(() => {
@@ -75,9 +75,7 @@ const Banner = () => {
             <Slider {...settings}>
                {
                   images.map(image => (
-                     <>
                      <BannerContent src={require('../assets/images/banners/' + image).default} />
-                     </>
                   ))
                }
             </Slider>

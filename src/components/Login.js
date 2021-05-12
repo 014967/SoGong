@@ -8,10 +8,17 @@ const Container = styled.div`
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  & > * > * + *, & > *:last-child {
+`;
+
+const LoginContainer = styled.form`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: 16px;
+  & > * {
     margin-left: 16px;
   }
-`;
+`
 
 const Input = styled.input`
   position: relative;
@@ -87,11 +94,11 @@ const Login = () => {
         </>
         : 
         <>
-          <form onSubmit={handleLogin}>
+          <LoginContainer onSubmit={handleLogin}>
             <Input placeholder="ID" onChange={handleIDChange} />
             <Input type="password" placeholder="PW" onChange={handlePWChange} />
             <Button type="submit">SIGN IN</Button>
-          </form>
+          </LoginContainer>
           <Button background="primary">SIGN UP</Button>
         </>
       }

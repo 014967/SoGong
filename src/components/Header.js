@@ -20,7 +20,11 @@ const Container = styled.div`
 
 const BaseContainer = styled.div`
   display: flex;
+  min-width: 100%;
   justify-content: space-between;
+  & > *:first-child {
+    margin-right: 256px; // 브라우저 width 감소 대응
+  }
   & > * + * {
     margin-left: 16px;
   }
