@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import styled, { css } from 'styled-components';
 import axios from 'axios'
+import DatePicker from "react-datepicker";
 import HeaderButton from './elements/HeaderButton';
 import GetEventData from './GetEventData';
 import CheckBox from './elements/CheckBox'
@@ -45,14 +46,16 @@ const TableHeaderContent = styled.div`
 const regDate = date => date.split('.')[0].replace('T', '').replace('-', '').replace('-', '').replace(':', '').replace(':', '').slice(2)
 
 const EventNotice = () => {
-
+  const [eventList, setEventList] = useState([])
   const [enter, setEnter] = useState(false)
   const [checked, setChecked] = useState([])
   const [checkedAll, setCheckedAll] = useState(false)
   const [modifiedFlag, setModifiedFlag] = useState(false)
   const [buttonColor, setButtonColor] = useState('disabled')
   const [order, setOrder] = useState(false) //최신순(default): false, 오래된순: true
-  const [eventList, setEventList] = useState([])
+  const [dateRange, setDateRange] = useState([null, null])
+  const [startDate, endDate] = dateRange
+  
 
   const handleEnter = () => {
     setEnter(true)
@@ -112,6 +115,15 @@ const EventNotice = () => {
     setOrder(prev => !prev)
   }
 
+  const FilterButton = forwardRef( //datepicker custom input
+    ({ value, onClick }, ref) => (
+      <HeaderButton background="secondary"
+        onClick={onClick} ref={ref}>
+        {value || '필터링'}
+      </HeaderButton>
+    ),
+  )
+
   useEffect(() => {
     setCheckedAll(checked.every(v => v) && eventList.length !== 0)
     setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
@@ -125,37 +137,50 @@ const EventNotice = () => {
     }
   }, [order])
 
+  useEffect(() => {
+    console.log(startDate, endDate)
+  }, [dateRange])
+
   return (
       <Container>
-          {
-            enter ? (
-              <EnterEventNotice setEnter={setEnter} />
-            ) : (
-              <>
-                <Header>
-                  <CheckBox checked={checkedAll} onClick={handleCheckedAll} />
-                  <ButtonsContainer>
-                    <HeaderButton background={buttonColor} onClick={handleAvailable}>선택 활성화</HeaderButton>
-                    <HeaderButton background={buttonColor} onClick={handleUnavailable}>선택 비활성화</HeaderButton>
-                    <HeaderButton background={buttonColor} onClick={handleDelete}>선택 삭제</HeaderButton>
-                    <HeaderButton background="secondary" onClick={handleOrder}>
-                      {order ? '최신 순' : '오래된 순'}
-                    </HeaderButton>
-                    <HeaderButton background="secondary">필터링</HeaderButton>
-                    <HeaderButton background="primary" right onClick={handleEnter}>등록</HeaderButton>
-                  </ButtonsContainer>
-                </Header>
-                <TableHeader>
-                  <TableHeaderContent width="619px">제목</TableHeaderContent>
-                  <TableHeaderContent width="201px">활성화/비활성화</TableHeaderContent>
-                  <TableHeaderContent width="185px">진행기간</TableHeaderContent>
-                </TableHeader>
-                <GetEventData eventList={eventList} setEventList={setEventList}
-                  checked={checked} setChecked={setChecked}
-                  modifiedFlag={modifiedFlag} setModifiedFlag={setModifiedFlag} />
-              </>
-            )
-          }
+        {
+          enter ? (
+            <EnterEventNotice setEnter={setEnter} />
+          ) : (
+            <>
+              <Header>
+              <CheckBox checked={checkedAll} onClick={handleCheckedAll} />
+              <ButtonsContainer>
+                <HeaderButton background={buttonColor} onClick={handleAvailable}>선택 활성화</HeaderButton>
+                <HeaderButton background={buttonColor} onClick={handleUnavailable}>선택 비활성화</HeaderButton>
+                <HeaderButton background={buttonColor} onClick={handleDelete}>선택 삭제</HeaderButton>
+                <HeaderButton background="secondary" onClick={handleOrder}>
+                  {order ? '최신 순' : '오래된 순'}
+                </HeaderButton>
+                <DatePicker
+                  selectsRange
+                  isClearable
+                  startDate={startDate}
+                  endDate={endDate}
+                  onChange={update => {
+                    setDateRange(update)
+                  }}
+                  // customInput={<FilterButton />}
+                />
+                  <HeaderButton background="primary" right onClick={handleEnter}>등록</HeaderButton>
+                </ButtonsContainer>
+              </Header>
+              <TableHeader>
+                <TableHeaderContent width="619px">제목</TableHeaderContent>
+                <TableHeaderContent width="201px">활성화/비활성화</TableHeaderContent>
+                <TableHeaderContent width="185px">진행기간</TableHeaderContent>
+              </TableHeader>
+              <GetEventData eventList={eventList} setEventList={setEventList}
+                checked={checked} setChecked={setChecked}
+                modifiedFlag={modifiedFlag} setModifiedFlag={setModifiedFlag} />
+            </>
+          )
+        }
       </Container>
   )
 }

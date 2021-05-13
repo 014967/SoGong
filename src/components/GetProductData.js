@@ -63,7 +63,7 @@ font: normal normal 300 20px/29px Spoqa Han Sans Neo;
 
 
 
-const  GetProductData = ({setEnter, setAlter}) =>
+const  GetProductData = ({ setEnter, setAlter }) =>
 {
 
   const history = useHistory();
@@ -75,19 +75,13 @@ const  GetProductData = ({setEnter, setAlter}) =>
     const {data : products} = await axios.get("/api/products")
     setProductList(products)
     setIsLoading(false)
-    
-    
-  
   }
 
-  useEffect(()=>
-  {
+  useEffect(() => {
     getProductList();
-
   }, [])
 
-  const clickButton = (data, index) => ()  =>
-  {
+  const clickButton = (data, index) => () => {
     setEnter({ enter: true, data: data , index: index});
     setAlter(true);
   }
