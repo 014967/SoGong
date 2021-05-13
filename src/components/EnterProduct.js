@@ -131,6 +131,8 @@ const EnterProduct = ({enter, setEnter, alter}) =>
     const [imgFileName, setImgFileName] = useState("이미지는 정사각형으로 표시됩니다");
     const [price, setPrice] = useState();
     const [category, setCategory] = useState([]);
+    const [stock , setStock ] = useState([]);
+  
     useEffect(()=>
     {
         
@@ -140,13 +142,14 @@ const EnterProduct = ({enter, setEnter, alter}) =>
         {
         
 
-
+        console.log(enter.data)
 
         setProductTitle(enter.data.data.name);
         setProductDescription(enter.data.data.detail);
         setPrice(enter.data.data.price);
         setProductImg(enter.data.data.img);
         setCategory(enter.data.data.category);
+        setStock(enter.data.data.stock);
         
         }
 
@@ -158,28 +161,32 @@ const EnterProduct = ({enter, setEnter, alter}) =>
     const handleSubmit = async (e) =>
     {
 
-        console.log(category)
-        console.log(category[0])
-        console.log(category[0].value)
+      
+        
         e.preventDefault()
-        if(!productTitle || !productDescription || !productImg || !price || !category[0].value)
+        if(!productTitle || !productDescription || !productImg || !price || !stock || !category)
         {
+            
             alert("필수 입력 사항을 입력하지 않으셨습니다");
             return
         }
+        console.log(productTitle, productDescription, price, stock, category)
         const formData = new FormData()
         formData.append('img', productImg)
-        const response = await axios.post("api/products", {
+      
+        const response = await axios.post("/api/products", {
             name: productTitle,
             detail: productDescription,
             price: price,
-            category : category[0].value,
+            stock : stock,
+          
            
             
         }) 
-        .catch((err) => console.log('error'))
+        .catch((err) => console.log(err))
+        
         const responseImg = await axios.post(`/productImg/${response.data._id}` , formData)
-        .then(setEnter({enter : false}))
+        .then( setEnter({enter : false}))
         
     }
 
@@ -195,6 +202,7 @@ const EnterProduct = ({enter, setEnter, alter}) =>
             detail : productDescription,
             price : price,
             category : category,
+            stock : stock,
         }
         ).catch((err)=> console.log('error'))
         .then(setEnter({enter:false}), alter=false)
@@ -220,18 +228,24 @@ const EnterProduct = ({enter, setEnter, alter}) =>
         setPrice(e.target.value);
     }
     
+    const handleStock = e =>
+    {
+        setStock(e.target.value);
+    }
     return(
         <>
        {
            alter ? (
+               
            <div>
+               {console.log("수정")}
                <Header>
             <Button background = "primary" onClick= { alterSubmit}>
                 상품 등록
             </Button>
         </Header>
         <Container>
-            <InputContainer>
+            <InputContainer>        
             <Title>상품명</Title>
             <Input value={productTitle} onChange={handleProductTitle}></Input>
             </InputContainer>
@@ -257,6 +271,12 @@ const EnterProduct = ({enter, setEnter, alter}) =>
                     <FileName>{imgFileName}</FileName>
             </InputContainer>
             <InputContainer>
+                <Title>상품 수량</Title>
+                <Input placeholder="상품 수량 입력"  type='number' onChange={handleStock}></Input>
+                <PriceText>개</PriceText>
+                
+            </InputContainer>
+            <InputContainer>
             <Title>상품 가격</Title>
             <Input  value={price} type='number' onChange={handlePrice}></Input>
             <PriceText>원</PriceText>
@@ -266,6 +286,7 @@ const EnterProduct = ({enter, setEnter, alter}) =>
         </Container>
            </div>)
            : (<div>
+               {console.log("등록")}
                <Header>
             <Button background = "primary" onClick= { handleSubmit}>
                 상품 등록
@@ -295,12 +316,17 @@ const EnterProduct = ({enter, setEnter, alter}) =>
                     <FileName>{imgFileName}</FileName>
             </InputContainer>
             <InputContainer>
+                <Title>상품 수량</Title>
+                <Input placeholder="상품 수량 입력"  type='number' onChange={handleStock}></Input>
+                <PriceText>개</PriceText>
+                
+            </InputContainer>
+            <InputContainer>
             <Title>상품 가격</Title>
             <Input placeholder="상품 가격 입력" type='number' onChange={handlePrice}></Input>
             <PriceText>원</PriceText>
-
-            
             </InputContainer>
+
         </Container>
            </div>)
        }

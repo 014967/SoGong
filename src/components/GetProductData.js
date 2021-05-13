@@ -2,7 +2,6 @@ import React ,{useState, useEffect} from 'react';
 import {useHistory} from 'react-router';
 
 import styled from 'styled-components';
-import product from '../testData/product.json';
 import axios from 'axios';
 import CheckBox from './elements/CheckBox';
 import Button from './elements/Button';
@@ -64,28 +63,28 @@ font: normal normal 300 20px/29px Spoqa Han Sans Neo;
 
 
 
-const GetProductData = ({setEnter, setAlter}) =>
+const  GetProductData = ({setEnter, setAlter}) =>
 {
 
   const history = useHistory();
   const [productList , setProductList] = useState([]);
   const [isLoading , setIsLoading] = useState(true);
-  const [images , setImages]= useState([]);
-
+ 
   const getProductList = async () => 
   {
     const {data : products} = await axios.get("/api/products")
     setProductList(products)
     setIsLoading(false)
-    setImages(products.map(product => product.img))
+    
+    
+  
   }
 
   useEffect(()=>
   {
-    getProductList()
-    
+    getProductList();
 
-  } , [])
+  }, [])
 
   const clickButton = (data, index) => ()  =>
   {
@@ -100,18 +99,16 @@ const GetProductData = ({setEnter, setAlter}) =>
    
         <Container>
           {
-            isLoading ? 'Loading...' : productList.map((data,index) =>
+             isLoading ? 'Loading...' :  productList.map((data,index) =>
             (
               
               
-              <Row key={index}>
-              <CheckBox />
-              {
-                images ?
-                '이미지 준비중' : <StyleImg src={require('../assets/images/products/' + data.img).default}/>
-              }
               
-            
+              <Row key={index}>
+              <CheckBox />   
+              
+              
+              <StyleImg src={require('../assets/images/products/' + data.img).default}  />
               <Title>{data.name}</Title>
               <Price>{data.price}</Price>
               <Button background="secondary" onClick= { () => {history.push(

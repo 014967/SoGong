@@ -9,7 +9,7 @@ productNo:{
 },//상품번호
 category:{
     type:String,
-    default:'uncategorized'
+    default : "몰라"
 },// 카테고리
 name:{
     type:String,
@@ -21,23 +21,20 @@ detail:{
 },//상세정보
 img: {
     type:String,
-    default:'No image'
+    
 }, //이미지
 imgPath: {
     type:String,
-    default:'No image'
+    
 }, //이미지경로
 price: {
     type:Number,
     required: [true]
 },//가격
-category : {
-    type : String,
-    required: [true]
-},//카테고리
+
 stock:{
     type:Number,
-    default:0
+    required: [true]
 },//수량
 token:{
     type: Boolean,
