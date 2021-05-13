@@ -206,6 +206,7 @@ app.post('/eventImg/:id', mupload.single('img'), (req, res) => {
     {_id: req.params.id}, {img: imgName, imgPath: imgPath+imgName}).then(function(event){
 
     Event.findOne({_id: req.params.id}).then(function(event){
+      console.log('successfully updated local image');
     })  
   })
 });
@@ -218,6 +219,7 @@ app.post('/productImg/:id', pupload.single('img'), (req, res) => {
     {_id: req.params.id}, {img: imgName, imgPath: imgPath+imgName}).then(function(product){
 
     Product.findOne({_id: req.params.id}).then(function(product){
+      console.log('successfully updated local image');
     })  
   })
 });
