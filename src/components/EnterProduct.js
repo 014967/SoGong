@@ -179,13 +179,11 @@ const EnterProduct = ({enter, setEnter, alter}) =>
             detail: productDescription,
             price: price,
             stock : stock,
-          
-           
-            
         }) 
         .catch((err) => console.log(err))
         
         const responseImg = await axios.post(`/productImg/${response.data._id}` , formData)
+        .then(console.log(responseImg))
         .then( setEnter({enter : false}))
         
     }
@@ -286,7 +284,6 @@ const EnterProduct = ({enter, setEnter, alter}) =>
         </Container>
            </div>)
            : (<div>
-               {console.log("등록")}
                <Header>
             <Button background = "primary" onClick= { handleSubmit}>
                 상품 등록

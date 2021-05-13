@@ -70,9 +70,8 @@ const  GetProductData = ({ setEnter, setAlter }) =>
   const [productList , setProductList] = useState([]);
   const [isLoading , setIsLoading] = useState(true);
  
-  const getProductList = async () => 
-  {
-    const {data : products} = await axios.get("/api/products")
+  const getProductList = async () => {
+    const {data: products} = await axios.get("/api/products")
     setProductList(products)
     setIsLoading(false)
   }
@@ -86,31 +85,22 @@ const  GetProductData = ({ setEnter, setAlter }) =>
     setAlter(true);
   }
 
-  
-
-
     return (
    
         <Container>
           {
-             isLoading ? 'Loading...' :  productList.map((data,index) =>
-            (
-              
-              
-              
+             isLoading ? 'Loading...' :  productList.map((data,index) => (
               <Row key={index}>
-              <CheckBox />   
-              
-              
-              <StyleImg src={require('../assets/images/products/' + data.img).default}  />
-              <Title>{data.name}</Title>
-              <Price>{data.price}</Price>
-              <Button background="secondary" onClick= { () => {history.push(
-                {
-                  pathname : `/manager/${data._id}`,
-                  state : {data : data}
-                })}} >확인</Button>
-              <Button background="primary" onClick={clickButton({data,index})}>수정</Button>
+                <CheckBox />
+                <StyleImg src={require('../assets/images/products/' + data.img).default} />
+                <Title>{data.name}</Title>
+                <Price>{data.price}</Price>
+                <Button background="secondary" onClick= { () => {history.push(
+                  {
+                    pathname : `/manager/${data._id}`,
+                    state : {data : data}
+                  })}} >확인</Button>
+                <Button background="primary" onClick={clickButton({data,index})}>수정</Button>
               </Row>
             )
             
