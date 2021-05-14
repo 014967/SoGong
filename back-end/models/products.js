@@ -9,7 +9,7 @@ productNo:{
 },//상품번호
 category:{
     type:String,
-    default : "몰라"
+    required : [true]
 },// 카테고리
 name:{
     type:String,
@@ -31,7 +31,6 @@ price: {
     type:Number,
     required: [true]
 },//가격
-
 stock:{
     type:Number,
     required: [true]

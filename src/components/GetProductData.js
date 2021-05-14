@@ -5,7 +5,6 @@ import styled from 'styled-components';
 import axios from 'axios';
 import CheckBox from './elements/CheckBox';
 import Button from './elements/Button';
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -63,24 +62,34 @@ font: normal normal 300 20px/29px Spoqa Han Sans Neo;
 
 
 
-const  GetProductData = ({ setEnter, setAlter }) =>
+const  GetProductData =  ({ setEnter, setAlter }) =>
 {
 
   const history = useHistory();
   const [productList , setProductList] = useState([]);
   const [isLoading , setIsLoading] = useState(true);
- 
+  const [images, setImages] = useState([]);
   const getProductList = async () => 
   {
-    const {data : products} = await axios.get("/api/products")
-    setProductList(products)
-    setIsLoading(false)
+    
+    const {data : products} = await axios.get("/api/products/")
+    
+      setProductList(products)
+      setIsLoading(false)
+    
+    
+    
   }
 
   useEffect(() => {
+   getProductList();
+  }, [ setEnter])
+  useEffect(()=>
+  {    
     getProductList();
-  }, [])
+  },[setAlter])
 
+  
   const clickButton = (data, index) => () => {
     setEnter({ enter: true, data: data , index: index});
     setAlter(true);
@@ -100,9 +109,15 @@ const  GetProductData = ({ setEnter, setAlter }) =>
               
               <Row key={index}>
               <CheckBox />   
-              
-              
-              <StyleImg src={require('../assets/images/products/' + data.img).default}  />
+              <div>
+              {
+                typeof(data.img) !== 'undefined' ? 
+                
+                  <StyleImg src={require(data.imgPath).default}  /> 
+                  : "이미지로딩중"
+                
+              }
+              </div>
               <Title>{data.name}</Title>
               <Price>{data.price}</Price>
               <Button background="secondary" onClick= { () => {history.push(

@@ -20,7 +20,7 @@ app.use(cookieParser());
 app.use(cors());
 app.use('/api',require('./routes/api'));
 app.use((err,req,res,next)=>{
-    //console.log(err);
+    console.log(err);
     res.status(422).send({error:err.message});
 })
 
@@ -190,7 +190,7 @@ const Product = require('./models/products');
   const pupload = multer({
     storage: multer.diskStorage({
       destination: function (req, file, cb) {
-        cb(null, '../src/assets/images/products/');
+        cb(null, '../assets/images/products/');
       },
       filename: function (req, file, cb) {
         cb(null, new Date().valueOf() + '_' + file.originalname);
@@ -220,10 +220,10 @@ app.post('/productImg/:id', pupload.single('img'), (req, res) => {
 
     Product.findOne({_id: req.params.id}).then(function(product){
       console.log('successfully updated local image');
-    })  
+      res.send('Success');
+    })
   })
 });
-
 app.post('/eventImgDel', (req, res) => {
   var a = 0
   var b = Object.keys(req.body.imgPaths).length

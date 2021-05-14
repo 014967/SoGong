@@ -2,8 +2,7 @@ import styled from 'styled-components';
 import React, {useEffect, useState} from 'react';
 import Button from './elements/Button';
 import axios from 'axios'
-import { Dropdown } from 'react-dropdown-now';
-import MultiSelect from 'react-multi-select-component';
+
 
 const Header = styled.div`
   display: flex;
@@ -113,16 +112,7 @@ const PriceText = styled.div`
 const EnterProduct = ({enter, setEnter, alter}) =>
 {
 
-    
-    const options = [
-        
-            {label : "Man Top", value : "남성 상의"},
-            {label : "Man Bottom", value : "남성 하의"},
-            {label : "Woman Top", value : "여성 상의"},
-            {label : "Woman Bottom", value : "여성 하의"},
-            {label : "Child", value : "아동"},
-        
-    ];
+  
 
 
     const [productTitle ,setProductTitle] =useState('');
@@ -130,7 +120,7 @@ const EnterProduct = ({enter, setEnter, alter}) =>
     const [productImg , setProductImg] = useState(null);
     const [imgFileName, setImgFileName] = useState("이미지는 정사각형으로 표시됩니다");
     const [price, setPrice] = useState();
-    const [category, setCategory] = useState([]);
+    const [category, setCategory] = useState("남성 상의");
     const [stock , setStock ] = useState([]);
   
     useEffect(()=>
@@ -174,10 +164,11 @@ const EnterProduct = ({enter, setEnter, alter}) =>
         const formData = new FormData()
         formData.append('img', productImg)
       
-        const response = await axios.post("/api/products", {
+        const response = await axios.post("/api/products/", {
             name: productTitle,
             detail: productDescription,
             price: price,
+            category :category,
             stock : stock,
           
            
@@ -185,9 +176,13 @@ const EnterProduct = ({enter, setEnter, alter}) =>
         }) 
         .catch((err) => console.log(err))
         
-        const responseImg = await axios.post(`/productImg/${response.data._id}` , formData)
-        .then( setEnter({enter : false}))
+        const responseImg = await axios.post(`/productImg/${response.data._id}/` , formData)
+        .catch((err) => console.log(err))
+        .then(
         
+            setEnter({enter : false})
+        
+        )
     }
 
     const alterSubmit = async (e) =>
@@ -232,6 +227,11 @@ const EnterProduct = ({enter, setEnter, alter}) =>
     {
         setStock(e.target.value);
     }
+    const handleCategory = e =>
+    {
+        setCategory(e.target.value);
+    }
+
     return(
         <>
        {
@@ -251,13 +251,17 @@ const EnterProduct = ({enter, setEnter, alter}) =>
             </InputContainer>
             <InputContainer>
                     <Title>카테고리</Title>
-                    <MultiSelect
-                    width="200px"
-                    options={options}
+                    <select 
                     value={category}
-                    onChange={setCategory}
-                    labelledBy={"카테고리"}
-                    />
+                    onChange={handleCategory}
+                    >
+                        <option value="Man Top">남성 상의</option>
+                        <option value="Man Bottom">남성 하의</option>
+                        <option value="Woman Top">여성 상의</option>
+                        <option value="Woman Bottom">여성 하의</option>
+                        <option value="Child">아동용</option>
+
+                    </select>
                     
             </InputContainer>
             <InputContainer>
@@ -299,11 +303,17 @@ const EnterProduct = ({enter, setEnter, alter}) =>
             </InputContainer>
             <InputContainer>
                     <Title>카테고리</Title>
-                    <MultiSelect
-                    options={options}
+                    <select 
                     value={category}
-                    onChange={setCategory}
-                    labelledBy={"카테고리"}/>
+                    onChange={handleCategory}
+                    >
+                        <option value="Man Top">남성 상의</option>
+                        <option value="Man Bottom">남성 하의</option>
+                        <option value="Woman Top">여성 상의</option>
+                        <option value="Woman Bottom">여성 하의</option>
+                        <option value="Child">아동용</option>
+
+                    </select>
             </InputContainer>
             <InputContainer>
                     <Title>설명*</Title>
