@@ -334,6 +334,7 @@ router.post('/products/sorted/:category', function(req, res){
 /*
  JSON FORMAT of request to '/products/sorted/:category'
 
+ 
 {
     "search": "string",
     "min": "0",
