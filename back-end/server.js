@@ -190,7 +190,7 @@ const Product = require('./models/products');
   const pupload = multer({
     storage: multer.diskStorage({
       destination: function (req, file, cb) {
-        cb(null, '../assets/images/products/');
+        cb(null, '../src/assets/images/products/');
       },
       filename: function (req, file, cb) {
         cb(null, new Date().valueOf() + '_' + file.originalname);
@@ -216,16 +216,12 @@ app.post('/productImg/:id', pupload.single('img'), (req, res) => {
   const imgName = req.file.filename
   const imgPath = req.file.destination
   Product.findByIdAndUpdate(
-    {_id: req.params.id}, {img: imgName, imgPath: './../assets/images/products/'+imgName}).then(function(product){
+    {_id: req.params.id}, {img: imgName, imgPath: '../assets/images/products/'+imgName}).then(function(product){
 
     Product.findOne({_id: req.params.id}).then(function(product){
       console.log('successfully updated local image');
       res.send('Success');
-<<<<<<< HEAD
-    })  
-=======
     })
->>>>>>> 805b92d041e18a8c33baf519b7a4660e10d6a109
   })
 });
 app.post('/eventImgDel', (req, res) => {

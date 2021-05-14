@@ -111,34 +111,9 @@ const  GetProductData =  ({ setEnter, setAlter }) =>
           <CheckBox />   
           <div>
           {
-             isLoading ? 'Loading...' :  productList.map((data,index) =>
-            (
-              
-              
-              
-              <Row key={index}>
-              <CheckBox />   
-              <div>
-              {
-                typeof(data.img) !== 'undefined' ? 
-                
-                  <StyleImg src={require(data.imgPath).default}  /> 
-                  : "이미지로딩중"
-                
-              }
-              </div>
-              <Title>{data.name}</Title>
-              <Price>{data.price}</Price>
-              <Button background="secondary" onClick= { () => {history.push(
-                {
-                  pathname : `/manager/${data._id}`,
-                  state : {data : data}
-                })}} >확인</Button>
-              <Button background="primary" onClick={clickButton({data,index})}>수정</Button>
-              </Row>
-            )
+            typeof(data.img) !== 'undefined' ? 
             
-              <StyleImg src={require(data.imgPath).default}  /> 
+              <StyleImg src={require('../assets/images/products/'+data.img).default}  /> 
               : "이미지로딩중"
             
           }
