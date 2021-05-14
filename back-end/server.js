@@ -216,10 +216,11 @@ app.post('/productImg/:id', pupload.single('img'), (req, res) => {
   const imgName = req.file.filename
   const imgPath = req.file.destination
   Product.findByIdAndUpdate(
-    {_id: req.params.id}, {img: imgName, imgPath: imgPath+imgName}).then(function(product){
+    {_id: req.params.id}, {img: imgName, imgPath: './../assets/images/products/'+imgName}).then(function(product){
 
     Product.findOne({_id: req.params.id}).then(function(product){
       console.log('successfully updated local image');
+      res.send('Success');
     })  
   })
 });
