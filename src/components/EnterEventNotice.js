@@ -167,7 +167,6 @@ const EnterEventNotice = ({ setEnter }) => {
         .catch((err) => console.log('error'))
         const responseImg = await axios.post(`/eventImg/${response.data._id}`, formData)
         .then(setEnter(false))
-        .then(alert('등록되었습니다.'))
     }
 
     return (

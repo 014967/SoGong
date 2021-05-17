@@ -60,7 +60,16 @@ const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFl
 
   useEffect(() => {
     getEvents()
+    // if (eventList.some(event => event.imgPath === 'no image'))
 	}, [])
+
+  useEffect(() => {
+    if (eventList.some(event => event.imgPath === 'no image')) {
+      console.log('no image occured')
+      console.log(eventList)
+      setModifiedFlag(true)
+    }
+  }, [eventList])
 
   useEffect(() => {
     if (modifiedFlag) {

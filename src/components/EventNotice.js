@@ -96,6 +96,7 @@ const EventNotice = () => {
     if (window.confirm('삭제하시겠습니까?')) {
       const ids = []
       const paths = []
+      console.log(eventList)
       checked.forEach((isChecked, i) => {
         if (isChecked) {
           ids.push(eventList[i]._id)
@@ -104,8 +105,9 @@ const EventNotice = () => {
       })
       const res = await axios.post('/api/events/delete', { eventIds: ids })
         .catch((err) => console.log('error'))
+      console.log(paths)
       const resImg = await axios.post('/eventImgDel', { imgPaths: paths })
-        .catch((err) => console.log('error'))
+        .catch((err) => console.log('error', err))
       .then(setEventList([]))
       .then(setModifiedFlag(true))
     }
@@ -125,6 +127,10 @@ const EventNotice = () => {
   )
 
   useEffect(() => {
+    console.log(eventList)
+  }, [eventList])
+
+  useEffect(() => {
     setCheckedAll(checked.every(v => v) && eventList.length !== 0)
     setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
   }, [checked])
@@ -138,7 +144,6 @@ const EventNotice = () => {
   }, [order])
 
   useEffect(() => {
-    console.log(startDate, endDate)
   }, [dateRange])
 
   return (
