@@ -128,12 +128,14 @@ const EnterProduct = ({enter, setEnter, alter}) =>
         
       
         
-        if(enter.data != null)
+        if(!enter.data.length==0)
         {
         
 
         console.log(enter.data)
+        console.log(enter.data.data)
 
+        
         setProductTitle(enter.data.data.name);
         setProductDescription(enter.data.data.detail);
         setPrice(enter.data.data.price);
@@ -290,7 +292,7 @@ const EnterProduct = ({enter, setEnter, alter}) =>
         </Container>
            </div>)
            : (<div>
-               {console.log("등록")}
+             
                <Header>
             <Button background = "primary" onClick= { handleSubmit}>
                 상품 등록

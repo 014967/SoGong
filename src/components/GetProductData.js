@@ -59,28 +59,50 @@ width : ${({width}) => handleWidth(width)};
 font: normal normal 300 20px/29px Spoqa Han Sans Neo;
 `
 
+const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').replace('-', '.').slice(2)
 
 
-
-const  GetProductData =  ({ setEnter, setAlter }) =>
+const  GetProductData =  ({ setEnter, setAlter, checked, productList, setChecked, modifiedFlag }) =>
 {
 
   const history = useHistory();
-  const [productList , setProductList] = useState([]);
   const [isLoading , setIsLoading] = useState(true);
-  const [images, setImages] = useState([]);
+  
+
+
+
+  const errText = e =>
+  {
+    console.log(e.target.value);
+  }
+
+ 
+
+
+
   const getProductList = async () => 
   {
     
     const {data : products} = await axios.get("/api/products/")
     
-      setProductList(products)
+      setEnter(
+        {
+          data: products
+        }
+      )
       setIsLoading(false)
+      setChecked([...Array(products.length).fill(false)])
     
     
     
   }
 
+  const handleChecked = index => () => {
+    setChecked(prev => [...prev.map((v,i) =>
+      i === index ? !v : v
+      )])
+  }
+  
   useEffect(() => {
    getProductList();
   }, [ setEnter])
@@ -89,7 +111,8 @@ const  GetProductData =  ({ setEnter, setAlter }) =>
     getProductList();
   },[setAlter])
 
-  
+
+
   const clickButton = (data, index) => () => {
     setEnter({ enter: true, data: data , index: index});
     setAlter(true);
@@ -102,18 +125,20 @@ const  GetProductData =  ({ setEnter, setAlter }) =>
    
       <Container>
       {
+        
          isLoading ? 'Loading...' :  productList.map((data,index) =>
         (
           
-          
-          
           <Row key={index}>
-          <CheckBox />   
+            {console.log(productList)
+            }
+          <CheckBox checked={checked[index]} onClick={handleChecked(index)} />   
           <div>
           {
+            
             typeof(data.img) !== 'undefined' ? 
             
-              <StyleImg src={require('../assets/images/products/'+data.img).default}  /> 
+              <StyleImg src={require('../assets/images/products/'+data.img).default}  onError={errText} /> 
               : "이미지로딩중"
             
           }
