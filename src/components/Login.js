@@ -20,6 +20,15 @@ const LoginContainer = styled.form`
   }
 `
 
+const SignedContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  & > *:last-child {
+    margin-left: 16px;
+  }
+`
+
 const Input = styled.input`
   position: relative;
   width: 192px;
@@ -88,10 +97,10 @@ const Login = () => {
     <Container>
       {
         success ? 
-        <>
+        <SignedContainer>
           <div>{ID}님 환영합니다.</div>
           <Button onClick={handleLogOut}>SIGN OUT</Button>
-        </>
+        </SignedContainer>
         : 
         <>
           <LoginContainer onSubmit={handleLogin}>
