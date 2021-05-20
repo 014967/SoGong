@@ -9,6 +9,7 @@ import Data from './Data'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
 import ProductData from '../components/ProductData';
+import OrderList from './OrderList'
 
 const App = () => {
     return (
@@ -21,6 +22,7 @@ const App = () => {
                 <Route exact path="/signup" component={SignUp} />
                 <Route exact path="/data" component={Data} />
                 <Route exact path="/manager/:id" component= {ProductData}/>
+                <Route exact path="/orderlist" component= {OrderList}/>
                 <Footer />
             </Router>
         </>

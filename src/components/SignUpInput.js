@@ -29,7 +29,7 @@ const SignUpInput = () => {
     const [password,setPassword] = useState('');
     const [passwordCheck,setPasswordCheck] = useState('');
     const [passwordError,setPasswordError] = useState(false);
-    
+    const [passwordAvailable,setPasswordAvailable] = useState(false);
 
 
     const onSubmit = (e) => {
@@ -57,7 +57,14 @@ const SignUpInput = () => {
         setEmail(e.target.value);
     };
     const onChangePassword = (e) => {
+        var regExp = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z]{8,10}$/
+        // 형식에 맞는 경우 true 리턴
+        console.log('비밀번호 유효성 검사 :: ', regExp.test(e.target.value))
+        setPasswordAvailable(regExp.test(e.target.value)==false);
         setPassword(e.target.value);
+        if(regExp.test(e.target.value)==false){
+            return setPasswordAvailable(true);
+        }
     };
     const onChangePasswordChk = (e) => {
         //비밀번호를 입력할때마다 password 를 검증하는 함수
@@ -79,6 +86,7 @@ const SignUpInput = () => {
             <div>
                 <label htmlFor="user-password">PW*</label><br/>
                 <Input name="user-password" type="password" value={password} placeholder="PW" required onChange={onChangePassword} />
+                {passwordAvailable && <div style={{color : 'red'}}>영문과 숫자로 이루어진 8~10자로 입력하여 주세요.</div>}
             </div>
             <div>
                 <label htmlFor="user-password-check">RE-ENTER PW*</label><br/>
