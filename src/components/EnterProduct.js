@@ -2,8 +2,7 @@ import styled from 'styled-components';
 import React, {useEffect, useState} from 'react';
 import Button from './elements/Button';
 import axios from 'axios'
-import { useHistory , useLocation} from 'react-router';
-
+import { useHistory , useLocation } from 'react-router';
 
 const Header = styled.div`
   display: flex;

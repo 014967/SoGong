@@ -9,8 +9,6 @@ import { AirlineSeatFlatAngled } from '@material-ui/icons';
 
 const Container = styled.div`
   display: flex;
-  flex-direction: column;
-  width: 100%;
   margin-bottom: 64px;
 `
 const Row = styled.div`
