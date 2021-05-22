@@ -112,7 +112,7 @@ const PriceText = styled.div`
 
 
 
-const EnterProduct = () =>
+const AlterProduct = () =>
 {
 
     
@@ -128,60 +128,67 @@ const EnterProduct = () =>
     const [imgFileName, setImgFileName] = useState("이미지는 정사각형으로 표시됩니다");
     const [price, setPrice] = useState();
     const [category, setCategory] = useState("남성 상의");
-    const [stock , setStock ] = useState([]);
+    const [stock , setStock ] = useState();
   
   
+    useEffect(()=>
+    {
+        console.log(location.state)
+        console.log(location.state.data.name)
+
+        if(location.state !== "undefined")
+        {
+            console.log("hello")
+            setProductTitle(location.state.data.name)
+            setProductDescription(location.state.data.detail)
+            setCategory(location.state.data.category)
+            setStock(location.state.data.stock)
+            setPrice(location.state.data.price)
+            setImgFileName(location.state.data.img)
+       
+
+        }
+        else
+        {
+
+        }
+       
+         
+        
+    },[])
+
+    
+    
+
    
 
-    
-    
-
-    const handleSubmit = async (e) =>
+    const alterSubmit = async (e) =>
     {
-
-      
         
         e.preventDefault()
-        if(!productTitle || !productDescription || !productImg || !price || !stock || !category)
-        {
-            
-            alert("필수 입력 사항을 입력하지 않으셨습니다");
-            return
-        }
-        console.log(productTitle, productDescription, price, stock, category)
         const formData = new FormData()
-        formData.append('img', productImg)
-      
-        const response = await axios.post("/api/products/", {
-            name: productTitle,
-            detail: productDescription,
-            price: price,
-            category :category,
+        const response = await axios.put("api/products/" +`${location.state.data._id}`,
+        
+        {
+            name : productTitle,
+            detail : productDescription,
+            price : price,
+            category : category,
             stock : stock,
-          
-           
-            
-        }) 
-        .catch((err) => console.log(err))
-        
-        const responseImg = await axios.post(`/productImg/${response.data._id}/` , formData)
-        .catch((err) => console.log(err))
+        }
+        ).catch((err)=> console.log('error'))
         .then(
-        
-            //setEnter({enter : false}),
-            //selected =="product",
             history.replace(
                 {
                     pathname : `/manager`,
-                    state : {selected : location.state.selected},
+                    state : {selected : location.state.selected }
                 }
-            ),
-            
-            
+            )
         )
+        
+        
     }
 
-    
     const handleProductTitle = e =>
     {
         setProductTitle(e.target.value);
@@ -212,17 +219,19 @@ const EnterProduct = () =>
     return(
         <>
        
-          <div>
-             
+          
+               
+           <div>
+               {console.log("수정")}
                <Header>
-            <Button background = "primary" onClick= { handleSubmit}>
+            <Button background = "primary" onClick= { alterSubmit}>
                 상품 등록
             </Button>
         </Header>
         <Container>
-            <InputContainer>
+            <InputContainer>        
             <Title>상품명</Title>
-            <Input placeholder="상품명 입력" onChange={handleProductTitle}></Input>
+            <Input value={productTitle} onChange={handleProductTitle}></Input>
             </InputContainer>
             <InputContainer>
                     <Title>카테고리</Title>
@@ -237,10 +246,11 @@ const EnterProduct = () =>
                         <option value="Child">아동용</option>
 
                     </select>
+                    
             </InputContainer>
             <InputContainer>
                     <Title>설명*</Title>
-                    <Textarea placeholder="설명 입력" onChange={handleDiscription}></Textarea>
+                    <Textarea value={productDescription} onChange={handleDiscription}></Textarea>
             </InputContainer>
             <InputContainer>
                     <Title>대표 이미지*</Title>
@@ -250,19 +260,20 @@ const EnterProduct = () =>
             </InputContainer>
             <InputContainer>
                 <Title>상품 수량</Title>
-                <Input placeholder="상품 수량 입력"  type='number' onChange={handleStock}></Input>
+                <Input value={stock}  type='number' onChange={handleStock}></Input>
                 <PriceText>개</PriceText>
                 
             </InputContainer>
             <InputContainer>
             <Title>상품 가격</Title>
-            <Input placeholder="상품 가격 입력" type='number' onChange={handlePrice}></Input>
+            <Input  value={price} type='number' onChange={handlePrice}></Input>
             <PriceText>원</PriceText>
-            </InputContainer>
 
+            
+            </InputContainer>
         </Container>
-           </div>)
-     
+           </div>
+       
         
         
         
@@ -270,4 +281,4 @@ const EnterProduct = () =>
         </>
     ) 
 }
-export default EnterProduct;
+export default AlterProduct;

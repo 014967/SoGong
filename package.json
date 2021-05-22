@@ -31,7 +31,9 @@
     "slick-carousel": "^1.8.1",
     "styled": "^1.0.0",
     "styled-components": "^5.2.3",
-    "web-vitals": "^1.1.1"
+    "web-vitals": "^1.1.1",
+    "webpack": "^4.44.2",
+    "webpack-dev-server": "^3.11.1"
   },
   "scripts": {
     "start": "cross-env NODE_PATH=src react-scripts start",
@@ -56,5 +58,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "file-loader": "^6.2.0",
+    "image-webpack-loader": "^7.0.1"
   }
 }

@@ -212,21 +212,31 @@ app.post('/eventImg/:id', mupload.single('img'), (req, res) => {
 });
 
 app.post('/productImg/:id', pupload.single('img'), (req, res) => {
-  console.log(req.file);
+  
   const imgName = req.file.filename
   const imgPath = req.file.destination
+  
   Product.findByIdAndUpdate(
-    {_id: req.params.id}, {img: imgName, imgPath: '../assets/images/products/'+imgName}).then(function(product){
+    {_id: req.params.id}, {img: imgName, imgPath: imgPath+imgName}).then(function(product){
 
+      
     Product.findOne({_id: req.params.id}).then(function(product){
       console.log('successfully updated local image');
       res.send('Success');
     })
   })
 });
+
+
+
+
+
+
 app.post('/eventImgDel', (req, res) => {
   var a = 0
   var b = Object.keys(req.body.imgPaths).length
+
+  
   while(a<b){
     fs.unlink(Object.values(req.body.imgPaths)[a++], (err) => {
       if (err) {

@@ -8,6 +8,7 @@ import ContentsWrapper from './elements/ContentsWrapper'
 import ManagerMenuButton from './elements/ManagerMenuButton'
 import EventNotice from './EventNotice'
 import Product from './Product'
+import { useHistory , useLocation} from 'react-router';
 
 const Container = styled.div`
   display: flex;
@@ -50,6 +51,14 @@ const ManagerContents = ({ history }) => {
       history.push('/')
     }
   }
+  const location = useLocation();
+  console.log(location);
+  
+  useEffect(() => {
+    location.state ? setSelected(location.state.selected) : console.log(location.state)
+  }, [])
+  
+
 
     return (
         <ContentsWrapper wide>
@@ -78,12 +87,12 @@ const ManagerContents = ({ history }) => {
             </Menu>
             {
               selected === 'event' && (
-                <EventNotice />
+                <EventNotice selected={selected}/>
               )
             }
             {
               selected === 'product' && (
-                <Product />
+                <Product selected={selected} />
               )
             }
           </Container>
