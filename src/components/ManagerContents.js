@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components'
+import axios from 'axios'
+import Cookies from 'js-cookie'
+import { LoginContext } from '../pages/App'
 import Title from './elements/Title'
 import ContentsWrapper from './elements/ContentsWrapper'
 import ManagerMenuButton from './elements/ManagerMenuButton'
@@ -28,12 +31,25 @@ const title = {
   product: '상품 관리'
 }
 
-const ManagerContents = () => {
+const ManagerContents = ({ history }) => {
   const [selected, setSelected] = useState('event');
+
+  const { setID, setPW, setSuccess } = useContext(LoginContext)
 
   const handleItemClick = e => {
     setSelected(e.target.value)
   };
+
+  const handleLogOut = async () => {
+    const { data } = await axios.get('/api/logout')
+    if (data.success) {
+      Cookies.remove('w_auth')
+      setSuccess(false)
+      setID('')
+      setPW('')
+      history.push('/')
+    }
+  }
 
     return (
         <ContentsWrapper wide>
@@ -56,7 +72,7 @@ const ManagerContents = () => {
               </ManagerMenuButton>
               <ManagerMenuButton
                 value="logout"
-                onClick={handleItemClick}>
+                onClick={handleLogOut}>
                 로그아웃
               </ManagerMenuButton>
             </Menu>

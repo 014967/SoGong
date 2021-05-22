@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import styled from 'styled-components'
+import { withRouter } from 'react-router-dom'
+import { LoginContext } from '../pages/App'
 import Button from './elements/Button'
 import axios from 'axios'
 import Cookies from 'js-cookie'
@@ -43,11 +45,9 @@ const Input = styled.input`
   }
 `;
 
-const Login = () => {
+const Login = ({ location, history }) => {
 
-  const [ID, setID] = useState('')
-  const [PW, setPW] = useState('')
-  const [success, setSuccess] = useState(false)
+  const { ID, setID, PW, setPW, success, setSuccess } = useContext(LoginContext)
 
   const handleLogin = async () => {
     const { data: response } = await axios.post('/api/login',
@@ -69,6 +69,9 @@ const Login = () => {
       setSuccess(false)
       setID('')
       setPW('')
+      if (location.pathname.includes('manager')) {
+        history.push('/')
+      }
     }
   }
 
@@ -115,4 +118,4 @@ const Login = () => {
   );
 }
 
-export default Login
+export default withRouter(Login)

@@ -9,11 +9,11 @@ const Wrapper = styled.div`
     padding-top: 282px;
 `
 
-const ManagerHomePage = () =>
+const ManagerHomePage = ({ history }) =>
 {
     return (
         <Wrapper>
-            <ManagerContents />
+            <ManagerContents history={history} />
         </Wrapper>
     )
 }
