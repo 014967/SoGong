@@ -74,8 +74,8 @@ const Banner = () => {
          <Container>
             <Slider {...settings}>
                {
-                  images.map(image => (
-                     <BannerContent src={require('../assets/images/banners/' + image).default} />
+                  images.map((image, i) => (
+                     <BannerContent key={i} src={require('../assets/images/banners/' + image).default} />
                   ))
                }
             </Slider>

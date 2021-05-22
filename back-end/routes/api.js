@@ -21,7 +21,7 @@ router.get('/', (req, res)=>{
 router.get("/auth", auth, (req, res) => {
     res.status(200).json({
         _id: req.user._id,
-        isAdmin: req.user.role === 0 ? false : true,
+        isAdmin: req.user.rule === 1 ? true : false,
         isAuth: true,
         id: req.user.id,
         email: req.user.email,
@@ -34,11 +34,12 @@ router.get("/auth", auth, (req, res) => {
 
 router.post("/login", (req, res) => {
     User.findOne({ id: req.body.id }, (err, user) => {
-        if (!user)
+        if (!user) {
             return res.json({
                 loginSuccess: false,
                 message: "해당 ID가 존재하지 않습니다."
             });
+        }
 
         user.comparePassword(req.body.password, (err, isMatch) => {
             if (!isMatch)

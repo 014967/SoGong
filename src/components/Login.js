@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { withRouter } from 'react-router-dom'
 import { LoginContext } from '../pages/App'
 import Button from './elements/Button'
+import LinkedButton from './elements/LinkedButton'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
@@ -49,9 +50,9 @@ const Login = ({ location, history }) => {
 
   const { ID, setID, PW, setPW, success, setSuccess } = useContext(LoginContext)
 
-  const handleLogin = async () => {
-    const { data: response } = await axios.post('/api/login',
-      {
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    const { data: response } = await axios.post('/api/login', {
         id: ID,
         password: PW
       }
@@ -59,6 +60,11 @@ const Login = ({ location, history }) => {
     setSuccess(response.loginSuccess)
     if (!response.loginSuccess) {
       alert(response.message)
+    } else {
+      const { data: response } = await axios.get('/api/auth')
+      if (response.isAdmin) {
+        history.push('/manager')
+      }
     }
   }
 
@@ -111,7 +117,7 @@ const Login = ({ location, history }) => {
             <Input type="password" placeholder="PW" onChange={handlePWChange} />
             <Button type="submit">SIGN IN</Button>
           </LoginContainer>
-          <Button background="primary">SIGN UP</Button>
+          <LinkedButton background="primary" link='/signup'>SIGN UP</LinkedButton>
         </>
       }
     </Container>

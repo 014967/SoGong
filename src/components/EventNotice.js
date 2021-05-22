@@ -127,10 +127,6 @@ const EventNotice = () => {
   )
 
   useEffect(() => {
-    console.log(eventList)
-  }, [eventList])
-
-  useEffect(() => {
     setCheckedAll(checked.every(v => v) && eventList.length !== 0)
     setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
   }, [checked])
