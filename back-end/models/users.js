@@ -33,14 +33,15 @@ tokenExp: {
     type: Number
 }, // 토큰의 유효시간
 rule:{
-    type:Number,
-    default: 0
+    type:Boolean,
+    default: false
 }, // 관리자 : 1, 일반유저 : 0
 plist:{
     type:Array
 },
 wishlist:{
-    type:Array
+    type:Array,
+    default:[]
 }
 });
 
