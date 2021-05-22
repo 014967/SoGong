@@ -20,7 +20,6 @@ const ManagerHomePage = ({ history }) => {
 
     const isAdmin = async () => {
         const { data: response } = await axios.get('/api/auth')
-        console.log(response.isAdmin)
         if (!response.isAdmin) {
             alert('관리자만 접근 가능합니다.')
             history.push('/')
