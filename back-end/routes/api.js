@@ -250,7 +250,8 @@ router.get('/events', function(req, res){
             let milliseconds = date.getMilliseconds();
             let currentTime = new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds))
             const regDate = date => date.split('.')[0].replace('T', '').replace('-', '').replace('-', '').replace(':', '').replace(':', '')
-            const regDate2 = date => `${date.getFullYear()}${date.getMonth() < 9 && 0}${date.getMonth() + 1}${date.getDate()}${date.getHours()}${date.getMinutes()}${date.getSeconds()}`
+            const regDate2 = date => `${date.getFullYear()}${date.getMonth() < 9 ? 0 : ''}${date.getMonth() + 1}${date.getDate() < 9 ? 0 : ''}
+            ${date.getDate()}${date.getHours()}${date.getMinutes()}${date.getSeconds()}`
             
 
             events.forEach((event) => {
@@ -336,7 +337,8 @@ router.post('/events/unavailable', function(req, res){
       if (err) {
           console.log("failed to update:"+err);
       } else {
-          console.log('successfully updated unavailable events');                                
+          console.log('successfully updated unavailable events');
+          res.send('successfully updated unavailable events');                                  
       }
     })
   }
@@ -555,6 +557,27 @@ router.post('/products/delete', function(req, res){
     "productIds" : ["116t4sdfi0315", "013532hf8dsa093"]
 }
 productIds: 삭제할 상품id의 배열
+*/
+
+router.post('/products/unavailable', function(req, res){
+    var a = 0
+  var b = Object.keys(req.body.productIds).length
+  while(a<b){
+    Product.findByIdAndUpdate({_id: Object.values(req.body.productIds)[a++]},  { available: false } ,(err) => {
+      if (err) {
+          console.log("failed to update:"+err);
+      } else {
+          console.log('successfully updated unavailable products');
+          res.send('successfully updated unavailable products');                               
+      }
+    })
+  }
+});
+    /* [ JSON FORMAT of request to '/products/unavailable' ]
+{
+    "productIds" : ["116t4sdfi0315", "013532hf8dsa093"]
+}
+productIds: 비활성화할 상품id의 배열
 */
 
 module.exports = router;
