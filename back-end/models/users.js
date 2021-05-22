@@ -40,7 +40,12 @@ plist:{
     type:Array
 },
 wishlist:{
+<<<<<<< HEAD
     type:Array
+=======
+    type:Array,
+    default:[]
+>>>>>>> e77e6a3b96ab7f09a67788cf4ee1a860fba449f0
 }
 });
 
