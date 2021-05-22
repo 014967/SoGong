@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components'
 import Title from './elements/Title'
 import ContentsWrapper from './elements/ContentsWrapper'
 import ManagerMenuButton from './elements/ManagerMenuButton'
 import EventNotice from './EventNotice'
 import Product from './Product'
+import { useHistory , useLocation} from 'react-router';
 
 const Container = styled.div`
   display: flex;
@@ -35,6 +36,18 @@ const ManagerContents = () => {
     setSelected(e.target.value)
   };
 
+  const location = useLocation();
+  console.log(location);
+  
+  
+
+  useEffect(()=>
+  {
+    location.state ? setSelected(location.state.selected) : console.log(location.state)
+  },[])
+  
+
+
     return (
         <ContentsWrapper wide>
           <Title>{title[selected]}</Title>
@@ -62,12 +75,12 @@ const ManagerContents = () => {
             </Menu>
             {
               selected === 'event' && (
-                <EventNotice />
+                <EventNotice selected={selected}/>
               )
             }
             {
               selected === 'product' && (
-                <Product />
+                <Product selected={selected} />
               )
             }
           </Container>

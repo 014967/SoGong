@@ -222,9 +222,10 @@ page: 페이지 limit(n) n= 한페이지에 표시할 개수
 router.get('/products', function(req, res){
     Product.find({}).then(function(product){
         res.send(product);
-        console.log(res);
     });
 });
+
+
 
 router.post('/products', function(req, res, next){
     Product.create(req.body).then(function(products){

@@ -21,11 +21,12 @@ detail:{
 },//상세정보
 img: {
     type:String,
+    default : 'no image'
     
 }, //이미지
 imgPath: {
     type:String,
-    
+    default : 'no image'
 }, //이미지경로
 price: {
     type:Number,

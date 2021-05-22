@@ -8,6 +8,8 @@ import EnterProduct from './EnterProduct'
 import SearchBar from './elements/SearchBar';
 import { addYears } from 'date-fns';
 import axios from 'axios';
+import { LocalConvenienceStoreOutlined } from '@material-ui/icons';
+import { useHistory, useLocation } from 'react-router';
 
 const Container = styled.div`
   display: flex;
@@ -49,9 +51,10 @@ const TableHeaderContent = styled.div`
 const regDate = date => date.split('.')[0].replace('T','').replace('-','').replace(':','').replace(':','').slice(2)
 
 
-const Product = () => {
+const Product = ({selected}) => {
 
-  
+  const history = useHistory();
+  const location = useLocation();
   const [enterProduct, setEnterProduct] = useState(
     {
       enter : false,
@@ -59,6 +62,7 @@ const Product = () => {
       index : [],
     })
 
+  const [productList, setProductList] = useState([]);
   const [alter , setAlter] = useState(false);
   const [order, setOrder] = useState(false)
   const [checked, setChecked] = useState([false]);
@@ -94,12 +98,21 @@ const Product = () => {
       .catch((err) => console.log('error'))
       .then(setEnterProduct(
         {
-          data : []
+          data : [],
+          
         }
-      ))
+
+      ),
+      history.replace(
+        {
+            pathname : `/manager`,
+            state : {selected : location.state.selected},
+        }
+    ),)
       .then(setMoodifiedFlag(true))
     }
   }
+  
   
   const handleOrder = () => 
   {
@@ -108,11 +121,22 @@ const Product = () => {
    
 
   const handleEnter = () => {
-    setEnterProduct({...enterProduct, enter: true});
+    
+    console.log(selected)
+    history.push(
+      {
+        pathname : '/manager/Enter/',
+        state : {selected : selected},
+
+      }
+    )
+    
     
   }
-  
+  /*
   useEffect(()=>{
+  if(enterProduct.data !== Array(0))
+  {
     if(order){
       setEnterProduct(
         {data : prev => [...prev.sort((h,t) => regDate(h.date)- regDate(t.date))]
@@ -127,23 +151,26 @@ const Product = () => {
         }
       )
     }
+  }
+   
   } , [order])
-
+*/
+  
+ 
+ 
   
   useEffect(()=>
   {
-    setCheckedAll(checked.every(v => v) && enterProduct.data.length !== 0)
-    setButtonColor(checked.some(v=>v) ? 'secondary' : 'disabled')
+    if(enterProduct.enter !== null)
+    {
+      setCheckedAll(checked.every(v => v) && enterProduct.data !== Array(0))
+      setButtonColor(checked.some(v=>v) ? 'secondary' : 'disabled')
+  
+    }
     
-  })
-  useEffect(() =>
-  {
-    console.log(enterProduct);
+  }, [enterProduct.enter])
 
-    
-  },[enterProduct])
-
-
+ 
   return (
       <Container>
         
@@ -151,7 +178,7 @@ const Product = () => {
             
             enterProduct.enter ? (
               
-              <EnterProduct enter ={enterProduct} setEnter={setEnterProduct} alter={alter} />
+              <EnterProduct enter ={enterProduct} setEnter={setEnterProduct} alter={alter} setAlter={setAlter} />
             ) : (
               <>
                 <Header>
@@ -173,8 +200,9 @@ const Product = () => {
                   <TableHeaderContent width="704px">상품명</TableHeaderContent>
                   <TableHeaderContent width="140px">가격</TableHeaderContent>
                 </TableHeader>
-                {<GetProductData productList={enterProduct.data}  setEnter= {setEnterProduct} setAlter = {setAlter}
-                 checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setMoodifiedFlag={setMoodifiedFlag} /> }
+                {<GetProductData productList={enterProduct}  setEnterProduct= {setEnterProduct} setAlter = {setAlter}
+                 checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setMoodifiedFlag={setMoodifiedFlag}
+                 selected={selected} /> }
               </>
             )
           }
