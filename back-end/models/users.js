@@ -42,6 +42,10 @@ plist:{
 wishlist:{
     type:Array,
     default:[]
+},
+delivery:{
+    type:Array,
+    default:[]
 }
 });
 

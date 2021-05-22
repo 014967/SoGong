@@ -182,6 +182,29 @@ router.get("/wishlist/:id", auth, (req, res) => {
     })
 });
 
+router.post("/adddelivery", auth, (req, res) => {
+
+    User.findOne({ _id: req.body._id },
+
+                User.findOneAndUpdate(
+                    { _id: req.user._id },
+                    {
+                        $push: {
+                            delivery: {
+                                name: req.body.name,
+                                address: req.body.address,
+                                phonenumber: req.body.phonenumber
+                            }
+                        }
+                    },
+                    { new: true },
+                    (err, userInfo) => {
+                        if (err) return res.status(400).json({ success: false, err })
+                        res.status(200).send(userInfo.delivery)
+                    }
+                )
+        )
+});
 
 // [USER API]
 
