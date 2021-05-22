@@ -58,6 +58,7 @@ router.post("/login", (req, res) => {
     });
 });
 
+
 router.get("/logout", auth, (req, res) => {
     User.findOneAndUpdate({ _id: req.user._id }, { token: "", tokenExp: "" }, (err, doc) => {
         if (err) return res.json({ success: false, err });
@@ -222,7 +223,6 @@ page: 페이지 limit(n) n= 한페이지에 표시할 개수
 router.get('/products', function(req, res){
     Product.find({}).then(function(product){
         res.send(product);
-        console.log(res);
     });
 });
 
@@ -334,7 +334,6 @@ router.post('/products/sorted/:category', function(req, res){
 /*
  JSON FORMAT of request to '/products/sorted/:category'
 
- 
 {
     "search": "string",
     "min": "0",
