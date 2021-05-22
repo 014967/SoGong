@@ -1,0 +1,64 @@
+{
+  "name": "sogonproject",
+  "version": "0.1.0",
+  "private": true,
+  "proxy": "http://localhost:8080",
+  "dependencies": {
+    "@material-ui/core": "^4.11.3",
+    "@material-ui/icons": "^4.11.2",
+    "@testing-library/jest-dom": "^5.11.9",
+    "@testing-library/react": "^11.2.5",
+    "@testing-library/user-event": "^12.8.3",
+    "axios": "^0.21.1",
+    "components": "^0.1.0",
+    "cross-env": "^7.0.3",
+    "date-fns": "^2.20.1",
+    "js-cookie": "^2.2.1",
+    "jsonwebtoken": "^8.5.1",
+    "react": "^17.0.2",
+    "react-datepicker": "^3.8.0",
+    "react-dom": "^17.0.2",
+    "react-dropdown-now": "^5.0.0",
+    "react-icons": "^4.2.0",
+    "react-multi-select-component": "^4.0.1",
+    "react-router-dom": "^5.2.0",
+    "react-scripts": "4.0.3",
+    "react-slick": "^0.28.1",
+    "semantic-ui-css": "^2.4.1",
+    "semantic-ui-react": "^2.0.3",
+    "slick-carousel": "^1.8.1",
+    "styled": "^1.0.0",
+    "styled-components": "^5.2.3",
+    "web-vitals": "^1.1.1",
+    "webpack": "^4.44.2",
+    "webpack-dev-server": "^3.11.1"
+  },
+  "scripts": {
+    "start": "cross-env NODE_PATH=src react-scripts start",
+    "build": "cross-env NODE_PATH=src react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "file-loader": "^6.2.0",
+    "image-webpack-loader": "^7.0.1"
+  }
+}
