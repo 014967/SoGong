@@ -34,14 +34,16 @@ const Available = styled.div`
   text-align: center;
 `
 
-const Date = styled.div`
+const DateRange = styled.div`
   width: 185px;
   text-align: center;
 `
 
 const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').replace('-', '.').slice(2)
+const regDate2 = date => date.split('.')[0].replace('T', '').replace('-', '').replace('-', '').replace(':', '').replace(':', '')
+const regDate3 = date => `${date.getFullYear()}${date.getMonth() < 9 ? 0 : ''}${date.getMonth() + 1}${date.getDate() < 9 ? 0 : ''}${date.getDate()}000000`
 
-const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFlag, setModifiedFlag }) => {
+const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFlag, setModifiedFlag, startDate, endDate }) => {
 
   const [isLoading, setIsLoading] = useState(true)
 
@@ -50,6 +52,7 @@ const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFl
     setEventList(events)
     setIsLoading(false)
     setChecked([...Array(events.length).fill(false)])
+    return await new Promise(r => r(events))
   }
 
   const handleChecked = index => () => {
@@ -57,6 +60,24 @@ const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFl
       i === index ? !v : v
     )])
   }
+
+  const changeDateRange = async () => {
+    if (startDate && endDate) {
+      setIsLoading(true)
+      await getEvents()
+      const newEndDate = new Date(endDate.getTime())
+      newEndDate.setDate(newEndDate.getDate() + 1)
+      setEventList(prev => [...prev.filter(evt => {
+        console.log(regDate2(evt.date))
+        console.log(regDate2(evt.due))
+        console.log(regDate3(startDate))
+        console.log(regDate3(newEndDate))
+        return (
+          regDate2(evt.date) > regDate3(startDate) &&
+          regDate2(evt.due) < regDate3(newEndDate)
+        )
+      })])
+    }}
 
   useEffect(() => {
     getEvents()
@@ -76,8 +97,13 @@ const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFl
       setIsLoading(true)
       getEvents()
       setModifiedFlag(false)
+      console.log('call')
     }
 	}, [modifiedFlag])
+
+  useEffect(() => {
+    changeDateRange()
+  }, [startDate, endDate])
 
     return (
       <Container>
@@ -86,7 +112,7 @@ const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFl
               <CheckBox checked={checked[index]} onClick={handleChecked(index)}/>
               <Title>{data.title}</Title>
               <Available>{data.available ? '활성화' : '비활성화'}</Available>
-              <Date>{regDate(data.date)}<br />~<br />{regDate(data.due)}</Date>
+              <DateRange>{regDate(data.date)}<br />~<br />{regDate(data.due)}</DateRange>
               <Button background="primary">수정</Button>
             </Row>
           )
