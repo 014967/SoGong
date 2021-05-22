@@ -167,19 +167,17 @@ router.get('/removeFromwishlist', auth, (req, res) => {
                 return item.id
             })
 
-            //product collection에서  현재 남아있는 상품들의 정보를 가져오기 
-
-            //productIds = ['5e8961794be6d81ce2b94752', '5e8960d721e2ca1cb3e30de4'] 이런식으로 바꿔주기
             Product.find({ _id: { $in: array } })
-                .exec((err, productInfo) => {
+                .exec((err, userInfo) => {
                     return res.status(200).json({
-                        productInfo,
-                        wishlist
+                        userInfo,
+                        delivery
                     })
                 })
         }
     )
 })
+// get으로  http://localhost:8080/api/removeFromwishlist?id=${productId}하면 해당 productId가 있는 장바구니 항목 삭제
 
 router.get("/wishlist/:id", auth, (req, res) => {
     User.findById({_id:req.params.id}).select('wishlist').then(function(users){
@@ -216,41 +214,41 @@ router.post("/adddelivery", auth, (req, res) => {
 {
 "_id":"60a8bcb15faf4952ec13fe45",
 "name":"홍길동",
-"address":"서울특별시 ~구 ~동 ~로 100"
-"detailaddress":"~동 ~호"
-"zonecode":"12345"
+"address":"서울특별시 ~구 ~동 ~로 100",
+"detailaddress":"~동 ~호",
+"zonecode":"12345",
+"phonenumber":"010-8282-8282"
 }
 */
 
 router.get('/removeFromdelivery', auth, (req, res) => {
 
-    //먼저 wishlist안에 내가 지우려고 한 상품을 지워주기 
+    //먼저 delivery안에 내가 지우려고 한 배송지을 지워주기 
     User.findOneAndUpdate(
         { _id: req.user._id },
         {
             "$pull":
-                { "delivery": { "id": req.query.id } }
+                { "delivery": { "address": req.query.address } }
         },
         { new: true },
         (err, userInfo) => {
             let delivery = userInfo.delivery;
-            let array = wishlist.map(item => {
+            let array = delivery.map(item => {
                 return item.address
             })
 
-            //product collection에서  현재 남아있는 상품들의 정보를 가져오기 
-
-            //productIds = ['5e8961794be6d81ce2b94752', '5e8960d721e2ca1cb3e30de4'] 이런식으로 바꿔주기
             Product.find({ _id: { $in: array } })
-                .exec((err, productInfo) => {
+                .exec((err, userInfo) => {
                     return res.status(200).json({
-                        productInfo,
-                        wishlist
+                        userInfo,
+                        delivery
                     })
                 })
         }
     )
 })
+// get으로  http://localhost:8080/api/removeFromdelivery?address=${address}하면 해당 address가 있는 주소 항목 삭제
+// ${address} = 서울특별시 ~구 ~동 ~로 100 같은거
 
 // [USER API]
 
