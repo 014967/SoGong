@@ -249,8 +249,8 @@ router.get('/removeFromdelivery', auth, (req, res) => {
         }
     )
 })
-// get으로  http://localhost:8080/api/removeFromdelivery?deliveryname=${deliveryname}하면 해당 address가 있는 주소 항목 삭제
-// ${address} = 우리집1
+// get으로  http://localhost:8080/api/removeFromdelivery?deliveryname=${deliveryname}하면 해당 deliveryname이 있는 주소 항목 삭제
+// ${deliveryname} = 우리집1
 
 // [USER API]
 
