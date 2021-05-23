@@ -79,14 +79,13 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   {
     
     const {data : products} = await axios.get("/api/products/")
-    
-      setEnterProduct(
-        {
-          data: products
-        }
-      )
-      setIsLoading(false)
-      setChecked([...Array(products.length).fill(false)])
+    setEnterProduct(
+      {
+        data: products
+      }
+    )
+    setChecked([...Array(products.length).fill(false)])
+    setIsLoading(false)
      
    
     
@@ -107,11 +106,19 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
     console.log(productList)
     if (productList.data !==Array(0))
     {
+      
       if(productList.data.some(product => product.imgPath === 'no image'))
       {
-        console.log('no image occured')
-        setFlag(true)
-  
+        try{
+          console.log('no image occured')
+          setFlag(true)
+    
+        }
+        catch(err)
+        {
+          console.log(err)
+        }
+        
       }
     }
   
@@ -144,10 +151,11 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
           {
             
             console.log("이미지 파일들 : " + data.img),
-            data.img !== "no image"  ? 
+            flag ? 
             
-             <StyleImg src={require('../assets/images/products/'+data.img).default }/> 
-              : "이미지준비중" 
+              
+               "이미지준비중" :
+               <StyleImg src={require(`../assets/images/products/${data.img}`).default }/> 
             
            
           }

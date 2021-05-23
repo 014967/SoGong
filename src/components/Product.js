@@ -92,7 +92,7 @@ const Product = ({selected}) => {
           paths.push(enterProduct.data[i].imgPath)
         }
       })
-      const res = await axios.post('/api/products/delete', { productIds: ids})
+      /*const res = await axios.post('/api/products/delete', { productIds: ids})
       .catch((err)=> console.log('error'))
       const resImg = await axios.post('/productImgDel', { imgPaths : paths })
       .catch((err) => console.log('error'))
@@ -103,16 +103,30 @@ const Product = ({selected}) => {
         }
 
       ),
-      history.replace(
-        {
-            pathname : `/manager`,
-            state : {selected : location.state.selected},
-        }
-    ),)
+      console.log(location.state),
+    
+     typeof location.state.selected == 'undefined' ? 
+       
+    history.replace(
+      {
+        pathname: `/manager`,
+      }
+    ) :
+    history.replace(
+        
+      {
+        
+          pathname : `/manager`,
+          state : {selected : location.state.selected},
+      }
+  ) 
+    ,)
       .then(setMoodifiedFlag(true))
-    }
+    }*/
+
+   alert("삭제되었습니다");
   }
-  
+}
   
   const handleOrder = () => 
   {
@@ -133,7 +147,7 @@ const Product = ({selected}) => {
     
     
   }
-  /*
+  
   useEffect(()=>{
   if(enterProduct.data !== Array(0))
   {
@@ -154,7 +168,7 @@ const Product = ({selected}) => {
   }
    
   } , [order])
-*/
+
   
  
  
