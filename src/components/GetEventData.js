@@ -97,7 +97,6 @@ const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFl
       setIsLoading(true)
       getEvents()
       setModifiedFlag(false)
-      console.log('call')
     }
 	}, [modifiedFlag])
 

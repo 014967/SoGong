@@ -241,20 +241,12 @@ router.delete('/users/:id', function(req, res){
 router.get('/events', function(req, res){
     Event.find({}).sort({date: -1}).then(function(events){
             let date = new Date();
-            let year = date.getFullYear();
-            let month = date.getMonth();
-            let today = date.getDate();
-            let hours = date.getHours();
-            let minutes = date.getMinutes();
-            let seconds = date.getSeconds();
-            let milliseconds = date.getMilliseconds();
-            let currentTime = new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds))
             const regDate = date => date.split('.')[0].replace('T', '').replace('-', '').replace('-', '').replace(':', '').replace(':', '')
-            const regDate2 = date => `${date.getFullYear()}${date.getMonth() < 9 && 0}${date.getMonth() + 1}${date.getDate()}${date.getHours()}${date.getMinutes()}${date.getSeconds()}`
-            
+            const regDate2 = date => `${date.getFullYear()}${date.getMonth() < 9 ? 0 : ''}${date.getMonth() + 1}${date.getDate() < 9 ? 0 : ''}${date.getDate()}${date.getHours() < 9 ? 0 : ''}${date.getHours()}${date.getMinutes() < 9 ? 0 : ''}${date.getMinutes()}${date.getSeconds() < 9 ? 0 : ''}${date.getSeconds()}`
 
             events.forEach((event) => {
-                if (regDate2(currentTime) > regDate(event.due)){
+                console.log(regDate2(date), regDate(event.due))
+                if (regDate2(date) > regDate(event.due)){
                     Event.findByIdAndUpdate({_id: event._id}, {available : false} ).then(function(events){
                         Event.find({}).sort({date: -1}).then(function(events){
                             res.send(events);

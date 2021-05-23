@@ -144,6 +144,14 @@ const EnterEventNotice = ({ setEnter }) => {
         setImgFileName(e.target.files[0].name)
     }
 
+    const _setEndDate = (date) => {
+        const _endDate = new Date(date)
+        _endDate.setHours(23)
+        _endDate.setMinutes(59)
+        _endDate.setSeconds(59)
+        setEndDate(_endDate)
+        return _endDate
+    }
 
     const handleSubmit = async (e) => {
         e.preventDefault()
@@ -151,10 +159,13 @@ const EnterEventNotice = ({ setEnter }) => {
             alert('필수 입력 사항을 입력하지 않으셨습니다.')
             return
         }
+        _setEndDate(endDate)
+
         const formData = new FormData()
         formData.append('img', imgFile)
         const stringStartDate = format(startDate.setHours(startDate.getHours() + 9), "yyyy-MM-dd'T'HH:mm:ss")
-        const stringEndDate = format(endDate, "yyyy-MM-dd'T'HH:mm:ss")
+        const stringEndDate = format(_setEndDate(endDate), "yyyy-MM-dd'T'HH:mm:ss")
+        console.log(endDate)
         const response = await axios.post("api/events", {
             title: title,
             available: true,
@@ -195,20 +206,8 @@ const EnterEventNotice = ({ setEnter }) => {
                     <Title>진행 기간*</Title>
                     <StyledDatePicker selected={startDate} onChange={date => setStartDate(date)} />
                     <DateText>부터</DateText>
-                    <StyledDatePicker selected={endDate} onChange={date => setEndDate(date)} />
+                    <StyledDatePicker selected={endDate} onChange={date => _setEndDate(date)} />
                     <DateText>까지</DateText>
-                </InputContainer>
-                <InputContainer>
-                    <Title>표시 순서</Title>
-                    <Dropdown
-                        disabled
-                        placeholder="Select an option"
-                        className="my-className"
-                        options={['1', '2', '3', '4', '5', '6', '7', '8', '9', '10']}
-                        value="1"
-                        onChange={(value) => setPriority(value)}
-                        onSelect={(value) => setPriority(value)}
-                    />
                 </InputContainer>
             </Container>
         </>
