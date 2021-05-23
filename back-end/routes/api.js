@@ -194,6 +194,7 @@ router.post("/adddelivery", auth, (req, res) => {
                     {
                         $push: {
                             delivery: {
+                                deliveryname: req.body.deliveryname,
                                 name: req.body.name,
                                 address: req.body.address,
                                 detailaddress: req.body.detailaddress,
@@ -213,6 +214,7 @@ router.post("/adddelivery", auth, (req, res) => {
 /*
 {
 "_id":"60a8bcb15faf4952ec13fe45",
+"deliveryname":"우리집1"
 "name":"홍길동",
 "address":"서울특별시 ~구 ~동 ~로 100",
 "detailaddress":"~동 ~호",
@@ -228,13 +230,13 @@ router.get('/removeFromdelivery', auth, (req, res) => {
         { _id: req.user._id },
         {
             "$pull":
-                { "delivery": { "address": req.query.address } }
+                { "delivery": { "deliveryname": req.query.deliveryname } }
         },
         { new: true },
         (err, userInfo) => {
             let delivery = userInfo.delivery;
             let array = delivery.map(item => {
-                return item.address
+                return item.deliveryname
             })
 
             Product.find({ _id: { $in: array } })
@@ -247,8 +249,8 @@ router.get('/removeFromdelivery', auth, (req, res) => {
         }
     )
 })
-// get으로  http://localhost:8080/api/removeFromdelivery?address=${address}하면 해당 address가 있는 주소 항목 삭제
-// ${address} = 서울특별시 ~구 ~동 ~로 100 같은거
+// get으로  http://localhost:8080/api/removeFromdelivery?deliveryname=${deliveryname}하면 해당 address가 있는 주소 항목 삭제
+// ${address} = 우리집1
 
 // [USER API]
 
