@@ -82,34 +82,56 @@ const Product = ({selected}) => {
   {
     if(window.confirm('삭제하시곘습니까?'))
     {
-      const ids = []
-      const paths = []
-      checked.forEach((isChecked, i ) =>
-      {
-        if(isChecked)
-        {
-          ids.push(enterProduct.data[i]._id)
-          paths.push(enterProduct.data[i].imgPath)
-        }
-      })
-      const res = await axios.post('/api/products/delete', { productIds: ids})
-      .catch((err)=> console.log('error'))
-      const resImg = await axios.post('/productImgDel', { imgPaths : paths })
-      .catch((err) => console.log('error'))
-      .then(setEnterProduct(
-        {
-          data : [],
+    //  const ids = []
+    //  const paths = []
+     // checked.forEach((isChecked, i ) =>
+      //{
+       // if(isChecked)
+        //{
+         // ids.push(enterProduct.data[i]._id)
+         // paths.push(enterProduct.data[i].imgPath)
+       // }
+      //})
+     // const res = await axios.post('/api/products/delete', { productIds: ids})
+      //.catch((err)=> console.log('error'))
+      //const resImg = await axios.post('/productImgDel', { imgPaths : paths })
+      //.catch((err) => console.log('error'))
+      //.then(setEnterProduct(
+       // {
+        //  data : [],
           
-        }
+        //}
 
-      ),
-      history.replace(
+      //),
+      // console.log("location :" + location)
+      // console.log("location state :" + location.state)
+      //console.log("location state selected :" +location.state.selected)
+      ( location.state  == undefined ) ?
+      
+      
+        history.replace(
+          {
+            pathname : `/manager`,
+          }
+        )
+      
+      :
+      
+        history.replace(
         {
             pathname : `/manager`,
             state : {selected : location.state.selected},
         }
-    ),)
-      .then(setMoodifiedFlag(true))
+      )
+      
+    
+    
+  
+    alert("삭제되었습니다")
+    
+    setMoodifiedFlag(true)
+    
+    
     }
   }
   
@@ -200,7 +222,7 @@ const Product = ({selected}) => {
                   <TableHeaderContent width="704px">상품명</TableHeaderContent>
                   <TableHeaderContent width="140px">가격</TableHeaderContent>
                 </TableHeader>
-                {<GetProductData productList={enterProduct}  setEnterProduct= {setEnterProduct} setAlter = {setAlter}
+                {<GetProductData productList={enterProduct}  setEnterProduct= {setEnterProduct} setAlter = {setAlter} order = {order} setOrder = {setOrder}
                  checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setMoodifiedFlag={setMoodifiedFlag}
                  selected={selected} /> }
               </>

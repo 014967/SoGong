@@ -453,17 +453,18 @@ Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
 router.post('/products/unsorted', function(req, res){
     
     
-    if(req.body.page == 1) Product.find({category: req.body.category}).sort({date: -1})
+    if(req.body.page == 1) Product.find({}).sort({date: -1})
     .limit(10)
    .then(function(product){
-        res.send(product);
+        res.send(product)
     });
 
-    if(req.body.page!=1) Product.find({category: req.body.category}).sort({date: -1})
+    if(req.body.page!=1) Product.find({}).sort({date: -1})
     .skip( (req.body.page-1) * 10 - 1 )
     .limit(10)
    .then(function(product){
-        res.send(product);
+        res.send(product)
+
     });
 });
 
