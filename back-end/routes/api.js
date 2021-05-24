@@ -357,15 +357,15 @@ router.get('/users', function(req, res){
 
 router.get('/users/:id', function(req, res){
     User.find({id:req.params.id}).then(function(users){
-        if(users.length == 0){res.send("success");}
-        else res.send("error:overlap")
+        if(users.length == 0){res.send(false);}
+        else res.send(true)
     });
 });
 
 router.get('/usersEmail/:email', function(req, res){
     User.find({email:req.params.email}).then(function(users){
-        if(users.length == 0){res.send("success");}
-        else res.send("error:overlap")
+        if(users.length == 0){res.send(false);}
+        else res.send(true)
     });
 });
 

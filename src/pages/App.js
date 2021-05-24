@@ -21,16 +21,19 @@ export const LoginContext = createContext({
     PW: '',
     setPW: () => {},
     success: false,
-    setSuccess: () => {}
+    setSuccess: () => {},
+    signUpFlag: false,
+    setSignUpFlag: () => {}
 })
 
 const App = () => {
     const [ID, setID] = useState('')
     const [PW, setPW] = useState('')
     const [success, setSuccess] = useState(false)
+    const [signUpFlag, setSignUpFlag] = useState(false)
     const value = useMemo(() => ({ 
-        ID, setID, PW, setPW, success, setSuccess 
-    }), [ID, setID, PW, setPW, success, setSuccess])
+        ID, setID, PW, setPW, success, setSuccess, signUpFlag, setSignUpFlag
+    }), [ID, setID, PW, setPW, success, setSuccess, signUpFlag, setSignUpFlag])
 
     return (
         <LoginContext.Provider value={value}>

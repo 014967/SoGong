@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
+import { useHistory } from 'react-router'
+import axios from 'axios'
 import Title from './elements/Title'
 import Button from './elements/Button'
 import ContentsWrapper from './elements/ContentsWrapper'
 import styled from 'styled-components'
+import { LoginContext } from '../pages/App'
 
 const Input = styled.input`
   position: relative;
@@ -18,7 +21,7 @@ const Input = styled.input`
   }
 `;
 
-const Form = styled.form`
+const Form = styled.div`
     & > * {
         margin-top: 32px;
     }
@@ -30,8 +33,8 @@ const Form = styled.form`
 const SignUpInput = () => {
 
     const [id,setId] = useState('');
-    const [checkId, setCheckId] = useState('사용 가능한 ID입니다.') //id 중복확인
-    const [checkEmail, setCheckEmail] = useState('사용 가능한 E-MAIL입니다.') //email 중복확인
+    const [checkId, setCheckId] = useState('') //id 중복확인
+    const [checkEmail, setCheckEmail] = useState('') //email 중복확인
     const [password,setPassword] = useState('');
     const [passwordCheck,setPasswordCheck] = useState('');
     const [passwordError,setPasswordError] = useState(false); //pw 확인과 같은지
@@ -39,11 +42,21 @@ const SignUpInput = () => {
     const [email,setEmail] = useState('');
     const [emailViolate, setEmailViolate] = useState('') //email reg
     const [checkSignUp, setCheckSignUp] = useState(false) //회원가입 가능한지
+    const [name, setName] = useState('')
 
-    const onSubmit = (e) => {
+    const { setSignUpFlag } = useContext(LoginContext)
+    const history = useHistory()
+
+    const onSubmit = async (e) => {
         e.preventDefault()
         if (checkSignUp) {
             //회원가입
+            const res = await axios.post('/api/users', { id, password, name, email })
+            .catch(err => console.log(err))
+            alert('회원가입이 완료되었습니다.')
+            const { data: response } = await axios.post('/api/login', { id, password })
+            setSignUpFlag(true)
+            history.push('/')
         }
     };
 
@@ -56,6 +69,7 @@ const SignUpInput = () => {
             id.length === 0 ||
             password.length === 0 ||
             passwordCheck.length === 0 ||
+            name.length === 0 ||
             email.length === 0 ||
             checkId !== '사용 가능한 ID입니다.' ||
             checkEmail !== '사용 가능한 E-MAIL입니다.' ||
@@ -72,10 +86,12 @@ const SignUpInput = () => {
     // Coustom Hook 이전
     const onChangeId = (e) => {
         setId(e.target.value)
+        setCheckId('')
     };
     const onChangeEmail = (e) => {
         setEmail(e.target.value)
         checkEmailViolate(e.target.value)
+        setCheckEmail('')
     };
     const onChangePassword = (e) => {
         setPassword(e.target.value)
@@ -84,6 +100,9 @@ const SignUpInput = () => {
     const onChangePasswordChk = (e) => {
         setPasswordCheck(e.target.value)
     };
+    const onChangeName = (e) => {
+        setName(e.target.value)
+    }
 
     const checkViolate = pw => {
         const reg = /^(?=.*?[\w])(?=.*?[\d])(?=.*?[`~!@#$%^&*()_|+\-=?;:'",.<>\{\}\[\]\\\/]).{8,20}$/
@@ -107,12 +126,30 @@ const SignUpInput = () => {
         }
     }
 
-    const handleCheckId = () => {
-
+    const handleCheckId = async () => {
+        if (id.length === 0) {
+            setCheckId('')
+        } else {
+            const { data: overlap } = await axios(`/api/users/${id}`) //true면 중복
+            if (overlap) {
+                setCheckId('이미 사용 중인 ID입니다.')
+            } else {
+                setCheckId('사용 가능한 ID입니다.')
+            }
+        }
     }
 
-    const handleCheckEmail = () => {
-
+    const handleCheckEmail = async () => {
+        if (email.length === 0 || emailViolate === '이메일 규칙에 맞지 않습니다.') {
+            setCheckEmail('')
+        } else {
+            const { data: overlap } = await axios(`/api/usersEmail/${email}`) //true면 중복
+            if (overlap) {
+                setCheckEmail('이미 사용 중인 E-MAIL입니다.')
+            } else {
+                setCheckEmail('사용 가능한 E-MAIL입니다.')
+            }
+        }
     }
     
     return (
@@ -120,7 +157,7 @@ const SignUpInput = () => {
             <Title>
             SIGN UP
             </Title>
-            <Form onSubmit={onSubmit}>
+            <Form>
                 <div>
                     <label htmlFor="user-id">ID*</label><br/>
                     <Input name="user-id" value={id} placeholder="ID" required onChange={onChangeId} />
@@ -138,6 +175,10 @@ const SignUpInput = () => {
                     {passwordError ? <div style={{color : 'red'}}>비밀번호가 일치하지 않습니다.</div> : <div>&nbsp;</div>}
                 </div>
                 <div>
+                    <label htmlFor="user-name">이름*</label><br/>
+                    <Input name="user-name" value={name} placeholder="이름" required onChange={onChangeName} /><br /><br />
+                </div>
+                <div>
                     <label htmlFor="user-email">E-MAIL*</label><br/>
                     <Input name="user-email" value={email} placeholder="EMAIL@GMAIL.COM" required onChange={onChangeEmail} />
                     <Button onClick={handleCheckEmail} style={{marginLeft: '16px'}}>중복 확인</Button>
@@ -146,7 +187,7 @@ const SignUpInput = () => {
                 </div>
                 <br />
                 <div>
-                    <Button type="primary" htmlType="submit" background={checkSignUp ? 'primary' : 'disabled'}>가입하기</Button>
+                    <Button type="primary" htmlType="submit" background={checkSignUp ? 'primary' : 'disabled'} onClick={onSubmit}>가입하기</Button>
                 </div>
             </Form>
         </ContentsWrapper>

@@ -48,7 +48,7 @@ const Input = styled.input`
 
 const Login = ({ location, history }) => {
 
-  const { ID, setID, PW, setPW, success, setSuccess } = useContext(LoginContext)
+  const { ID, setID, PW, setPW, success, setSuccess, signUpFlag, setSignUpFlag } = useContext(LoginContext)
 
   const handleLogin = async (e) => {
     e.preventDefault()
@@ -101,6 +101,14 @@ const Login = ({ location, history }) => {
       auth()
     }
   }, [])
+
+  useEffect(() => {
+    const session = Cookies.get('w_auth')
+    if (session) {
+      auth()
+    }
+    setSignUpFlag(false)
+  }, [signUpFlag])
 
   return (
     <Container>
