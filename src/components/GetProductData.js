@@ -5,12 +5,27 @@ import styled from 'styled-components';
 import axios from 'axios';
 import CheckBox from './elements/CheckBox';
 import Button from './elements/Button';
-import { AirlineSeatFlatAngled } from '@material-ui/icons';
+
 
 const Container = styled.div`
   display: flex;
+  flex-direction: column;
+  width: 100%;
   margin-bottom: 64px;
 `
+const PageContainer = styled.div`
+  display : flex;
+  align-items : center;
+  justify-content: center;
+  margin-top : 100px;
+
+
+`
+const PageButton = styled.button`
+margin-right : 10px;
+`
+
+
 const Row = styled.div`
   display: flex;
   align-items: center;
@@ -62,7 +77,8 @@ font: normal normal 300 20px/29px Spoqa Han Sans Neo;
 const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').replace('-', '.').slice(2)
 
 
-const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected }) =>
+const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order,
+   setOrder, minPrice, maxPrice, priceFlag , sorted , setSorted}) =>
 {
   
 
@@ -70,21 +86,85 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   const [isLoading , setIsLoading] = useState(true);
 
   const [flag ,setFlag] = useState(false);
-  const NoImage = "No Image.jpeg";
+  
+  const [productCount , setProductCount] = useState();
+
+  const [page ,setPage] = useState();
+  
+  const [productOrder, setProductOrder] = useState("acs");
 
 
+  const pageCount = () =>
+  {
+      const result = [];
+      for(let i =0; i<= productCount/10 ; i++)
+      {
+        result.push(
+          <PageButton key={i+1} onClick={()=>
+          {
+            setPage(i+1)
+           
+          }
+          }>{i+1}</PageButton>
+        )
+      }
+      return result;
+
+  }
   const getProductList = async () => 
   {
-    
-    const {data : products} = await axios.get("/api/products/")
-    
+   
+
+   const {data : productLength} = await axios.get("/api/products/")
+   setProductCount(productLength.length)
+  
+
+   
+    console.log(sorted)
+   if(sorted)
+   {
+    console.log("내림차순")
+    console.log(productOrder)
+  
+    const {data : sortedProducts} = await axios.post("/api/products/sorted",
+    {
+        search : "",
+        order : productOrder,
+        page : page,
+        min : minPrice,
+        max : maxPrice,
+        
+    })
+    setEnterProduct(
+      {
+          data: sortedProducts
+      }
+    )
+    console.log(sortedProducts)
+
+      
+      setChecked([...Array(sortedProducts.length).fill(false)])
+      setIsLoading(false)
+   }
+   else
+   {
+     console.log("오름차순default")
+      const {data : products} = await axios.post("/api/products/unsorted",
+      {
+          page : page,
+       
+      })
       setEnterProduct(
         {
           data: products
         }
-      )
-      setIsLoading(false)
-      setChecked([...Array(products.length).fill(false)])
+     )
+     console.log(products)
+    
+        setChecked([...Array(products.length).fill(false)])
+        setIsLoading(false)
+  }
+   
      
    
     
@@ -97,19 +177,82 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   
   useEffect(()=>
   {
+    if(priceFlag)
+    {
+      setSorted(true)
+    }
+    else
+    {
+      setSorted(false)
+    }
+
+  },[priceFlag])
+
+  useEffect(()=>
+  {
+    console.log(page)
     getProductList()
-  },[])
+  },[page])
   
+
+  
+useEffect (()=>
+{ 
+  if(order)
+  {
+    setSorted(true)
+    setProductOrder("-1")
+    console.log("내림차순"
+    )
+    
+  }
+  else
+  {
+    setSorted(false)
+    setProductOrder("asc")
+    console.log("default")
+
+  }
+  
+}, [order])
+
+useEffect ( () =>
+{
+
+} , [])
+
+useEffect(()=>
+{
+  console.log(sorted)
+  getProductList()
+
+} , [sorted])
+
+
+
+/*useEffect(()=>
+{
+    setSorted(true)
+}, [order, priceFlag, page])
+  
+  */
   useEffect(() =>
   {
-    console.log(productList)
     if (productList.data !==Array(0))
     {
+      
       if(productList.data.some(product => product.imgPath === 'no image'))
       {
-        console.log('no image occured')
-        setFlag(true)
-  
+        try{
+          console.log('no image occured')
+          setFlag(true)
+    
+        }
+        catch(err)
+        {
+          console.log(err)
+        }
+        
       }
     }
   
@@ -125,6 +268,10 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   },[flag])
 
 
+  useEffect(()=>
+  {
+    console.log(productList.data)
+  },[productList.data])
 
 
     return (
@@ -135,17 +282,24 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
          isLoading ? 'Loading...' :  productList.data.map((data,index) =>
         (
           
-          <Row key={index}>
+          <Row key={data._id}>
             
-          <CheckBox checked={checked[index]} onClick={handleChecked(index)} />   
+          <CheckBox checked={checked[index]} onChange={handleChecked(index)} />   
           <div>
           {
             
-            console.log("이미지 파일들 : " + data.img),
-            data.img !== "no image"  ? 
+          
             
-             <StyleImg src={require('../assets/images/products/'+data.img).default }/> 
-              : "이미지준비중" 
+            flag ? 
+              "이미지준비중" :
+              <StyleImg src={require('../assets/images/products/' + data.img).default}
+              onError={(e)=>
+                {
+                  console.log(e);
+                }}/> 
+            
+         
+            
             
            
           }
@@ -154,7 +308,7 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
           <Price>{data.price}</Price>
           <Button background="secondary" onClick= { () => {history.push(
             {
-              pathname : `/manager/Enter/${data._id}`,
+              pathname : `/product/${data._id}`,
               state : {data : data}
             })}} >확인</Button>
           <Button background="primary" onClick={ () =>
@@ -173,7 +327,16 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
         )
         
       }
-    
+    { 
+      
+          <PageContainer>
+          {
+            pageCount()
+          }
+          </PageContainer>
+        
+   
+    }
     </Container>
     )
 }

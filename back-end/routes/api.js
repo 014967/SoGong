@@ -143,12 +143,20 @@ router.post("/addTowishlist", auth, (req, res) => {
             }
         })
 });
+/*
 
+장바구니 추가
 
+{
+"_id":"60a8bcb15faf4952ec13fe45",
+"productId":"60a8bcb15faf4952ec13fe45",
+"quantity": 5
+} //예시
+
+*/
 
 router.get('/removeFromwishlist', auth, (req, res) => {
 
-    //먼저 cart안에 내가 지우려고 한 상품을 지워주기 
     User.findOneAndUpdate(
         { _id: req.user._id },
         {
@@ -162,25 +170,36 @@ router.get('/removeFromwishlist', auth, (req, res) => {
                 return item.id
             })
 
-            //product collection에서  현재 남아있는 상품들의 정보를 가져오기 
-
-            //productIds = ['5e8961794be6d81ce2b94752', '5e8960d721e2ca1cb3e30de4'] 이런식으로 바꿔주기
             Product.find({ _id: { $in: array } })
-                .exec((err, productInfo) => {
+                .exec((err, userInfo) => {
                     return res.status(200).json({
-                        productInfo,
+                        userInfo,
                         wishlist
                     })
                 })
         }
     )
 })
+/* 
+
+장바구니 삭제
+
+get으로  http://localhost:8080/api/removeFromwishlist?id=${productId}하면 해당 productId가 있는 장바구니 항목 삭제
+
+*/
 
 router.get("/wishlist/:id", auth, (req, res) => {
     User.findById({_id:req.params.id}).select('wishlist').then(function(users){
         res.send(users)  
     })
 });
+/*
+
+장바구니 목록확인
+
+get으로 http://localhost:8080/api/wishlist/productId하면 장바구니의 해당 productId, quantity, date가 조회가능
+
+*/
 
 router.post("/adddelivery", auth, (req, res) => {
 
@@ -191,8 +210,11 @@ router.post("/adddelivery", auth, (req, res) => {
                     {
                         $push: {
                             delivery: {
+                                deliveryname: req.body.deliveryname,
                                 name: req.body.name,
                                 address: req.body.address,
+                                detailaddress: req.body.detailaddress,
+                                zonecode: req.body.zonecode,
                                 phonenumber: req.body.phonenumber
                             }
                         }
@@ -205,6 +227,125 @@ router.post("/adddelivery", auth, (req, res) => {
                 )
         )
 });
+/*
+
+배송지 추가
+
+{
+"_id":"60a8bcb15faf4952ec13fe45",
+"deliveryname":"우리집1",
+"name":"홍길동",
+"address":"서울특별시 ~구 ~동 ~로 100",
+"detailaddress":"~동 ~호",
+"zonecode":"12345",
+"phonenumber":"010-8282-8282"
+} //예시
+
+*/
+
+router.get('/removeFromdelivery', auth, (req, res) => {
+
+    //먼저 delivery안에 내가 지우려고 한 배송지을 지워주기 
+    User.findOneAndUpdate(
+        { _id: req.user._id },
+        {
+            "$pull":
+                { "delivery": { "deliveryname": req.query.deliveryname } }
+        },
+        { new: true },
+        (err, userInfo) => {
+            let delivery = userInfo.delivery;
+            let array = delivery.map(item => {
+                return item.deliveryname
+            })
+
+            Product.find({ _id: { $in: array } })
+                .exec((err, userInfo) => {
+                    return res.status(200).json({
+                        userInfo,
+                        delivery
+                    })
+                })
+        }
+    )
+})
+/* 
+
+배송지 삭제
+
+get으로  http://localhost:8080/api/removeFromdelivery?deliveryname=${deliveryname}하면 해당 deliveryname이 있는 배송지 항목 삭제
+
+${deliveryname} = 우리집1 //예시
+
+*/
+router.patch('/delivery/:deliveryname', auth, (req, res) => {
+
+User.findOne({ _id: req.body._id },
+        (err, userInfo) => {
+
+    User.findOneAndUpdate(
+        { _id: req.user._id, "delivery.deliveryname": req.params.deliveryname },
+        {
+            $set:
+            {
+                "delivery.$.deliveryname": req.body.deliveryname,
+                "delivery.$.name": req.body.name,
+	            "delivery.$.address": req.body.address,
+	            "delivery.$.detailaddress": req.body.detailaddress,
+	            "delivery.$.zonecode": req.body.zonecode,
+	            "delivery.$.phonenumber": req.body.phonenumber
+            }
+            
+	    },
+        { new: true },
+        (err, userInfo) => {
+            let delivery = userInfo.delivery;
+            let array = delivery.map(item => {
+                return item.deliveryname
+            })
+
+            User.find({ deliveryname: { $in: array } })
+                .exec((err, userInfo) => {
+                    return res.status(200).json({
+                        delivery
+                    })
+                })
+        }
+    )})
+})
+
+/*
+
+배송지 수정
+
+patch로  http://localhost:8080/api/delivery/:deliveryname하면 해당 deliveryname이 있는 정보를 바꿀 수 있음
+:deliveryname = 우리집1  //예시
+
+{
+"_id":"60a8bcb15faf4952ec13fe45",
+"deliveryname":"우리집1",
+"name":"홍길동",
+"address":"서울특별시 ~구 ~동 ~로 100",
+"detailaddress":"~동 ~호",
+"zonecode":"12345",
+"phonenumber":"010-8282-8282"
+} //바꾸는 정보(예시)
+
+*/
+
+router.get("/delivery/:id", auth, (req, res) => {
+    User.findById({_id:req.params.id}).select('delivery').then(function(users){
+        res.send(users)  
+    })
+});
+/*
+
+배송지 목록확인
+
+get으로 http://localhost:8080/api/delivery/_id하면 유저의 배송지들을 확인 가능
+
+*/
+
 
 // [USER API]
 
@@ -255,15 +396,15 @@ router.get('/eventsAvailable', function(req, res){
                 console.log(regDate2(date), regDate(event.due))
                 if (regDate2(date) > regDate(event.due)){
                     Event.findByIdAndUpdate({_id: event._id}, {available : false} ).then(function(events){
-                        Event.find({}).sort({date: -1}).then(function(events){
-                            res.send("available events checked");
-                        })
+                        // Event.find({}).sort({date: -1}).then(function(events){
+                        //     res.send("available events checked");
+                        // })
                     })
                 }
-            })
-         })
-        })
-         // 현재시각과 비교해 이벤트를 활성화 / 비활성화함
+            }) // 현재시각과 비교해 이벤트를 활성화 / 비활성화함
+    })
+    .then(() => {res.send("available events checked")})
+})
 
 
 const postEventImage = require(path.join(__dirname, "post-eventImg.js"))
@@ -457,14 +598,15 @@ router.post('/products/unsorted', function(req, res){
     if(req.body.page == 1) Product.find({}).sort({date: -1})
     .limit(10)
    .then(function(product){
-        res.send(product);
+        res.send(product)
     });
 
     if(req.body.page!=1) Product.find({}).sort({date: -1})
     .skip( (req.body.page-1) * 10 )
     .limit(10)
    .then(function(product){
-        res.send(product);
+        res.send(product)
+
     });
 });
 

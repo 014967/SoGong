@@ -12,6 +12,7 @@ import ProductData from '../components/ProductData';
 import EnterProduct from '../components/EnterProduct';
 import Product from '../components/Product';
 import AlterProduct from '../components/AlterProduct';
+import UserPostList from '../components/UserPostList';
 
 export const LoginContext = createContext({
     ID: '',
@@ -42,7 +43,8 @@ const App = () => {
                 
                 <Route exact path= "/manager/Enter" component = {EnterProduct}/>
                 <Route exact path="/manager/Alter" component = {AlterProduct} />
-                <Route exact path ="/manager/Enter/:id" component = {ProductData} />
+                <Route exact path ="/product/:id" component = {ProductData} />
+                <Route exact path ='/user/PostList' component ={UserPostList}/>
                 <Footer />
             </Router>
         </LoginContext.Provider>

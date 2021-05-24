@@ -5,7 +5,7 @@ import HeaderButton from './elements/HeaderButton';
 import GetProductData from './GetProductData';
 import CheckBox from './elements/CheckBox'
 import EnterProduct from './EnterProduct'
-import SearchBar from './elements/SearchBar';
+import SmallSearchBar from './elements/SmallSeacrhBar';
 import { addYears } from 'date-fns';
 import axios from 'axios';
 import { LocalConvenienceStoreOutlined } from '@material-ui/icons';
@@ -16,6 +16,20 @@ const Container = styled.div`
   flex-direction: column;
   width: 100%;
 `
+
+const Input = styled.input`
+    border: 1px solid ${({ theme }) => theme.color.primary};
+    &:focus {
+        outline: none;
+    }
+    font-size: 20px;
+    font-family: ${({ theme }) => theme.font.light};
+    height: 48px;
+    width: 150px;
+    max-width: 150px;
+
+`
+
 
 const Header = styled.div`
   display: flex;
@@ -53,6 +67,8 @@ const regDate = date => date.split('.')[0].replace('T','').replace('-','').repla
 
 const Product = ({selected}) => {
 
+  const selectedProduct = selected;
+  console.log(selectedProduct);
   const history = useHistory();
   const location = useLocation();
   const [enterProduct, setEnterProduct] = useState(
@@ -64,12 +80,17 @@ const Product = ({selected}) => {
 
   const [productList, setProductList] = useState([]);
   const [alter , setAlter] = useState(false);
-  const [order, setOrder] = useState(false)
+  const [order, setOrder] = useState(false);
+  const [filter , setFilter] = useState(false);
   const [checked, setChecked] = useState([false]);
   const [checkedAll ,setCheckedAll] = useState(false);
   const [modifiedFlag, setMoodifiedFlag] = useState(false);
   const [buttonColor, setButtonColor] = useState('disabled');
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice , setMaxPrice] = useState(100000000);
+  const [priceFlag , setPriceFlag] = useState(false);
 
+  const [sorted , setSorted] = useState(false);
 
   const handleCheckedAll = () =>
   {
@@ -82,34 +103,56 @@ const Product = ({selected}) => {
   {
     if(window.confirm('삭제하시곘습니까?'))
     {
-      const ids = []
-      const paths = []
-      checked.forEach((isChecked, i ) =>
-      {
-        if(isChecked)
-        {
-          ids.push(enterProduct.data[i]._id)
-          paths.push(enterProduct.data[i].imgPath)
-        }
-      })
-      const res = await axios.post('/api/products/delete', { productIds: ids})
-      .catch((err)=> console.log('error'))
-      const resImg = await axios.post('/productImgDel', { imgPaths : paths })
-      .catch((err) => console.log('error'))
-      .then(setEnterProduct(
-        {
-          data : [],
+    //  const ids = []
+    //  const paths = []
+     // checked.forEach((isChecked, i ) =>
+      //{
+       // if(isChecked)
+        //{
+         // ids.push(enterProduct.data[i]._id)
+         // paths.push(enterProduct.data[i].imgPath)
+       // }
+      //})
+     // const res = await axios.post('/api/products/delete', { productIds: ids})
+      //.catch((err)=> console.log('error'))
+      //const resImg = await axios.post('/productImgDel', { imgPaths : paths })
+      //.catch((err) => console.log('error'))
+      //.then(setEnterProduct(
+       // {
+        //  data : [],
           
-        }
+        //}
 
-      ),
-      history.replace(
+      //),
+      // console.log("location :" + location)
+      // console.log("location state :" + location.state)
+      //console.log("location state selected :" +location.state.selected)
+      ( location.state  == undefined ) ?
+      
+      
+        history.replace(
+          {
+            pathname : `/manager`,
+          }
+        )
+      
+      :
+      
+        history.replace(
         {
             pathname : `/manager`,
             state : {selected : location.state.selected},
         }
-    ),)
-      .then(setMoodifiedFlag(true))
+      )
+      
+    
+    
+  
+    alert("삭제되었습니다")
+    
+    setMoodifiedFlag(true)
+    
+    
     }
   }
   
@@ -133,31 +176,23 @@ const Product = ({selected}) => {
     
     
   }
-  /*
-  useEffect(()=>{
-  if(enterProduct.data !== Array(0))
-  {
-    if(order){
-      setEnterProduct(
-        {data : prev => [...prev.sort((h,t) => regDate(h.date)- regDate(t.date))]
-        }
-      )
-    }
-    else
-    {
-      setEnterProduct(
-        {
-          data: prev => [...prev.sort((h,t) => regDate(t.date) - regDate(h.date))]
-        }
-      )
-    }
-  }
-   
-  } , [order])
-*/
   
+  
+
+const handleFilter = () =>
+{
+    setFilter(prev => !prev)
+}
  
  
+const handleMinPrice = e =>
+{
+  setMinPrice(e.target.value);
+}
+const handleMaxPrice = e =>
+{
+  setMaxPrice(e.target.value);
+}
   
   useEffect(()=>
   {
@@ -182,7 +217,7 @@ const Product = ({selected}) => {
             ) : (
               <>
                 <Header>
-                  <CheckBox checked={checkedAll} onClick={handleCheckedAll} />
+                  <CheckBox checked={checkedAll} onChange={handleCheckedAll} />
                   <ButtonsContainer>
                     <HeaderButton background={buttonColor} onClick={handleDelete}>선택 삭제</HeaderButton>
                     <HeaderButton background="secondary" onClick={handleOrder}>
@@ -190,8 +225,23 @@ const Product = ({selected}) => {
                         order ? '최신 순 ' : '오래된 순'
                       }
                     </HeaderButton>
-                    <HeaderButton background="secondary">필터링</HeaderButton>
-                    <SearchBar/>
+                    <HeaderButton background="secondary" onClick={handleFilter}>
+                    {
+                      filter ? '가격필터링on' : '가격필터링off'
+                    }
+                    </HeaderButton>
+                    {
+                      filter ? 
+                      <div>
+                          <Input placeholder="상품 최소 가격" type='number' onChange={handleMinPrice} />
+                          <Input placeholder="상품 최대 가격" type='number' onChange={handleMaxPrice} />
+                          <button onClick= { ()=>
+                          {
+                              setPriceFlag(true);
+                          }}>가격 설정</button>
+                      </div> : null
+                    }
+                    <SmallSearchBar/>
                   </ButtonsContainer>
                   <Button background="primary" onClick={handleEnter}>등록</Button>
                 </Header>
@@ -200,7 +250,8 @@ const Product = ({selected}) => {
                   <TableHeaderContent width="704px">상품명</TableHeaderContent>
                   <TableHeaderContent width="140px">가격</TableHeaderContent>
                 </TableHeader>
-                {<GetProductData productList={enterProduct}  setEnterProduct= {setEnterProduct} setAlter = {setAlter}
+                {<GetProductData productList={enterProduct}  setEnterProduct= {setEnterProduct} setAlter = {setAlter} order = {order} setOrder = {setOrder} 
+                maxPrice = {maxPrice} minPrice = {minPrice} priceFlag={priceFlag} sorted={sorted} setSorted ={ setSorted}
                  checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setMoodifiedFlag={setMoodifiedFlag}
                  selected={selected} /> }
               </>

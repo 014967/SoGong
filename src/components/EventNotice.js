@@ -75,7 +75,7 @@ const FilterButtonHyphen = styled.div`
 `
 
 const regDate = date => date.split('.')[0].replace('T', '').replace('-', '').replace('-', '').replace(':', '').replace(':', '')
-const regDate2 = date => `${date.getFullYear()}${date.getMonth() < 9 && 0}${date.getMonth() + 1}${date.getDate()}${date.getHours()}${date.getMinutes()}${date.getSeconds()}`
+const regDate2 = date => `${date.getFullYear()}${date.getMonth() < 9 ? 0 : ''}${date.getMonth() + 1}${date.getDate() < 9 ? 0 : ''}${date.getDate()}000000`
 
 const EventNotice = () => {
   const [eventList, setEventList] = useState([])
@@ -182,14 +182,15 @@ const EventNotice = () => {
   useEffect(() => {
     if (startDate && endDate) {
       setEventList(prev => [...prev.filter(evt => {
+        const newEndDate = new Date(endDate)
+        newEndDate.setDate(newEndDate.getDate() + 1)
         console.log(regDate(evt.date))
         console.log(regDate(evt.due))
         console.log(regDate2(startDate))
-        console.log(regDate2(endDate))
+        console.log(regDate2(newEndDate))
         return (
-          regDate(evt.date) < regDate2(startDate) &&
-          regDate(evt.due) > regDate2(endDate)
-
+          regDate(evt.date) > regDate2(startDate) &&
+          regDate(evt.due) < regDate2(newEndDate)
         )
       })])
     }
@@ -203,7 +204,7 @@ const EventNotice = () => {
           ) : (
             <>
               <Header>
-              <CheckBox checked={checkedAll} onClick={handleCheckedAll} />
+              <CheckBox checked={checkedAll} onChange={handleCheckedAll} />
               <ButtonsContainer>
                 <HeaderButton background={buttonColor} onClick={handleAvailable}>선택 활성화</HeaderButton>
                 <HeaderButton background={buttonColor} onClick={handleUnavailable}>선택 비활성화</HeaderButton>
@@ -245,7 +246,8 @@ const EventNotice = () => {
               </TableHeader>
               <GetEventData eventList={eventList} setEventList={setEventList}
                 checked={checked} setChecked={setChecked}
-                modifiedFlag={modifiedFlag} setModifiedFlag={setModifiedFlag} />
+                modifiedFlag={modifiedFlag} setModifiedFlag={setModifiedFlag} 
+                startDate={startDate} endDate={endDate} />
             </>
           )
         }

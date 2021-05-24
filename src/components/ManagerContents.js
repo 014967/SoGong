@@ -35,6 +35,7 @@ const title = {
 const ManagerContents = ({ history }) => {
   const [selected, setSelected] = useState('event');
 
+  
   const { setID, setPW, setSuccess } = useContext(LoginContext)
 
   const handleItemClick = e => {
@@ -87,11 +88,13 @@ const ManagerContents = ({ history }) => {
             </Menu>
             {
               selected === 'event' && (
+                
                 <EventNotice selected={selected}/>
               )
             }
             {
               selected === 'product' && (
+                
                 <Product selected={selected} />
               )
             }
