@@ -313,7 +313,6 @@ useEffect(()=>
             })}} >확인</Button>
           <Button background="primary" onClick={ () =>
           {
-            console.log(data)
             history.push(
               {
                 pathname : `/manager/Alter/`,

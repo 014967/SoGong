@@ -395,11 +395,8 @@ router.get('/eventsAvailable', function(req, res){
             events.forEach((event) => {
                 console.log(regDate2(date), regDate(event.due))
                 if (regDate2(date) > regDate(event.due)){
-                    Event.findByIdAndUpdate({_id: event._id}, {available : false} ).then(function(events){
-                        // Event.find({}).sort({date: -1}).then(function(events){
-                        //     res.send("available events checked");
-                        // })
-                    })
+                    Event.findByIdAndUpdate({_id: event._id}, {available : false})
+                    console.log('changed available')
                 }
             }) // 현재시각과 비교해 이벤트를 활성화 / 비활성화함
     })

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useHistory } from 'react-router';
 import styled from 'styled-components';
 import axios from 'axios'
 import CheckBox from './elements/CheckBox'
@@ -43,9 +44,10 @@ const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').r
 const regDate2 = date => date.split('.')[0].replace('T', '').replace('-', '').replace('-', '').replace(':', '').replace(':', '')
 const regDate3 = date => `${date.getFullYear()}${date.getMonth() < 9 ? 0 : ''}${date.getMonth() + 1}${date.getDate() < 9 ? 0 : ''}${date.getDate()}000000`
 
-const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFlag, setModifiedFlag, startDate, endDate }) => {
+const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFlag, setModifiedFlag, startDate, endDate, handleAlter }) => {
 
   const [isLoading, setIsLoading] = useState(true)
+  const history = useHistory();
 
   const getEvents = async () => {
     const res = await axios.get("/api/eventsAvailable")
@@ -115,7 +117,7 @@ const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFl
               <Title>{data.title}</Title>
               <Available>{data.available ? '활성화' : '비활성화'}</Available>
               <DateRange>{regDate(data.date)}<br />~<br />{regDate(data.due)}</DateRange>
-              <Button background="primary">수정</Button>
+              <Button background="primary" onClick={() => {handleAlter(data)}}>수정</Button>
             </Row>
           )
         )}

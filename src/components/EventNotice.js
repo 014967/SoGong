@@ -6,6 +6,7 @@ import HeaderButton from './elements/HeaderButton';
 import GetEventData from './GetEventData';
 import CheckBox from './elements/CheckBox'
 import EnterEventNotice from './EnterEventNotice'
+import AlterEventNotice from './AlterEventNotice'
 
 const Container = styled.div`
   display: flex;
@@ -80,6 +81,7 @@ const regDate2 = date => `${date.getFullYear()}${date.getMonth() < 9 ? 0 : ''}${
 const EventNotice = () => {
   const [eventList, setEventList] = useState([])
   const [enter, setEnter] = useState(false)
+  const [alter, setAlter] = useState(null)
   const [checked, setChecked] = useState([])
   const [checkedAll, setCheckedAll] = useState(false)
   const [modifiedFlag, setModifiedFlag] = useState(false)
@@ -91,6 +93,10 @@ const EventNotice = () => {
 
   const handleEnter = () => {
     setEnter(true)
+  }
+
+  const handleAlter = (data) => {
+    setAlter(data)
   }
 
   const handleCheckedAll = () => {
@@ -202,53 +208,57 @@ const EventNotice = () => {
           enter ? (
             <EnterEventNotice setEnter={setEnter} />
           ) : (
-            <>
-              <Header>
-              <CheckBox checked={checkedAll} onChange={handleCheckedAll} />
-              <ButtonsContainer>
-                <HeaderButton background={buttonColor} onClick={handleAvailable}>선택 활성화</HeaderButton>
-                <HeaderButton background={buttonColor} onClick={handleUnavailable}>선택 비활성화</HeaderButton>
-                <HeaderButton background={buttonColor} onClick={handleDelete}>선택 삭제</HeaderButton>
-                <HeaderButton background="secondary" onClick={handleOrder}>
-                  {order ? '최신 순' : '오래된 순'}
-                </HeaderButton>
-                <FilterButtonContainer>
-                  <DatePicker
-                    dateFormat="yyyy/MM/dd"
-                    selected={startDate}
-                    onChange={date => setStartDate(date)}
-                    selectsStart
-                    startDate={startDate}
-                    endDate={endDate}
-                    isclearable
-                    customInput={<StartFilterButton />}
-                  />
-                  <FilterButtonHyphen>~</FilterButtonHyphen>
-                  <DatePicker
-                    dateFormat="yyyy/MM/dd"
-                    selected={endDate}
-                    onChange={date => setEndDate(date)}
-                    selectsEnd
-                    startDate={startDate}
-                    endDate={endDate}
-                    minDate={startDate}
-                    isclearable
-                    customInput={<EndFilterButton />}
-                  />
-                </FilterButtonContainer>
-                  <HeaderButton background="primary" right onClick={handleEnter}>등록</HeaderButton>
-                </ButtonsContainer>
-              </Header>
-              <TableHeader>
-                <TableHeaderContent width="619px">제목</TableHeaderContent>
-                <TableHeaderContent width="201px">활성화/비활성화</TableHeaderContent>
-                <TableHeaderContent width="185px">진행기간</TableHeaderContent>
-              </TableHeader>
-              <GetEventData eventList={eventList} setEventList={setEventList}
-                checked={checked} setChecked={setChecked}
-                modifiedFlag={modifiedFlag} setModifiedFlag={setModifiedFlag} 
-                startDate={startDate} endDate={endDate} />
-            </>
+            alter ? (
+              <AlterEventNotice data={alter} setAlter={setAlter} />
+            ) : (
+              <>
+                <Header>
+                <CheckBox checked={checkedAll} onChange={handleCheckedAll} />
+                <ButtonsContainer>
+                  <HeaderButton background={buttonColor} onClick={handleAvailable}>선택 활성화</HeaderButton>
+                  <HeaderButton background={buttonColor} onClick={handleUnavailable}>선택 비활성화</HeaderButton>
+                  <HeaderButton background={buttonColor} onClick={handleDelete}>선택 삭제</HeaderButton>
+                  <HeaderButton background="secondary" onClick={handleOrder}>
+                    {order ? '최신 순' : '오래된 순'}
+                  </HeaderButton>
+                  <FilterButtonContainer>
+                    <DatePicker
+                      dateFormat="yyyy/MM/dd"
+                      selected={startDate}
+                      onChange={date => setStartDate(date)}
+                      selectsStart
+                      startDate={startDate}
+                      endDate={endDate}
+                      isclearable
+                      customInput={<StartFilterButton />}
+                    />
+                    <FilterButtonHyphen>~</FilterButtonHyphen>
+                    <DatePicker
+                      dateFormat="yyyy/MM/dd"
+                      selected={endDate}
+                      onChange={date => setEndDate(date)}
+                      selectsEnd
+                      startDate={startDate}
+                      endDate={endDate}
+                      minDate={startDate}
+                      isclearable
+                      customInput={<EndFilterButton />}
+                    />
+                  </FilterButtonContainer>
+                    <HeaderButton background="primary" right onClick={handleEnter}>등록</HeaderButton>
+                  </ButtonsContainer>
+                </Header>
+                <TableHeader>
+                  <TableHeaderContent width="619px">제목</TableHeaderContent>
+                  <TableHeaderContent width="201px">활성화/비활성화</TableHeaderContent>
+                  <TableHeaderContent width="185px">진행기간</TableHeaderContent>
+                </TableHeader>
+                <GetEventData eventList={eventList} setEventList={setEventList}
+                  checked={checked} setChecked={setChecked}
+                  modifiedFlag={modifiedFlag} setModifiedFlag={setModifiedFlag} 
+                  startDate={startDate} endDate={endDate} handleAlter={handleAlter} />
+              </>
+            )
           )
         }
       </Container>
