@@ -353,7 +353,7 @@ router.post('/events/sorted', function(req, res){
 
     if(page!=1) Event.find({'title': {'$regex': req.body.search,'$options': 'i' }})
     .sort({date: -1})
-    .skip( (page-1) * 5 - 1 )
+    .skip( (page-1) * 5 )
     .limit(5)
    .then(function(event){
         res.send(event);
@@ -416,7 +416,7 @@ router.post('/products/sorted', function(req, res){
 
     if(page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
-    .skip( (page-1) * 10 - 1 )
+    .skip( (page-1) * 10 )
     .limit(10)
    .then(function(product){
         res.send(product);
@@ -447,14 +447,14 @@ Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
 router.post('/products/unsorted', function(req, res){
     
     
-    if(req.body.page == 1) Product.find({category: req.body.category}).sort({date: -1})
+    if(req.body.page == 1) Product.find({}).sort({date: -1})
     .limit(10)
    .then(function(product){
         res.send(product);
     });
 
-    if(req.body.page!=1) Product.find({category: req.body.category}).sort({date: -1})
-    .skip( (req.body.page-1) * 10 - 1 )
+    if(req.body.page!=1) Product.find({}).sort({date: -1})
+    .skip( (req.body.page-1) * 10 )
     .limit(10)
    .then(function(product){
         res.send(product);
@@ -480,7 +480,7 @@ router.post('/products/sorted/:category', function(req, res){
 
     if(page!=1) Product.find({'category' : req.params.category, 'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
-    .skip( (page-1) * 10 - 1 )
+    .skip( (page-1) * 10 )
     .limit(10)
    .then(function(product){
         res.send(product);
@@ -519,7 +519,7 @@ router.post('/products/unsorted/:category', function(req, res){
     });
 
     if(req.body.page!=1) Product.find({category: req.params.category}).sort({date: -1})
-    .skip( (req.body.page-1) * 10 - 1 )
+    .skip( (req.body.page-1) * 10 )
     .limit(10)
    .then(function(product){
         res.send(product);
