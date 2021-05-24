@@ -329,7 +329,8 @@ router.post('/events/unavailable', function(req, res){
       if (err) {
           console.log("failed to update:"+err);
       } else {
-          console.log('successfully updated unavailable events');                                
+          console.log('successfully updated unavailable events');
+          res.send('successfully updated unavailable events');                                  
       }
     })
   }
@@ -352,7 +353,7 @@ router.post('/events/sorted', function(req, res){
 
     if(page!=1) Event.find({'title': {'$regex': req.body.search,'$options': 'i' }})
     .sort({date: -1})
-    .skip( (page-1) * 5 - 1 )
+    .skip( (page-1) * 5 )
     .limit(5)
    .then(function(event){
         res.send(event);
@@ -415,7 +416,7 @@ router.post('/products/sorted', function(req, res){
 
     if(page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
-    .skip( (page-1) * 10 - 1 )
+    .skip( (page-1) * 10 )
     .limit(10)
    .then(function(product){
         res.send(product);
@@ -446,14 +447,14 @@ Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
 router.post('/products/unsorted', function(req, res){
     
     
-    if(req.body.page == 1) Product.find({category: req.body.category}).sort({date: -1})
+    if(req.body.page == 1) Product.find({}).sort({date: -1})
     .limit(10)
    .then(function(product){
         res.send(product);
     });
 
-    if(req.body.page!=1) Product.find({category: req.body.category}).sort({date: -1})
-    .skip( (req.body.page-1) * 10 - 1 )
+    if(req.body.page!=1) Product.find({}).sort({date: -1})
+    .skip( (req.body.page-1) * 10 )
     .limit(10)
    .then(function(product){
         res.send(product);
@@ -479,7 +480,7 @@ router.post('/products/sorted/:category', function(req, res){
 
     if(page!=1) Product.find({'category' : req.params.category, 'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
-    .skip( (page-1) * 10 - 1 )
+    .skip( (page-1) * 10 )
     .limit(10)
    .then(function(product){
         res.send(product);
@@ -518,7 +519,7 @@ router.post('/products/unsorted/:category', function(req, res){
     });
 
     if(req.body.page!=1) Product.find({category: req.params.category}).sort({date: -1})
-    .skip( (req.body.page-1) * 10 - 1 )
+    .skip( (req.body.page-1) * 10 )
     .limit(10)
    .then(function(product){
         res.send(product);
@@ -548,6 +549,27 @@ router.post('/products/delete', function(req, res){
     "productIds" : ["116t4sdfi0315", "013532hf8dsa093"]
 }
 productIds: 삭제할 상품id의 배열
+*/
+
+router.post('/products/unavailable', function(req, res){
+    var a = 0
+  var b = Object.keys(req.body.productIds).length
+  while(a<b){
+    Product.findByIdAndUpdate({_id: Object.values(req.body.productIds)[a++]},  { available: false } ,(err) => {
+      if (err) {
+          console.log("failed to update:"+err);
+      } else {
+          console.log('successfully updated unavailable products');
+          res.send('successfully updated unavailable products');                               
+      }
+    })
+  }
+});
+    /* [ JSON FORMAT of request to '/products/unavailable' ]
+{
+    "productIds" : ["116t4sdfi0315", "013532hf8dsa093"]
+}
+productIds: 비활성화할 상품id의 배열
 */
 
 module.exports = router;

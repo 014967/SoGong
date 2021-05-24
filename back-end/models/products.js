@@ -53,6 +53,20 @@ date:{
     let milliseconds = date.getMilliseconds();
     return new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds));
     }
+},
+available:{
+    type:Boolean,
+    default:true
+
+},
+detailImg:{
+    type:Array,
+    default:[]
+
+},
+detailImgPath:{
+    type:Array,
+    default:[]
 }
 });
 
