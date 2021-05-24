@@ -10,12 +10,10 @@ const UserSchema = new Schema({
 id:{
     type:String,
     unique:1,
-    maxlength:15,
     required: [true]
 },
 password: {
     type:String,
-    minlegth:5,
     required: [true]
 },
 name: {
@@ -24,6 +22,7 @@ name: {
 },
 email:{
     type:String,
+    unique:1,
     required: [true]
 },
 token:{
