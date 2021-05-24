@@ -1,4 +1,5 @@
 import React from 'react'
+import { useLocation } from 'react-router'
 import styled from 'styled-components'
 import Logo from './elements/Logo'
 import Login from './Login'
@@ -9,12 +10,10 @@ const Container = styled.div`
   top: 0;
   display: flex;
   flex-direction: column;
-  justify-content: space-around;
   z-index: 999;
 
   padding: 32px 64px;
   width: 100%;
-  height: 218px;
   background: ${({ theme }) => theme.color.background};
 `
 
@@ -22,6 +21,7 @@ const BaseContainer = styled.div`
   display: flex;
   min-width: 100%;
   justify-content: space-between;
+  margin-bottom: 16px;
   & > *:first-child {
     margin-right: 256px; // 브라우저 width 감소 대응
   }
@@ -56,21 +56,27 @@ const Category = styled.button`
 `
 
 const Header = () => {
+  const location = useLocation()
+  console.log(location)
     return (
       <Container>
         <BaseContainer>
           <Logo />
           <Login />
         </BaseContainer>
-        <ExtensionContainer>
-          <Categories>
-            <Category>NEW</Category>
-            <Category>MEN</Category>
-            <Category>WOMEN</Category>
-            <Category>KIDS</Category>
-          </Categories>
-          <HeaderSearchBar />
-        </ExtensionContainer>
+        {
+          !location.pathname.includes('manager') && (
+            <ExtensionContainer>
+            <Categories>
+              <Category>NEW</Category>
+              <Category>MEN</Category>
+              <Category>WOMEN</Category>
+              <Category>KIDS</Category>
+            </Categories>
+            <HeaderSearchBar />
+            </ExtensionContainer>
+          )
+        }
       </Container>
     )
 }
