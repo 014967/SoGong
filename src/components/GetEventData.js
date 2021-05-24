@@ -48,6 +48,7 @@ const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFl
   const [isLoading, setIsLoading] = useState(true)
 
   const getEvents = async () => {
+    const res = await axios.get("/api/eventsAvailable")
     const { data: events } = await axios.get("/api/events")
     .catch((err) => console.log('error'))
     console.log(events)

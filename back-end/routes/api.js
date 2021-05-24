@@ -238,7 +238,14 @@ router.delete('/users/:id', function(req, res){
 
 
 // [EVENTS API]
+
 router.get('/events', function(req, res){
+    Event.find({}).sort({date: -1}).then(function(events){
+        res.send(events);
+    });
+}); //event를 불러옴 (최신순)
+
+router.get('/eventsAvailable', function(req, res){
     Event.find({}).sort({date: -1}).then(function(events){
             let date = new Date();
             const regDate = date => date.split('.')[0].replace('T', '').replace('-', '').replace('-', '').replace(':', '').replace(':', '')
@@ -249,15 +256,12 @@ router.get('/events', function(req, res){
                 if (regDate2(date) > regDate(event.due)){
                     Event.findByIdAndUpdate({_id: event._id}, {available : false} ).then(function(events){
                         Event.find({}).sort({date: -1}).then(function(events){
-                            res.send(events);
-                            console.log(events)
+                            res.send("available events checked");
                         })
                     })
                 }
-            })
-        }
-        );
-});
+            }) // 현재시각과 비교해 이벤트를 활성화 / 비활성화함
+
 
 const postEventImage = require(path.join(__dirname, "post-eventImg.js"))
 router.post('/events/image/:id', postEventImage) //upload image by formidable
