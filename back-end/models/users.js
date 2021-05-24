@@ -24,6 +24,7 @@ name: {
 },
 email:{
     type:String,
+    unique:1,
     required: [true]
 },
 token:{
