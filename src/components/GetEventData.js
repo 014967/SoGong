@@ -109,7 +109,7 @@ const GetEventData = ({ eventList, setEventList, checked, setChecked, modifiedFl
       <Container>
         {isLoading ? 'Loading...' : eventList.map((data, index) => (
             <Row key={index}>
-              <CheckBox checked={checked[index]} onClick={handleChecked(index)}/>
+              <CheckBox checked={checked[index]} onChange={handleChecked(index)}/>
               <Title>{data.title}</Title>
               <Available>{data.available ? '활성화' : '비활성화'}</Available>
               <DateRange>{regDate(data.date)}<br />~<br />{regDate(data.due)}</DateRange>

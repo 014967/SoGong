@@ -77,7 +77,8 @@ font: normal normal 300 20px/29px Spoqa Han Sans Neo;
 const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').replace('-', '.').slice(2)
 
 
-const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order, setOrder}) =>
+const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order,
+   setOrder, minPrice, maxPrice, priceFlag , sorted , setSorted}) =>
 {
   
 
@@ -90,7 +91,9 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
 
   const [page ,setPage] = useState();
   
-  
+  const [productOrder, setProductOrder] = useState("acs");
+
+
   const pageCount = () =>
   {
       const result = [];
@@ -100,6 +103,7 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
           <PageButton key={i+1} onClick={()=>
           {
             setPage(i+1)
+           
           }
           }>{i+1}</PageButton>
         )
@@ -109,24 +113,58 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   }
   const getProductList = async () => 
   {
-    
+   
 
    const {data : productLength} = await axios.get("/api/products/")
    setProductCount(productLength.length)
   
 
-    const {data : products} = await axios.post("/api/products/unsorted",
+   
+    console.log(sorted)
+   if(sorted)
+   {
+    console.log("내림차순")
+    console.log(productOrder)
+  
+    const {data : sortedProducts} = await axios.post("/api/products/sorted",
     {
+        search : "",
+        order : productOrder,
         page : page,
+        min : minPrice,
+        max : maxPrice,
+        
     })
     setEnterProduct(
       {
-        data: products
+          data: sortedProducts
       }
     )
+    console.log(sortedProducts)
+
+      
+      setChecked([...Array(sortedProducts.length).fill(false)])
+      setIsLoading(false)
+   }
+   else
+   {
+     console.log("오름차순default")
+      const {data : products} = await axios.post("/api/products/unsorted",
+      {
+          page : page,
+       
+      })
+      setEnterProduct(
+        {
+          data: products
+        }
+     )
+     console.log(products)
     
-    setChecked([...Array(products.length).fill(false)])
-    setIsLoading(false)
+        setChecked([...Array(products.length).fill(false)])
+        setIsLoading(false)
+  }
+   
      
    
     
@@ -139,20 +177,67 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   
   useEffect(()=>
   {
-    getProductList()
-  },[])
+    if(priceFlag)
+    {
+      setSorted(true)
+    }
+    else
+    {
+      setSorted(false)
+    }
+
+  },[priceFlag])
 
   useEffect(()=>
   {
+    console.log(page)
     getProductList()
   },[page])
   
 
   
+useEffect (()=>
+{ 
+  if(order)
+  {
+    setSorted(true)
+    setProductOrder("-1")
+    console.log("내림차순"
+    )
+    
+  }
+  else
+  {
+    setSorted(false)
+    setProductOrder("asc")
+    console.log("default")
+
+  }
   
+}, [order])
+
+useEffect ( () =>
+{
+
+} , [])
+
+useEffect(()=>
+{
+  console.log(sorted)
+  getProductList()
+
+} , [sorted])
+
+
+
+/*useEffect(()=>
+{
+    setSorted(true)
+}, [order, priceFlag, page])
+  
+  */
   useEffect(() =>
   {
-    console.log(productList)
     if (productList.data !==Array(0))
     {
       
@@ -183,6 +268,10 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   },[flag])
 
 
+  useEffect(()=>
+  {
+    console.log(productList.data)
+  },[productList.data])
 
 
     return (
@@ -195,11 +284,11 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
           
           <Row key={data._id}>
             
-          <CheckBox checked={checked[index]} onClick={handleChecked(index)} />   
+          <CheckBox checked={checked[index]} onChange={handleChecked(index)} />   
           <div>
           {
             
-            console.log("이미지 파일들 : " + data.img),
+          
             
             flag ? 
               "이미지준비중" :
