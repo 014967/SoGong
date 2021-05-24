@@ -61,6 +61,7 @@ const TableHeaderContent = styled.div`
   font-size: 20px;
   text-align: center;
 `
+const orderList = ["최신 순", "최저가 순" , "최고가 순"];
 
 const regDate = date => date.split('.')[0].replace('T','').replace('-','').replace(':','').replace(':','').slice(2)
 
@@ -77,11 +78,7 @@ const Product = ({selected}) => {
       index : [],
     })
   const [alter , setAlter] = useState(false);
-
-
-  const [order, setOrder] = useState("최신순");
-  const orderList= ["최신순 ", "최저가 순" , "최고가 순"];
-
+  const [order, setOrder] = useState("최신 순");
 
   const [filter , setFilter] = useState(false);
   const [checked, setChecked] = useState([false]);
@@ -91,8 +88,6 @@ const Product = ({selected}) => {
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice , setMaxPrice] = useState(100000000);
   const [priceFlag , setPriceFlag] = useState(false);
-
-  const [sorted , setSorted] = useState(false);
   const [value , setValue] = useState("");
 
   const [index, setIndex] = useState(0);
@@ -158,29 +153,17 @@ const Product = ({selected}) => {
     
     }
   }
-  
- 
 
- 
   const handleOrder = () => 
   {
-    if(index === 2  )
-    {
-      setIndex(0)
-    }
-    else{
-      setIndex(prev => prev+1)
-    
-    }
-    setOrder(orderList[index])
-   
+    setOrder(prev => {
+      if (prev === '최신 순')
+        return '최저가 순'
+      else if (prev === '최저가 순')
+        return '최고가 순'
+      else return '최신 순'
+    })
   }
-
-  
-  useEffect(()=>
-  {
-    setOrder(orderList[index])
-  }, [])
 
 
   const handleEnter = () => {
@@ -193,8 +176,6 @@ const Product = ({selected}) => {
 
       }
     )
-    
-    
   }
   
   
@@ -241,9 +222,7 @@ const handleMaxPrice = e =>
                   <ButtonsContainer>
                     <HeaderButton background={buttonColor} onClick={handleDelete}>선택 삭제</HeaderButton>
                     <HeaderButton background="secondary" onClick={handleOrder}>
-                      {
-                        order
-                      }
+                      {order}
                     </HeaderButton>
                     <HeaderButton background="secondary" onClick={handleFilter}>
                     {
@@ -271,7 +250,7 @@ const handleMaxPrice = e =>
                   <TableHeaderContent width="140px">가격</TableHeaderContent>
                 </TableHeader>
                 {<GetProductData productList={enterProduct}  setEnterProduct= {setEnterProduct} setAlter = {setAlter} order = {order} setOrder = {setOrder} 
-                maxPrice = {maxPrice} minPrice = {minPrice} priceFlag={priceFlag} sorted={sorted} setSorted ={ setSorted} value={value}
+                maxPrice = {maxPrice} minPrice = {minPrice} priceFlag={priceFlag} value={value}
                  checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setMoodifiedFlag={setMoodifiedFlag}
                  selected={selected} /> }
               </>

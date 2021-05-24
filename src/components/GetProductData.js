@@ -79,7 +79,7 @@ const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').r
 
 
 const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order,
-   setOrder, minPrice, maxPrice, priceFlag , sorted , setSorted , value}) =>
+   setOrder, minPrice, maxPrice, priceFlag , value}) =>
 {
 
   
@@ -92,15 +92,8 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   const [productCount , setProductCount] = useState();
 
   const [page ,setPage] = useState(1);
-  
-  const [productOrder, setProductOrder] = useState("");
 
-
-
-
-
-  const pageCount = () =>
-  {
+  const pageCount = () => {
       const result = [];
       for(let i =0; i<= productCount/10 ; i++)
       {
@@ -113,86 +106,40 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
           }>{i+1}</PageButton>
         )
       }
-      return result;
-
+    return result;
   }
-  const getProductList = async () => 
-  {
-   
-
-   const {data : productLength} = await axios.get("/api/products/")
-   setProductCount(productLength.length)
-  
-
-   
-    console.log(sorted)
-    console.log(productOrder)
-   if(sorted)
-   {
-    console.log(productOrder)
-  
-    const {data : sortedProducts} = await axios.post("/api/products/sorted",
-    {
+  const getProductList = async (productOrder) => {
+    const {data : productLength} = await axios.get("/api/products/")
+    setProductCount(productLength.length)
+    if(productOrder) {
+      const {data : sortedProducts} = await axios.post("/api/products/sorted", {
         search : value,
         order : productOrder,
         page : page,
         min : minPrice,
         max : maxPrice,
-        
     })
-    setEnterProduct(
-      {
-          data: sortedProducts
-      }
-    )
-
-      
+      setEnterProduct({ data: sortedProducts })
       setChecked([...Array(sortedProducts.length).fill(false)])
-      setIsLoading(false)
-   }
-  else
-  {
-     const {data : products} = await axios.post("/api/products/unsorted",
-     {
-         page : page,
-         
-      
-     })
-     setEnterProduct(
-       {
-         data: products
-       }
-    )
+    } else {
+      const {data : products} = await axios.post("/api/products/unsorted", {
+        page : page,
+      })
+      setEnterProduct(
+        {
+          data: products
+        }
+      )
+      setChecked([...Array(products.length).fill(false)])
+    }
+    setIsLoading(false)
+  }
 
-   
-       setChecked([...Array(products.length).fill(false)])
-       setIsLoading(false)
-  }
-  
-   
-     
-   
-    
-  }
   const handleChecked = index => () => {
     setChecked(prev => [...prev.map((v,i) =>
       i === index ? !v : v
       )])
   }
-  
-  
-
-  useEffect(()=>
-  {
-    if(value !== "")
-    {
-      setSorted(true)
-      
-    }
-    else{
-
-    }
-  } , [value] )
 
 
   useEffect(()=>
@@ -203,49 +150,21 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   
 
   
-useEffect (()=>
-{ 
-  console.log(order)
+useEffect (() => { 
+  setIsLoading(true)
   if(order === "최저가 순")
   {
-   
-
-    setProductOrder("asc")
-    setSorted(true)
+    getProductList('asc')
   }
   else if (order === "최고가 순")
   {
-
-
-    setProductOrder("-1")
-    setSorted(true)
-
+    getProductList('-1')
   }
   
-  else if (order ==="최신순"){
-    setSorted(false)
+  else if (order ==="최신 순"){
+    getProductList(null)
   }
-  
 }, [order])
-
-useEffect ( () =>
-{
-
-} , [])
-
-
-
-useEffect(()=>
-{
-  getProductList()
-}, [order])
-
-useEffect(()=>
-{
-
-},[productOrder])
-
-
 
 
   useEffect(() =>
