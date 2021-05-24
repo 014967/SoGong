@@ -204,7 +204,7 @@ const EventNotice = () => {
           ) : (
             <>
               <Header>
-              <CheckBox checked={checkedAll} onClick={handleCheckedAll} />
+              <CheckBox checked={checkedAll} onChange={handleCheckedAll} />
               <ButtonsContainer>
                 <HeaderButton background={buttonColor} onClick={handleAvailable}>선택 활성화</HeaderButton>
                 <HeaderButton background={buttonColor} onClick={handleUnavailable}>선택 비활성화</HeaderButton>

@@ -450,14 +450,15 @@ router.post('/products/unsorted', function(req, res){
     if(req.body.page == 1) Product.find({}).sort({date: -1})
     .limit(10)
    .then(function(product){
-        res.send(product);
+        res.send(product)
     });
 
     if(req.body.page!=1) Product.find({}).sort({date: -1})
     .skip( (req.body.page-1) * 10 )
     .limit(10)
    .then(function(product){
-        res.send(product);
+        res.send(product)
+
     });
 });
 
