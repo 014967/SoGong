@@ -355,6 +355,20 @@ router.get('/users', function(req, res){
     });
 });
 
+router.get('/users/:id', function(req, res){
+    User.find({id:req.params.id}).then(function(users){
+        if(users.length == 0){res.send("success");}
+        else res.send("error:overlap")
+    });
+});
+
+router.get('/usersEmail/:email', function(req, res){
+    User.find({email:req.params.email}).then(function(users){
+        if(users.length == 0){res.send("success");}
+        else res.send("error:overlap")
+    });
+});
+
 router.post('/users', function(req, res, next){
     User.create(req.body).then(function(user){
      res.send(user);
