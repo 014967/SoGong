@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+import { useHistory , useLocation } from 'react-router';
 import Button from './elements/Button';
 import {format} from "date-fns";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import { Dropdown } from 'react-dropdown-now';
-import 'react-dropdown-now/style.css';
 import axios from 'axios';
 
 const Header = styled.div`
@@ -120,17 +119,52 @@ const StyledDatePicker = styled(DatePicker)`
     padding-left: 8px;
     cursor: pointer;
 `
+const regDate = date => date.split('.')[0].replace(/-|T/g, '/')
 
+const AlterEventNotice = ({ data, setAlter }) => {
+    const history = useHistory();
+    const location = useLocation();
 
-const EnterEventNotice = ({ setEnter }) => {
-
-    const [startDate, setStartDate] = useState(new Date())
-    const [endDate, setEndDate] = useState(new Date())
-    const [title, setTitle] = useState('')
-    const [description, setDiscription] = useState('')
-    const [imgFile, setImgFile] = useState(null)
+    const [startDate, setStartDate] = useState(new Date(regDate(data.date)))
+    const [endDate, setEndDate] = useState(new Date(regDate(data.due)))
+    const [title, setTitle] = useState(data.title)
+    const [description, setDiscription] = useState(data.detail)
     const [priority , setPriority] = useState('1')
-    const [imgFileName, setImgFileName] = useState('*배너로 사용할 이미지의 가로/세로 비율은 고정해주세요.')
+    const [imgFile, setImgFile] = useState(null)
+    const [imgFileName, setImgFileName] = useState(data.img)
+    
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        if (!title || !description) {
+            alert('필수 입력 사항을 입력하지 않으셨습니다.')
+            return
+        }
+        _setEndDate(endDate)
+
+        const stringStartDate = format(startDate.setHours(startDate.getHours() + 9), "yyyy-MM-dd'T'HH:mm:ss")
+        const stringEndDate = format(_setEndDate(endDate), "yyyy-MM-dd'T'HH:mm:ss")
+        const response = await axios.put(`api/events/${data._id}`, {
+            title: title,
+            available: true,
+            token: false,
+            detail: description,
+            date: stringStartDate,
+            due: stringEndDate,
+            bannerNo: priority.label,
+        })
+        .catch((err) => console.log('error'))
+        if (imgFile) {
+            const formData = new FormData()
+            formData.append('img', imgFile)
+            const res = await axios.post(`/eventImg/${response.data._id}`, formData)
+            .catch((err) => console.log('error', err))
+            // const resImg = await axios.post('/eventImgDel', { imgPaths: ['../src/assets/images/banners/' + data.img] })
+            // .catch((err) => console.log('error', err))
+            .then(setAlter(null))
+        } else {
+            setAlter(null)
+        }
+    }
 
     const handleTitle = e => {
         setTitle(e.target.value)
@@ -153,47 +187,21 @@ const EnterEventNotice = ({ setEnter }) => {
         return _endDate
     }
 
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        if (!title || !description || !imgFile) {
-            alert('필수 입력 사항을 입력하지 않으셨습니다.')
-            return
-        }
-        _setEndDate(endDate)
-
-        const formData = new FormData()
-        formData.append('img', imgFile)
-        const stringStartDate = format(startDate.setHours(startDate.getHours() + 9), "yyyy-MM-dd'T'HH:mm:ss")
-        const stringEndDate = format(_setEndDate(endDate), "yyyy-MM-dd'T'HH:mm:ss")
-        const response = await axios.post("api/events", {
-            title: title,
-            available: true,
-            token: false,
-            detail: description,
-            date: stringStartDate,
-            due: stringEndDate,
-            bannerNo: priority.label,
-        })
-        .catch((err) => console.log('error'))
-        const responseImg = await axios.post(`/eventImg/${response.data._id}`, formData)
-        .then(setEnter(false))
-    }
-
     return (
         <>
             <Header>
                 <Button background ="primary" onClick={handleSubmit}>
-                    등록
+                    수정
                 </Button>
             </Header>
             <Container>
                 <InputContainer>
                     <Title>제목*</Title>
-                    <Input placeholder="제목 입력" onChange={handleTitle}></Input>
+                    <Input placeholder="제목 입력" value={title} onChange={handleTitle}></Input>
                 </InputContainer>
                 <InputContainer>
                     <Title>설명*</Title>
-                    <Textarea placeholder="설명 입력" onChange={handleDiscription}></Textarea>
+                    <Textarea placeholder="설명 입력" value={description} onChange={handleDiscription}></Textarea>
                 </InputContainer>
                 <InputContainer>
                     <Title>배너 이미지*</Title>
@@ -210,7 +218,6 @@ const EnterEventNotice = ({ setEnter }) => {
                 </InputContainer>
             </Container>
         </>
-    )
+    ) 
 }
-
-export default EnterEventNotice;
+export default AlterEventNotice;

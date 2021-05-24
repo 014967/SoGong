@@ -8,6 +8,7 @@ import SignUp from './SignUp'
 import Data from './Data'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
+import AlterEventNotice from '../components/AlterEventNotice'
 import ProductData from '../components/ProductData';
 import EnterProduct from '../components/EnterProduct';
 import Product from '../components/Product';
@@ -41,6 +42,7 @@ const App = () => {
                 <Route exact path="/signup" component={SignUp} />
                 <Route exact path="/data" component={Data} />
                 
+                <Route exact path="/manager/alterevent" component = {AlterEventNotice} />
                 <Route exact path= "/manager/Enter" component = {EnterProduct}/>
                 <Route exact path="/manager/Alter" component = {AlterProduct} />
                 <Route exact path ="/product/:id" component = {ProductData} />

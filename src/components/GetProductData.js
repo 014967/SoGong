@@ -5,6 +5,7 @@ import styled from 'styled-components';
 import axios from 'axios';
 import CheckBox from './elements/CheckBox';
 import Button from './elements/Button';
+import { CompareSharp } from '@material-ui/icons';
 
 
 const Container = styled.div`
@@ -78,8 +79,9 @@ const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').r
 
 
 const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order,
-   setOrder, minPrice, maxPrice, priceFlag , sorted , setSorted}) =>
+   setOrder, minPrice, maxPrice, priceFlag , value}) =>
 {
+
   
 
   const history = useHistory();
@@ -89,13 +91,9 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   
   const [productCount , setProductCount] = useState();
 
-  const [page ,setPage] = useState();
-  
-  const [productOrder, setProductOrder] = useState("acs");
+  const [page ,setPage] = useState(1);
 
-
-  const pageCount = () =>
-  {
+  const pageCount = () => {
       const result = [];
       for(let i =0; i<= productCount/10 ; i++)
       {
@@ -108,134 +106,67 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
           }>{i+1}</PageButton>
         )
       }
-      return result;
-
+    return result;
   }
-  const getProductList = async () => 
-  {
-   
-
-   const {data : productLength} = await axios.get("/api/products/")
-   setProductCount(productLength.length)
-  
-
-   
-    console.log(sorted)
-   if(sorted)
-   {
-    console.log("내림차순")
-    console.log(productOrder)
-  
-    const {data : sortedProducts} = await axios.post("/api/products/sorted",
-    {
-        search : "",
+  const getProductList = async (productOrder) => {
+    const {data : productLength} = await axios.get("/api/products/")
+    setProductCount(productLength.length)
+    if(productOrder) {
+      const {data : sortedProducts} = await axios.post("/api/products/sorted", {
+        search : value,
         order : productOrder,
         page : page,
         min : minPrice,
         max : maxPrice,
-        
     })
-    setEnterProduct(
-      {
-          data: sortedProducts
-      }
-    )
-    console.log(sortedProducts)
-
-      
+      setEnterProduct({ data: sortedProducts })
       setChecked([...Array(sortedProducts.length).fill(false)])
-      setIsLoading(false)
-   }
-   else
-   {
-     console.log("오름차순default")
-      const {data : products} = await axios.post("/api/products/unsorted",
-      {
-          page : page,
-       
+    } else {
+      const {data : products} = await axios.post("/api/products/unsorted", {
+        page : page,
       })
       setEnterProduct(
         {
           data: products
         }
-     )
-     console.log(products)
-    
-        setChecked([...Array(products.length).fill(false)])
-        setIsLoading(false)
+      )
+      setChecked([...Array(products.length).fill(false)])
+    }
+    setIsLoading(false)
   }
-   
-     
-   
-    
-  }
+
   const handleChecked = index => () => {
     setChecked(prev => [...prev.map((v,i) =>
       i === index ? !v : v
       )])
   }
-  
-  useEffect(()=>
-  {
-    if(priceFlag)
-    {
-      setSorted(true)
-    }
-    else
-    {
-      setSorted(false)
-    }
 
-  },[priceFlag])
 
   useEffect(()=>
   {
-    console.log(page)
+   
     getProductList()
   },[page])
   
 
   
-useEffect (()=>
-{ 
-  if(order)
+useEffect (() => { 
+  setIsLoading(true)
+  if(order === "최저가 순")
   {
-    setSorted(true)
-    setProductOrder("-1")
-    console.log("내림차순"
-    )
-    
+    getProductList('asc')
   }
-  else
+  else if (order === "최고가 순")
   {
-    setSorted(false)
-    setProductOrder("asc")
-    console.log("default")
-
+    getProductList('-1')
   }
   
+  else if (order ==="최신 순"){
+    getProductList(null)
+  }
 }, [order])
 
-useEffect ( () =>
-{
 
-} , [])
-
-useEffect(()=>
-{
-  console.log(sorted)
-  getProductList()
-
-} , [sorted])
-
-
-
-/*useEffect(()=>
-{
-    setSorted(true)
-}, [order, priceFlag, page])
-  
-  */
   useEffect(() =>
   {
     if (productList.data !==Array(0))
@@ -270,7 +201,6 @@ useEffect(()=>
 
   useEffect(()=>
   {
-    console.log(productList.data)
   },[productList.data])
 
 
@@ -313,7 +243,6 @@ useEffect(()=>
             })}} >확인</Button>
           <Button background="primary" onClick={ () =>
           {
-            console.log(data)
             history.push(
               {
                 pathname : `/manager/Alter/`,
