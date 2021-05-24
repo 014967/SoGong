@@ -34,21 +34,9 @@ const SignUpInput = () => {
     const [password,setPassword] = useState('');
     const [passwordCheck,setPasswordCheck] = useState('');
     const [passwordError,setPasswordError] = useState(false);
-    
 
     const onSubmit = (e) => {
-        e.preventDefault();
-       
-         // 1. 비밀번호와 비밀번호 체크가 다를 경우를 검증한다
-         
-        
-        
-        console.log({
-            id,
-            email,
-            password,
-            passwordCheck,
-        });
+        e.preventDefault()
     };
 
     useEffect(() => {
@@ -104,6 +92,5 @@ const SignUpInput = () => {
         </ContentsWrapper>
     );
 }
-
 
 export default SignUpInput;
