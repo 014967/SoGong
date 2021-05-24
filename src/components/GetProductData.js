@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import axios from 'axios';
 import CheckBox from './elements/CheckBox';
 import Button from './elements/Button';
-import { CompareSharp } from '@material-ui/icons';
+import { AirlineSeatLegroomReducedRounded, CompareSharp } from '@material-ui/icons';
+import { set } from 'js-cookie';
 
 
 const Container = styled.div`
@@ -79,10 +80,10 @@ const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').r
 
 
 const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order,
-   setOrder, minPrice, maxPrice, priceFlag , value}) =>
+   filter, minPrice, maxPrice,   value , min , max , priceFlag}) =>
 {
 
-  
+
 
   const history = useHistory();
   const [isLoading , setIsLoading] = useState(true);
@@ -92,6 +93,8 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   const [productCount , setProductCount] = useState();
 
   const [page ,setPage] = useState(1);
+
+  console.log('priceFlag' + priceFlag);
 
   const pageCount = () => {
       const result = [];
@@ -111,6 +114,7 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   const getProductList = async (productOrder) => {
     const {data : productLength} = await axios.get("/api/products/")
     setProductCount(productLength.length)
+    console.log(minPrice,maxPrice)
     if(productOrder) {
       const {data : sortedProducts} = await axios.post("/api/products/sorted", {
         search : value,
@@ -147,6 +151,8 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
    
     getProductList()
   },[page])
+
+
   
 
   

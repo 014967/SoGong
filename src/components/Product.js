@@ -85,8 +85,10 @@ const Product = ({selected}) => {
   const [checkedAll ,setCheckedAll] = useState(false);
   const [modifiedFlag, setMoodifiedFlag] = useState(false);
   const [buttonColor, setButtonColor] = useState('disabled');
-  const [minPrice, setMinPrice] = useState(0);
-  const [maxPrice , setMaxPrice] = useState(100000000);
+  const [minPrice, setMinPrice] = useState();
+  const [maxPrice , setMaxPrice] = useState();
+
+  
   const [priceFlag , setPriceFlag] = useState(false);
   const [value , setValue] = useState("");
 
@@ -234,10 +236,14 @@ const handleMaxPrice = e =>
                       <div>
                           <Input placeholder="상품 최소 가격" type='number' onChange={handleMinPrice} />
                           <Input placeholder="상품 최대 가격" type='number' onChange={handleMaxPrice} />
-                          <button onClick= { ()=>
-                          {
-                              setPriceFlag(true);
-                          }}>가격 설정</button>
+                          <button onClick={
+                            ()=>
+                            {
+                               setPriceFlag(true)
+                            }
+                          }>
+                            가격 전송
+                          </button>
                       </div> : null
                     }
                     <SmallSearchBar value={value} setValue={setValue}/>
@@ -250,7 +256,7 @@ const handleMaxPrice = e =>
                   <TableHeaderContent width="140px">가격</TableHeaderContent>
                 </TableHeader>
                 {<GetProductData productList={enterProduct}  setEnterProduct= {setEnterProduct} setAlter = {setAlter} order = {order} setOrder = {setOrder} 
-                maxPrice = {maxPrice} minPrice = {minPrice} priceFlag={priceFlag} value={value}
+                maxPrice = {maxPrice} minPrice = {minPrice}  value={value}  filter ={filter} priceFlag={ priceFlag}
                  checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setMoodifiedFlag={setMoodifiedFlag}
                  selected={selected} /> }
               </>
