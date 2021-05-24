@@ -250,6 +250,7 @@ router.get('/events', function(req, res){
                     Event.findByIdAndUpdate({_id: event._id}, {available : false} ).then(function(events){
                         Event.find({}).sort({date: -1}).then(function(events){
                             res.send(events);
+                            console.log(events)
                         })
                     })
                 }
