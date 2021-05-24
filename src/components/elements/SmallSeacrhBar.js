@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import Search from '@material-ui/icons/Search'
 
@@ -34,11 +34,39 @@ const SearchButton = styled(Search)`
   margin-left: 12px;
 `
 
-const SmallSearchBar = () => {
+const SmallSearchBar = ({value, setValue}) => {
+
+
+  const [text ,setText] = useState("");
+  const [click, setClick ] = useState(false);
+  const handleInput = e =>
+  {
+    setText(e.target.value);
+  }
+  useEffect(()=>
+  {
+    
+  },[text])
+  useEffect(()=>
+  {
+    console.log(click)
+
+    if(click)
+    {
+      
+      setValue(text)  
+
+    }
+  },[click])
     return (
       <Container>
-        <Input />
-        <SearchButton style={{fontSize: 80}} />
+        <Input onChange={handleInput} />
+        <SearchButton style={{fontSize: 80}} 
+        onClick={()=>
+        {
+          console.log("click")
+          setClick(true)
+        }}/>
       </Container>
     )
 }

@@ -133,9 +133,6 @@ const AlterProduct = () =>
   
     useEffect(()=>
     {
-        console.log(location.state)
-        console.log(location.state.data.name)
-
         if(location.state !== "undefined")
         {
             console.log("hello")
@@ -222,10 +219,9 @@ const AlterProduct = () =>
           
                
            <div>
-               {console.log("수정")}
                <Header>
             <Button background = "primary" onClick= { alterSubmit}>
-                상품 등록
+                상품 수정
             </Button>
         </Header>
         <Container>
