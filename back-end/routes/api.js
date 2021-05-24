@@ -260,7 +260,10 @@ router.get('/eventsAvailable', function(req, res){
                         })
                     })
                 }
-            }) // 현재시각과 비교해 이벤트를 활성화 / 비활성화함
+            })
+         })
+        })
+         // 현재시각과 비교해 이벤트를 활성화 / 비활성화함
 
 
 const postEventImage = require(path.join(__dirname, "post-eventImg.js"))
