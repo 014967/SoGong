@@ -31,7 +31,6 @@ const HomeContents = () => {
     const { data: products } = await axios.get("/api/products/")
     .catch(err => console.log(err))
     setData(products.slice(0, 4))
-    console.log(products.slice(0, 4))
   }
 
   useEffect(() => {
