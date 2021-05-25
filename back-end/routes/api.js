@@ -538,7 +538,11 @@ router.get('/products', function(req, res){
     });
 });
 
-
+router.get('/products/:id', function(req, res){
+    Product.find({_id:req.params.id}).then(function(product){
+        res.send(product)
+    });
+});
 
 router.post('/products', function(req, res, next){
     Product.create(req.body).then(function(products){
