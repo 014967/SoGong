@@ -571,14 +571,14 @@ router.delete('/products/:id', function(req, res){
 router.post('/products/sorted', function(req, res){
     let page = req.body.page
     if(page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
-    price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({price: req.body.order})
     .limit(10)
    .then(function(product){
         res.send(product);
     });
 
     if(page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
-    price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({price: req.body.order})
     .skip( (page-1) * 10 )
     .limit(10)
    .then(function(product){
@@ -610,13 +610,15 @@ Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
 router.post('/products/unsorted', function(req, res){
     
     
-    if(req.body.page == 1) Product.find({}).sort({date: -1})
+    if(req.body.page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
     .limit(10)
    .then(function(product){
         res.send(product)
     });
 
-    if(req.body.page!=1) Product.find({}).sort({date: -1})
+    if(req.body.page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
     .skip( (req.body.page-1) * 10 )
     .limit(10)
    .then(function(product){
@@ -627,6 +629,9 @@ router.post('/products/unsorted', function(req, res){
 
 /* [ JSON FORMAT of request to '/products/unsorted' ]
 {
+    "search": "string",
+    "min": "0",
+    "max": "1000000",
     "page" : "1"
 }
 page: 페이지 limit(n) n= 한페이지에 표시할 개수
@@ -636,14 +641,14 @@ router.post('/products/sorted/:category', function(req, res){
     let page = req.body.page
     console.log(req.params.category)
     if(page == 1) Product.find({'category' : req.params.category, 'name': {'$regex': req.body.search,'$options': 'i' },
-    price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({price: req.body.order})
     .limit(10)
    .then(function(product){
         res.send(product);
     });
 
     if(page!=1) Product.find({'category' : req.params.category, 'name': {'$regex': req.body.search,'$options': 'i' },
-    price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({price: req.body.order})
     .skip( (page-1) * 10 )
     .limit(10)
    .then(function(product){
@@ -676,13 +681,15 @@ Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
 router.post('/products/unsorted/:category', function(req, res){
     
     
-    if(req.body.page == 1) Product.find({category: req.params.category}).sort({date: -1})
+    if(req.body.page == 1) Product.find({category: req.params.category,'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
     .limit(10)
    .then(function(product){
         res.send(product);
     });
 
-    if(req.body.page!=1) Product.find({category: req.params.category}).sort({date: -1})
+    if(req.body.page!=1) Product.find({category: req.params.category,'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
     .skip( (req.body.page-1) * 10 )
     .limit(10)
    .then(function(product){
@@ -692,8 +699,13 @@ router.post('/products/unsorted/:category', function(req, res){
 
 /* [ JSON FORMAT of request to '/products/unsorted/:category' ]
 {
+    "search": "string",
+    "min": "0",
+    "max": "1000000",
     "page" : "1"
 }
+search: 해당 단어를 포함.(빈칸이면 모두 검색)
+min, max : 가격 범위 (빈칸이거나 누락되어선 안됨)
 page: 페이지 limit(n) n= 한페이지에 표시할 개수
 */
 
