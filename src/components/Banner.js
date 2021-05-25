@@ -4,24 +4,10 @@ import Slider from "react-slick";
 import axios from 'axios'
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { TabletMacSharp } from "@material-ui/icons";
 
 const BannerContent = styled.img`
    width: 100%;
 `
-
-const importAll = r => {
-   let images = []
-   r.keys().forEach((item, index) => {
-      if (r(item).default.includes('banner')) {
-         images.push(r(item).default)
-      }
-   })
-   return images
-}
-
-// const images = importAll(require.context('../assets/images', false, /\.(png|jpe?g|PNG|JPE?G)$/))
-
 const Container = styled.div`
 
    margin-bottom: 64px;
@@ -53,7 +39,6 @@ const settings = {
    autoplaySpeed: 10000, //(ms)
    pauseOnHover: true,
    arrows: true,
-   dots: true,
 };
 
 const Banner = () => {
@@ -74,8 +59,8 @@ const Banner = () => {
          <Container>
             <Slider {...settings}>
                {
-                  images.map(image => (
-                     <BannerContent src={require('../assets/images/banners/' + image).default} />
+                  images.map((image, i) => (
+                     <BannerContent key={i} src={require('../assets/images/banners/' + image).default} />
                   ))
                }
             </Slider>

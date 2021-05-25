@@ -1,6 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import styled from 'styled-components'
+import { withRouter } from 'react-router-dom'
+import { LoginContext } from '../pages/App'
 import Button from './elements/Button'
+import LinkedButton from './elements/LinkedButton'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
@@ -20,6 +23,15 @@ const LoginContainer = styled.form`
   }
 `
 
+const SignedContainer = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  & > *:last-child {
+    margin-left: 16px;
+  }
+`
+
 const Input = styled.input`
   position: relative;
   width: 192px;
@@ -34,15 +46,13 @@ const Input = styled.input`
   }
 `;
 
-const Login = () => {
+const Login = ({ location, history }) => {
 
-  const [ID, setID] = useState('')
-  const [PW, setPW] = useState('')
-  const [success, setSuccess] = useState(false)
+  const { ID, setID, PW, setPW, success, setSuccess } = useContext(LoginContext)
 
-  const handleLogin = async () => {
-    const { data: response } = await axios.post('/api/login',
-      {
+  const handleLogin = async (e) => {
+    e.preventDefault()
+    const { data: response } = await axios.post('/api/login', {
         id: ID,
         password: PW
       }
@@ -50,6 +60,11 @@ const Login = () => {
     setSuccess(response.loginSuccess)
     if (!response.loginSuccess) {
       alert(response.message)
+    } else {
+      const { data: response } = await axios.get('/api/auth')
+      if (response.isAdmin) {
+        history.push('/manager')
+      }
     }
   }
 
@@ -60,6 +75,9 @@ const Login = () => {
       setSuccess(false)
       setID('')
       setPW('')
+      if (location.pathname.includes('manager')) {
+        history.push('/')
+      }
     }
   }
 
@@ -88,10 +106,10 @@ const Login = () => {
     <Container>
       {
         success ? 
-        <>
+        <SignedContainer>
           <div>{ID}님 환영합니다.</div>
           <Button onClick={handleLogOut}>SIGN OUT</Button>
-        </>
+        </SignedContainer>
         : 
         <>
           <LoginContainer onSubmit={handleLogin}>
@@ -99,11 +117,11 @@ const Login = () => {
             <Input type="password" placeholder="PW" onChange={handlePWChange} />
             <Button type="submit">SIGN IN</Button>
           </LoginContainer>
-          <Button background="primary">SIGN UP</Button>
+          <LinkedButton background="primary" link='/signup'>SIGN UP</LinkedButton>
         </>
       }
     </Container>
   );
 }
 
-export default Login
+export default withRouter(Login)

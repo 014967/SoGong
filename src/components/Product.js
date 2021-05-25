@@ -5,15 +5,31 @@ import HeaderButton from './elements/HeaderButton';
 import GetProductData from './GetProductData';
 import CheckBox from './elements/CheckBox'
 import EnterProduct from './EnterProduct'
-import SearchBar from './elements/SearchBar';
+import SmallSearchBar from './elements/SmallSeacrhBar';
 import { addYears } from 'date-fns';
 import axios from 'axios';
+import { LocalConvenienceStoreOutlined } from '@material-ui/icons';
+import { useHistory, useLocation } from 'react-router';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
 `
+
+const Input = styled.input`
+    border: 1px solid ${({ theme }) => theme.color.primary};
+    &:focus {
+        outline: none;
+    }
+    font-size: 20px;
+    font-family: ${({ theme }) => theme.font.light};
+    height: 48px;
+    width: 150px;
+    max-width: 150px;
+
+`
+
 
 const Header = styled.div`
   display: flex;
@@ -45,27 +61,36 @@ const TableHeaderContent = styled.div`
   font-size: 20px;
   text-align: center;
 `
+const orderList = ["최신 순", "최저가 순" , "최고가 순"];
 
 const regDate = date => date.split('.')[0].replace('T','').replace('-','').replace(':','').replace(':','').slice(2)
 
 
-const Product = () => {
+const Product = ({selected}) => {
 
-  
+  const selectedProduct = selected;
+  const history = useHistory();
+  const location = useLocation();
   const [enterProduct, setEnterProduct] = useState(
     {
       enter : false,
       data : [],
       index : [],
     })
-
   const [alter , setAlter] = useState(false);
-  const [order, setOrder] = useState(false)
+  const [order, setOrder] = useState("최신 순");
+
+  const [filter , setFilter] = useState(false);
   const [checked, setChecked] = useState([false]);
   const [checkedAll ,setCheckedAll] = useState(false);
   const [modifiedFlag, setMoodifiedFlag] = useState(false);
   const [buttonColor, setButtonColor] = useState('disabled');
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice , setMaxPrice] = useState(100000000);
+  const [priceFlag , setPriceFlag] = useState(false);
+  const [value , setValue] = useState("");
 
+  const [index, setIndex] = useState(0);
 
   const handleCheckedAll = () =>
   {
@@ -78,72 +103,110 @@ const Product = () => {
   {
     if(window.confirm('삭제하시곘습니까?'))
     {
-      const ids = []
-      const paths = []
-      checked.forEach((isChecked, i ) =>
-      {
-        if(isChecked)
+    //  const ids = []
+    //  const paths = []
+     // checked.forEach((isChecked, i ) =>
+      //{
+       // if(isChecked)
+        //{
+         // ids.push(enterProduct.data[i]._id)
+         // paths.push(enterProduct.data[i].imgPath)
+       // }
+      //})
+     // const res = await axios.post('/api/products/delete', { productIds: ids})
+      //.catch((err)=> console.log('error'))
+      //const resImg = await axios.post('/productImgDel', { imgPaths : paths })
+      //.catch((err) => console.log('error'))
+      //.then(setEnterProduct(
+       // {
+        //  data : [],
+          
+        //}
+
+      //),
+      // console.log("location :" + location)
+      // console.log("location state :" + location.state)
+      //console.log("location state selected :" +location.state.selected)
+      ( location.state  == undefined ) ?
+      
+      
+        history.replace(
+          {
+            pathname : `/manager`,
+          }
+        )
+      
+      :
+      
+        history.replace(
         {
-          ids.push(enterProduct.data[i]._id)
-          paths.push(enterProduct.data[i].imgPath)
+            pathname : `/manager`,
+            state : {selected : location.state.selected},
         }
-      })
-      const res = await axios.post('/api/products/delete', { productIds: ids})
-      .catch((err)=> console.log('error'))
-      const resImg = await axios.post('/productImgDel', { imgPaths : paths })
-      .catch((err) => console.log('error'))
-      .then(setEnterProduct(
-        {
-          data : []
-        }
-      ))
-      .then(setMoodifiedFlag(true))
+      )
+      
+  
+    alert("삭제되었습니다")
+    
+    setMoodifiedFlag(true)
+    
+    
     }
   }
-  
+
   const handleOrder = () => 
   {
-     setOrder(prev => !prev)
+    setOrder(prev => {
+      if (prev === '최신 순')
+        return '최저가 순'
+      else if (prev === '최저가 순')
+        return '최고가 순'
+      else return '최신 순'
+    })
   }
-   
+
 
   const handleEnter = () => {
-    setEnterProduct({...enterProduct, enter: true});
     
+    console.log(selected)
+    history.push(
+      {
+        pathname : '/manager/Enter/',
+        state : {selected : selected},
+
+      }
+    )
   }
   
-  useEffect(()=>{
-    if(order){
-      setEnterProduct(
-        {data : prev => [...prev.sort((h,t) => regDate(h.date)- regDate(t.date))]
-        }
-      )
-    }
-    else
-    {
-      setEnterProduct(
-        {
-          data: prev => [...prev.sort((h,t) => regDate(t.date) - regDate(h.date))]
-        }
-      )
-    }
-  } , [order])
+  
 
+const handleFilter = () =>
+{
+    setFilter(prev => !prev)
+}
+ 
+ 
+const handleMinPrice = e =>
+{
+  setMinPrice(e.target.value);
+}
+const handleMaxPrice = e =>
+{
+  setMaxPrice(e.target.value);
+}
   
   useEffect(()=>
   {
-    setCheckedAll(checked.every(v => v) && enterProduct.data.length !== 0)
-    setButtonColor(checked.some(v=>v) ? 'secondary' : 'disabled')
+    if(enterProduct.enter !== null)
+    {
+      setCheckedAll(checked.every(v => v) && enterProduct.data !== Array(0))
+      setButtonColor(checked.some(v=>v) ? 'secondary' : 'disabled')
+  
+    }
     
-  })
-  useEffect(() =>
-  {
-    console.log(enterProduct);
+  }, [enterProduct.enter])
 
-    
-  },[enterProduct])
-
-
+ 
   return (
       <Container>
         
@@ -151,20 +214,33 @@ const Product = () => {
             
             enterProduct.enter ? (
               
-              <EnterProduct enter ={enterProduct} setEnter={setEnterProduct} alter={alter} />
+              <EnterProduct enter ={enterProduct} setEnter={setEnterProduct} alter={alter} setAlter={setAlter} />
             ) : (
               <>
                 <Header>
-                  <CheckBox checked={checkedAll} onClick={handleCheckedAll} />
+                  <CheckBox checked={checkedAll} onChange={handleCheckedAll} />
                   <ButtonsContainer>
                     <HeaderButton background={buttonColor} onClick={handleDelete}>선택 삭제</HeaderButton>
                     <HeaderButton background="secondary" onClick={handleOrder}>
-                      {
-                        order ? '최신 순 ' : '오래된 순'
-                      }
+                      {order}
                     </HeaderButton>
-                    <HeaderButton background="secondary">필터링</HeaderButton>
-                    <SearchBar/>
+                    <HeaderButton background="secondary" onClick={handleFilter}>
+                    {
+                      filter ? '가격필터링on' : '가격필터링off'
+                    }
+                    </HeaderButton>
+                    {
+                      filter ? 
+                      <div>
+                          <Input placeholder="상품 최소 가격" type='number' onChange={handleMinPrice} />
+                          <Input placeholder="상품 최대 가격" type='number' onChange={handleMaxPrice} />
+                          <button onClick= { ()=>
+                          {
+                              setPriceFlag(true);
+                          }}>가격 설정</button>
+                      </div> : null
+                    }
+                    <SmallSearchBar value={value} setValue={setValue}/>
                   </ButtonsContainer>
                   <Button background="primary" onClick={handleEnter}>등록</Button>
                 </Header>
@@ -173,8 +249,10 @@ const Product = () => {
                   <TableHeaderContent width="704px">상품명</TableHeaderContent>
                   <TableHeaderContent width="140px">가격</TableHeaderContent>
                 </TableHeader>
-                {<GetProductData productList={enterProduct.data}  setEnter= {setEnterProduct} setAlter = {setAlter}
-                 checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setMoodifiedFlag={setMoodifiedFlag} /> }
+                {<GetProductData productList={enterProduct}  setEnterProduct= {setEnterProduct} setAlter = {setAlter} order = {order} setOrder = {setOrder} 
+                maxPrice = {maxPrice} minPrice = {minPrice} priceFlag={priceFlag} value={value}
+                 checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setMoodifiedFlag={setMoodifiedFlag}
+                 selected={selected} /> }
               </>
             )
           }

@@ -79,45 +79,40 @@ const Header = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
 `
 
-const OrderListContents = () => {
+const WishListContents = () => {
   const [selected, setSelected] = useState('event');
 
 
 
     return (
         <ContentsWrapper wide>
-          <Title>주문 내역</Title>
+          <Title>장바구니</Title>
           <Container>
-          <ButtonsContainer>
-                  <HeaderButton >오늘</HeaderButton>
-                  <HeaderButton >1주일</HeaderButton>
-                  <HeaderButton >1달</HeaderButton>
-                  <HeaderButton >1년</HeaderButton>
-            </ButtonsContainer>
+          
           <TableHeader>
-          <TableHeaderContent width="250px">주문 날짜</TableHeaderContent>
+          <TableHeaderContent width="619px">이미지</TableHeaderContent>
                   <TableHeaderContent width="619px">상품명</TableHeaderContent>
-                  <TableHeaderContent width="201px">상품 상태</TableHeaderContent>
-                  <TableHeaderContent width="201px">가격</TableHeaderContent>
-                  <TableHeaderContent width="100px">비고</TableHeaderContent>
+                  <TableHeaderContent width="201px">수량</TableHeaderContent>
+                  <TableHeaderContent width="201px">상품 주문 금액</TableHeaderContent>
           </TableHeader>
           <Row>
-              <Title2>20XX-0X-XX</Title2>
-              <Available>k-sinsa 티셔츠</Available>
-              <DateRange>배송중</DateRange>
-              <DateRange>30,000</DateRange>
-              <Button background="primary">문의하기or상품평</Button>
+              <CheckBox />
+              <Title2>상품_이미지.png</Title2>
+              <Available>k-sinsa 바지</Available>
+              <DateRange>3</DateRange>
+              <DateRange>90,000</DateRange>
+              <Button background="primary">수정</Button>
             </Row>
           </Container>
           <Row>
-              ~
+              총 금액
           </Row>
           <ButtonsContainer2>
-          
+          <Button>결제하기</Button>
           </ButtonsContainer2>
           
         </ContentsWrapper>
     );
 }
 
-export default OrderListContents
+export default WishListContents

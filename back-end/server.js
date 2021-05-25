@@ -224,6 +224,36 @@ app.post('/productImg/:id', pupload.single('img'), (req, res) => {
     })
   })
 });
+
+// mutiple product images upload below.
+app.post('/productDetailImg/:id', pupload.array('img', 5), (req, res) => {
+  console.log(req.files);
+  let images = req.files
+  images.forEach((image) => {
+    const imgName = image.filename
+    const imgPath = image.destination
+    Product.findByIdAndUpdate(
+      {_id: req.params.id}, {
+        $push: {
+          detailImg: imgName,
+          detailImgPath: '../assets/images/products/'+imgName
+      }
+        }).then(function(product){
+      Product.findOne({_id: req.params.id}).then(function(product){  
+        console.log('successfully updated local image');
+        res.send('Success');
+      })
+    })
+  })
+});
+/*
+form data로 이미지를 여러 개 (MAX: 5개) 받아 서버에 업로드. 
+DB 에는 product model 의 
+detailImg, detailImgPath 두 필드에 각각 파일명, 파일경로
+를 배열 형태로 저장
+*/
+
+
 app.post('/eventImgDel', (req, res) => {
   var a = 0
   var b = Object.keys(req.body.imgPaths).length

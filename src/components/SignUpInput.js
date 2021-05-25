@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import Title from './elements/Title'
 import Button from './elements/Button'
 import ContentsWrapper from './elements/ContentsWrapper'
 import styled from 'styled-components'
@@ -8,7 +9,7 @@ const Input = styled.input`
   width: 300px;
   height: 48px;
   border: solid 1px ${({ theme }) => theme.color.primary};
-  background: ${({ theme }) => theme.color.background};
+  background: white;
   font-size: 20px;
   font-family: ${({ theme }) => theme.font.light};
   padding-left: 8px;
@@ -16,10 +17,14 @@ const Input = styled.input`
     outline: none;
   }
 `;
-const StyledLogo = styled.div`
-  color: ${props => props.theme.color[props.color] || props.theme.color.primary};
-  font-size: 48px;
-  font-family: ${({ theme }) => theme.font.medium};
+
+const Form = styled.form`
+    & > * {
+        margin-top: 32px;
+    }
+    & > *:last-child {
+        margin-bottom: 64px;
+    }
 `
 
 const SignUpInput = () => {
@@ -33,21 +38,14 @@ const SignUpInput = () => {
 
 
     const onSubmit = (e) => {
-        e.preventDefault();
-       
-         // 1. 비밀번호와 비밀번호 체크가 다를 경우를 검증한다
-         
-        if(password !== passwordCheck){
-            return setPasswordError(true);
-        }
-        
-        console.log({
-            id,
-            email,
-            password,
-            passwordCheck,
-        });
+        e.preventDefault()
     };
+
+    useEffect(() => {
+        if(password !== passwordCheck){
+        return setPasswordError(true);
+    }
+    }, [password, passwordCheck])
 
     // Coustom Hook 이전
     const onChangeId = (e) => {
@@ -74,10 +72,12 @@ const SignUpInput = () => {
     
     
     return (
-        <ContentsWrapper wide>
-            <StyledLogo>
+        <ContentsWrapper>
+            <Title>
             SIGN UP
-            </StyledLogo>
+            </Title>
+            
+            
             <form onSubmit={onSubmit}>
             <div>
             <label htmlFor="user-id">ID*</label><br/>
@@ -104,6 +104,5 @@ const SignUpInput = () => {
         </ContentsWrapper>
     );
 }
-
 
 export default SignUpInput;

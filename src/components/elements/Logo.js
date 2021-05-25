@@ -8,9 +8,9 @@ const StyledLogo = styled.div`
   font-size: 48px;
   font-family: ${({ theme }) => theme.font.medium};
 `
-const Logo = () => (
+const Logo = ({ color }) => (
   <Link to="/" style={{textDecoration: 'none'}}>
-    <StyledLogo>
+    <StyledLogo color={color}>
       K-SINSA
     </StyledLogo>
   </Link>
