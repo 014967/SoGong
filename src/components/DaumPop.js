@@ -6,7 +6,7 @@ const PopContainer = styled.div`
 position: fixed;
 background: #00000050;
 width: 50%;
-  padding : 100px 100px 100px ;
+  padding : 25px 25px 25px ;
 
 margin-top : 30px;
 

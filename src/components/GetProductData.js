@@ -5,7 +5,8 @@ import styled from 'styled-components';
 import axios from 'axios';
 import CheckBox from './elements/CheckBox';
 import Button from './elements/Button';
-import { CompareSharp } from '@material-ui/icons';
+import { AirlineSeatLegroomReducedRounded, CompareSharp } from '@material-ui/icons';
+import { set } from 'js-cookie';
 
 
 const Container = styled.div`
@@ -79,12 +80,11 @@ const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').r
 
 
 const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order,
-   setOrder, minPrice, maxPrice, priceFlag , value}) =>
+   filter, minPrice, maxPrice,   value , min , max , priceFlag ,history}) =>
 {
 
-  
 
-  const history = useHistory();
+
   const [isLoading , setIsLoading] = useState(true);
 
   const [flag ,setFlag] = useState(false);
@@ -92,6 +92,8 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   const [productCount , setProductCount] = useState();
 
   const [page ,setPage] = useState(1);
+
+ // console.log('priceFlag' + priceFlag);
 
   const pageCount = () => {
       const result = [];
@@ -147,11 +149,14 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
    
     getProductList()
   },[page])
+
+
   
 
   
 useEffect (() => { 
   setIsLoading(true)
+  console.log(order)
   if(order === "최저가 순")
   {
     getProductList('asc')
@@ -238,7 +243,7 @@ useEffect (() => {
           <Price>{data.price}</Price>
           <Button background="secondary" onClick= { () => {history.push(
             {
-              pathname : `/product/${data._id}`,
+              pathname : `/manager/product/${data._id}/`,
               state : {data : data}
             })}} >확인</Button>
           <Button background="primary" onClick={ () =>

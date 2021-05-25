@@ -16,8 +16,8 @@ const HomeContentCards = ({ data }) => {
       {data.map((card, i) => (
         <HomeContentCard key={i}
           img={card.img}
-          title={card.title}
-          desc={card.desc}
+          title={card.name}
+          desc={card.price}
         />
       ))}
     </Container>

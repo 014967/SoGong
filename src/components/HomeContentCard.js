@@ -11,6 +11,7 @@ const Container = styled.div`
   & > * + * {
     margin-top: 16px;
   }
+  cursor: pointer;
 `
 const Image = styled.img`
   width: 504px;
@@ -24,17 +25,19 @@ const ContentDesc = styled.div`
   font-size: 20px;
   font-family: ${({ theme }) => theme.font.regular};
   text-align: center;
+  margin-top: 8px;
+  color: ${({ theme }) => theme.color.secondary};
 `
 
 const HomeContentCard = ({ img, title, desc }) => {
   return (
     <Container>
-      <Image src={Img1} />
+      <Image src={require('../assets/images/products/' + img).default} />
       <ContentTitle>
         {title}
       </ContentTitle>
       <ContentDesc>
-        {desc}
+        &#8361;{desc.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}
       </ContentDesc>
     </Container>
   )
