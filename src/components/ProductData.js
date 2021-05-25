@@ -8,8 +8,12 @@ import Title from './elements/Title'
 
 
 import Button from './elements/Button'
-import { PowerInputSharp } from '@material-ui/icons'
+
+import { makeStyles } from '@material-ui/core/styles';
+import Modal from '@material-ui/core/Modal';
 import UserPostList from './UserPostList'
+
+
 
 
 const Container = styled.div`
@@ -59,18 +63,91 @@ const InputContainer = styled.div`
 
 
 
+function getModalStyle() {
+  const top = 50 ;
+  const left = 50 ;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    position: 'absolute',
+    width: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
+}));
+
+
 
 const ProductData = (props) =>
 { 
 
   
-  let params = useParams();
+  const params = useParams();
   console.log(params);
+  const id = params.id;
+  console.log(id);
+  useEffect(()=>
+  {
+    console.log(props);
+
+  },[props])
+
+
+
+  const [d1, setD1] = useState([]);
+  const location = useLocation();
+  
+   /*
+    if (window.performance) {
+      if (performance.navigation.type == 1) {
+        getRefreshData()
+      } else {
+        console.log( "This page is not reloaded");
+      }
+
+    }*/
+
+    if(props.location.state == "undefined")
+    {
+      getRefreshData()
+    }
   
 
-  const history = useHistory();
+  const getRefreshData = async ()=>
+  {
+    if(id !== "")
+    {
+      const {data : product} = await axios.get(`/api/products/get/${id}`)
+      /*setImg(props.location.state.data.img);
+      setName(props.location.state.data.name);
+      setPrice(props.location.state.data.price);
+      setDescription(props.location.state.data.detail);
+      setCategory(props.location.state.data.category);*/
+      setD1(product);
 
-  console.log(history);
+    }
+  }
+
+  useEffect(()=>
+  {
+    console.log(d1)
+  },[d1])
+
+
+  
+
+
+  const history = useHistory();
 
     const [category, setCategory] = useState();
     const [img , setImg] = useState();
@@ -95,18 +172,47 @@ const ProductData = (props) =>
       setOpenDelivery(prev => !prev);
     }
 
+//modal
+const classes = useStyles();
+const [modalStyle] = react.useState(getModalStyle);
+const [open , setOpen] = react.useState(false);
+
+const handleOpen = ()=>{
+  setOpen(true);
+};
+const handleClose = () =>
+{
+  setOpen(false);
+};
+const body = (
+  <div style={modalStyle} className={classes.paper}>
+    <h2 id="simple-modal-title">Text in a modal</h2>
+      <p id="simple-modal-description">
+        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+      </p>
+   
+    </div>
+);
+
 
     console.log(props);
     
     useEffect(() => {
       if(!img || !name || !price || !description || !category || !detailImgPath)
         {
-        setImg(props.location.state.data.img);
-        setName(props.location.state.data.name);
-        setPrice(props.location.state.data.price);
-        setDescription(props.location.state.data.detail);
-        setCategory(props.location.state.data.category);
-        }
+          if(typeof props.location.state == "undefined")
+          {
+            getRefreshData();
+          }
+          else{
+            setImg(props.location.state.data.img);
+            setName(props.location.state.data.name);
+            setPrice(props.location.state.data.price);
+            setDescription(props.location.state.data.detail);
+            setCategory(props.location.state.data.category);
+           
+          }
+         }
       }, [props]);
 
 
@@ -124,6 +230,15 @@ const ProductData = (props) =>
     const handelDetailImg = () =>
     {
 
+      if(typeof props.location.state =="undefined")
+      {
+
+      }
+      else{
+        console.log(props)
+        console.log(props.location)
+      console.log(props.location.state)
+      console.log(props.location.state.data)
       const result = [];
       for(let i= 0 ; i < props.location.state.data.detailImg.length; i++)
       {
@@ -134,6 +249,7 @@ const ProductData = (props) =>
         )
       }
       return result;
+    }
     }
 
 
@@ -184,16 +300,27 @@ const ProductData = (props) =>
                 <div id='delivery'>
                   <Button onClick={()=>
                   {
-                    history.push(
+                    /*history.push(
                      {
                        pathname : '/user/PostList'
                     }  
-                    )
+                    )*/
                     //popup()
 
+
+                    handleOpen()
                   }}>
                   배송지 추가
                   </Button>
+                  <Modal
+                  open={open}
+                  onClose={handleClose}  aria-labelledby="simple-modal-title"
+                  aria-describedby="simple-modal-description"
+                >
+                 {<UserPostList/>}
+
+
+                  </Modal>
                   
                   
                   
