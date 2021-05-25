@@ -551,22 +551,11 @@ router.get('/products', function(req, res){
     });
 });
 
-<<<<<<< HEAD
-
-router.get('/products/get/:id', function(req, res){
-    console.log(req)
-=======
 router.get('/products/:id', function(req, res){
->>>>>>> 6197673d7815d3ca33ff2a614f372320e4df0100
     Product.find({_id:req.params.id}).then(function(product){
         res.send(product)
     });
 });
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 6197673d7815d3ca33ff2a614f372320e4df0100
 
 router.post('/products', function(req, res, next){
     Product.create(req.body).then(function(products){
