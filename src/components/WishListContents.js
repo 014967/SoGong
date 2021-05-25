@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import styled from 'styled-components'
+import axios from 'axios'
 import Title from './elements/Title'
 import ContentsWrapper from './elements/ContentsWrapper'
 import Button from './elements/Button';
 import CheckBox from './elements/CheckBox'
+import { WishListContext } from '../pages/App'
 import HeaderButton from './elements/HeaderButton';
+import { WifiLockRounded } from '@material-ui/icons';
 
 const Container = styled.div`
   
@@ -21,30 +24,54 @@ const Row = styled.div`
   & > *:first-child {
     margin-right: 64px;
   }
-  & > *:last-child {
-    margin-left: 64px;
+`
+const Image = styled.img`
+  width: 100px;
+  height: 100px;
+`
+
+const Name = styled.div`
+  width: 475px;
+  text-align: center;
+`
+
+const Quantity = styled.input`
+  width: 51px;
+  margin: 0 42px;
+  text-align: center;
+  border: none;
+  height: 40px;
+  font-size: 20px;
+  font-family: ${({ theme }) => theme.font.light};
+  &::-webkit-inner-spin-button,
+  &::-webkit-outer-spin-button {
+    opacity: 1;
   }
-`
-const Title2 = styled.div`
-  width: 619px;
-  text-align: center;
-`
+  &:focus {
+    outline: none;
+  }
 
-const Available = styled.div`
-  width: 201px;
+`
+const Price = styled.div`
+  width: 245px;
   text-align: center;
 `
-
-const DateRange = styled.div`
-  width: 185px;
-  text-align: center;
+const Header = styled.div`
+  display: flex;
+  width: 100%;
+  height: 64px;
+  padding: 0 16px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+  & > * + * {
+    margin-left: 32px;
+  }
 `
 const TableHeader = styled.div`
   display: flex;
   align-items: center;
   width: 100%;
   height: 64px;
-  padding: 0 242px 0 120px;
+  padding: 0 16px 0 120px;
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
 `
 const TableHeaderContent = styled.div`
@@ -71,44 +98,109 @@ const ButtonsContainer2 = styled.div`
     margin-left: 16px;
   };
 `
-const Header = styled.div`
-  display: flex;
-  width: 100%;
-  height: 64px;
-  padding: 0 16px;
-  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
-`
 
 const WishListContents = () => {
   const [selected, setSelected] = useState('event');
+  const [wishList, setWishList] = useState([])
+  const [checked, setChecked] = useState([])
+  const [checkedAll, setCheckedAll] = useState(false)
+  const { wishListFlag, setWishListFlag } = useContext(WishListContext)
+  const [buttonColor, setButtonColor] = useState('disabled')
+  const [quantity, setQuantity] = useState([])
 
+  const getWishList = async () => {
+    const { data: wl } = await axios.get('/api/wishlist')
+    wl.wishlist.forEach(v => {
+      setQuantity(prev => [...prev, v.quantity])
+    })
+    setWishList(await Promise.all(wl.wishlist.map(async wishlist => {
+      const { data: product } = await axios.get(`/api/products/${wishlist.id}`)
+      return {
+        ...wishlist,
+        product: product[0]
+      }
+    })))
+    setChecked([...Array(wl.wishlist.length).fill(false)])
+  }
+  const handleChecked = index => () => {
+    setChecked(prev => [...prev.map((v, i) => 
+      i === index ? !v : v
+    )])
+  }
+  const handleCheckedAll = () => {
+    setCheckedAll(prev => !prev)
+    setChecked(prev => [...prev.fill(!checkedAll)])
+  }
 
+  const handleDelete = async () => {
+    if (window.confirm('삭제하시겠습니까?')) {
+      const ids = []
+      console.log(wishList)
+      checked.forEach((isChecked, i) => {
+        if (isChecked) {
+          ids.push(wishList[i].id)
+          console.log(ids)
+        }
+      })
+      await ids.forEach(async id => {
+        const { data: res } = await axios.get(`/api/removeFromwishlist?id=${id}`)
+      })
+      setWishListFlag(true)
+      getWishList()
+    }
+  }
+
+  const handleQuantity = (e, index) => {
+    setQuantity(prev => [...prev.map((v, i) => 
+      i === index ? e.target.value : v
+    )])
+  }
+
+  useEffect(() => {
+    getWishList()
+  }, [])
+
+  useEffect(() => {
+    setCheckedAll(checked.every(v => v) && wishList.length !== 0)
+    setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
+  }, [checked])
 
     return (
-        <ContentsWrapper wide>
+        <ContentsWrapper>
           <Title>장바구니</Title>
           <Container>
-          
+          <Header>
+            <CheckBox checked={checkedAll} onChange={handleCheckedAll} />
+            <Button background={buttonColor} onClick={handleDelete}>선택 삭제</Button>
+          </Header>
           <TableHeader>
-          <TableHeaderContent width="619px">이미지</TableHeaderContent>
-                  <TableHeaderContent width="619px">상품명</TableHeaderContent>
-                  <TableHeaderContent width="201px">수량</TableHeaderContent>
-                  <TableHeaderContent width="201px">상품 주문 금액</TableHeaderContent>
+          <TableHeaderContent width="100px">이미지</TableHeaderContent>
+            <TableHeaderContent width="485px">상품명</TableHeaderContent>
+            <TableHeaderContent width="137px">수량</TableHeaderContent>
+            <TableHeaderContent width="250px">금액</TableHeaderContent>
           </TableHeader>
-          <Row>
-              <CheckBox />
-              <Title2>상품_이미지.png</Title2>
-              <Available>k-sinsa 바지</Available>
-              <DateRange>3</DateRange>
-              <DateRange>90,000</DateRange>
-              <Button background="primary">수정</Button>
+          {wishList.length !== 0 && wishList.map((v, i) => (
+            <Row key={i}>
+                <CheckBox checked={checked[i]} onChange={handleChecked(i)}/>
+                <Image src={require('../assets/images/products/' + v.product.img).default} />
+                <Name>{v.product.name}</Name>
+                <Quantity value={quantity[i]} onChange={(e) => handleQuantity(e, i)} type='number' />
+                <Price>{(quantity[i] * v.product.price).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</Price>
             </Row>
+          ))}
           </Container>
           <Row>
-              총 금액
+              총 금액 :&nbsp;
+              <b>
+                {
+                  wishList.length !== 0 && wishList.reduce((pre, cur, i) => (
+                    pre + cur.product.price * quantity[i]
+                  ), 0).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")
+                }
+              </b>
           </Row>
           <ButtonsContainer2>
-          <Button>결제하기</Button>
+          <Button background='primary'>결제하기</Button>
           </ButtonsContainer2>
           
         </ContentsWrapper>
@@ -116,3 +208,46 @@ const WishListContents = () => {
 }
 
 export default WishListContents
+
+// import axios from 'axios';
+
+// const ADD_TO_WISHLIST = 'add_to_wishlist';
+// const WISHLIST = 'wishlist'
+// const REMOVE_WISHLIST_ITEM = 'remove_From_wishlist';
+// const SERVER = '/api';
+
+// export function addTowishlist(id) {
+//     let body = {
+//         productId: id
+//     }
+//     const request = axios.post(`${SERVER}/addTowishlist`, body)
+//         .then(response => response.data);
+
+//     return {
+//         type: ADD_TO_WISHLIST,
+//         payload: request
+//     }
+// }
+
+// export function removewishlistItem(productId) {
+
+//     const request = axios.get(`/api/removeFromwishlist?id=${productId}`)
+//         .then(response => {
+//             //productInfo ,  wishlist 정보를 조합해서   CartDetail을 만든다. 
+//             response.data.wishlist.forEach(item => {
+//                 response.data.productInfo.forEach((product, index) => {
+//                     if (item.id === product._id) {
+//                         response.data.productInfo[index].quantity = item.quantity
+//                     }
+//                 })
+//             })
+//             return response.data;
+//         });
+
+//     return {
+//         type: REMOVE_WISHLIST_ITEM,
+//         payload: request
+//     }
+// }
+
+// export default wishlist

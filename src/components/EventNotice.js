@@ -134,7 +134,6 @@ const EventNotice = () => {
     if (window.confirm('삭제하시겠습니까?')) {
       const ids = []
       const paths = []
-      console.log(eventList)
       checked.forEach((isChecked, i) => {
         if (isChecked) {
           ids.push(eventList[i]._id)
@@ -143,7 +142,6 @@ const EventNotice = () => {
       })
       const res = await axios.post('/api/events/delete', { eventIds: ids })
         .catch((err) => console.log('error'))
-      console.log(paths)
       const resImg = await axios.post('/eventImgDel', { imgPaths: paths })
         .catch((err) => console.log('error', err))
       .then(setEventList([]))

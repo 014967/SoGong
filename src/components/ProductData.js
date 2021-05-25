@@ -1,71 +1,72 @@
-import react , {useState, useEffect } from 'react'
+import react , {useState, useEffect, useContext } from 'react'
 import {useHistory, useLocation} from 'react-router'
 import {useParams} from 'react-router-dom'
 import styled from 'styled-components'
 import axios from 'axios'
-import ContentsWrapper from './elements/ContentsWrapper'
 import Title from './elements/Title'
-
-
+import ProductImage from './elements/ProductImage'
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import FormControl from '@material-ui/core/FormControl';
 import Button from './elements/Button'
-
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import UserPostList from './UserPostList'
+import { WishListContext } from '../pages/App'
 
-
-
-
-const Container = styled.div`
+const TopContainer = styled.div`
+  display: flex;
   width: 100%;
-  & > *:first-child {
-    margin-right: 64px;
+  padding-bottom: 64px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+`
+
+const InfoContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-left: 16px;
+`
+
+const ButtonContainer = styled.div`
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  & > * + * {
+    margin-left: 16px;
   }
 `
 
-
-const Category = styled.div`
-  font-size: 32px;
+const Name = styled.h3`
+  font-size: 48px;
   font-family: ${({ theme }) => theme.font.medium};
-  color: ${(props) => props.selected ? 
-    props.theme.color.primary : props.theme.color.secondary};
-  border: none;
-  background: none;
-  cursor: pointer;
-  text-align: left;
-  outline: 0;
-`
-const Img=  styled.img`
-  width : 500px;
-  height : 500px; 
-`
-const TopContainer = styled.div`
-    display : flex;
-    width :100 %;
-    padding : 64px 64px 0;
-    max-width: 1792px;
-    margin-top : 200px;
-
-
 `
 
-const BottomContainer = styled.div`
-    width : 100%;
-    padding : 64px 64px 0;
-    max-width :1792px;
-
+const Price = styled.div`
+  font-size: 24px;
+  font-family: ${({ theme }) => theme.font.regular};
+  margin-top: 16px;
+  margin-bottom: 256px;
+  color: ${({ theme }) => theme.color.secondary};
 `
 
-const InputContainer = styled.div`
-    display: flex;
-    max-width: 1094px;
+const Description = styled.div`
+  margin-top: 64px;
+  padding-left: 64px;
+  margin-bottom: 128px;
 `
 
+const Stock = styled.select`
+  width: 120px;
+  border: 1px solid ${({ theme }) => theme.color.secondary};
+  &:focus {
+    outline: none;
+  }
+`
 
-
-function getModalStyle() {
-  const top = 50 ;
-  const left = 50 ;
+const getModalStyle = () => {
+  const top = 50
+  const left = 50
 
   return {
     top: `${top}%`,
@@ -73,7 +74,6 @@ function getModalStyle() {
     transform: `translate(-${top}%, -${left}%)`,
   };
 }
-
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -84,29 +84,25 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2),
+  },
 }));
 
+const categoryMap = {
+  Man: 'MEN',
+  Woman: 'WOMEN',
+  Child: 'KIDS',
+}
 
+const ProductData = (props) => {  
 
-const ProductData = (props) =>
-{ 
-
-  
-  const params = useParams();
-  console.log(params);
-  const id = params.id;
-  console.log(id);
-  useEffect(()=>
-  {
-    console.log(props);
-
-  },[props])
-
-
-
-  const [d1, setD1] = useState([]);
-  const location = useLocation();
-  
+  const params = useParams()
+  const id = params.id
    /*
     if (window.performance) {
       if (performance.navigation.type == 1) {
@@ -116,246 +112,123 @@ const ProductData = (props) =>
       }
 
     }*/
+  const [d1, setD1] = useState([]);
+  const [category, setCategory] = useState('');
+  const [img, setImg] = useState('');
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState(0);
+  const [description, setDescription] = useState('');
+  const [orderStock, setOrderStock] = useState('수량');
+  const [detailImg, setDetailImg] = useState([])
+  const [detailImgPath, setDetailImgPath] = useState({ path: [] })
+  const [openDelivery, setOpenDelivery] =useState(false);
 
-    if(props.location.state == "undefined")
-    {
-      getRefreshData()
-    }
+  const { wishListFlag, setWishListFlag } = useContext(WishListContext)
+  const classes = useStyles();
   
-
-  const getRefreshData = async ()=>
-  {
-    if(id !== "")
-    {
-      const {data : product} = await axios.get(`/api/products/get/${id}`)
-      /*setImg(props.location.state.data.img);
-      setName(props.location.state.data.name);
-      setPrice(props.location.state.data.price);
-      setDescription(props.location.state.data.detail);
-      setCategory(props.location.state.data.category);*/
-      setD1(product);
-
+  const getProductData = async () => {
+    if (id.length !== 0) {
+      const { data: product } = await axios.get(`/api/products/${id}`)
+      console.log(product)
+      setCategory(categoryMap[product[0].category])
+      setImg(product[0].img)
+      setName(product[0].name)
+      setPrice(product[0].price)
+      setDescription(product[0].detail)
+      setDetailImg(product[0].detailImg)
     }
   }
 
-  useEffect(()=>
-  {
-    console.log(d1)
-  },[d1])
+  useEffect(() => {
+    getProductData()
+  }, [])
 
+  //modal
+  const [modalStyle] = react.useState(getModalStyle);
+  const [open, setOpen] = react.useState(false);
 
-  
+  const handleOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
 
+  const handleOrderStock = e => {
+    setOrderStock(e.target.value);
+  }
 
-  const history = useHistory();
-
-    const [category, setCategory] = useState();
-    const [img , setImg] = useState();
-    const [name , setName] = useState();
-    const [price, setPrice] = useState();
-    const [description, setDescription] = useState();
-    const [orderStock, setOrderStock] = useState(1);
-
-    const [detailImg , setDetailImg] = useState();
-
-    const [detailImgPath, setDetailImgPath] = useState(
-      {
-        path : []
-      }
-    );
-
-
-    const [openDelivery,setOpenDelivery] =useState(false);
-
-    const popup = ()=>
-    {
-      setOpenDelivery(prev => !prev);
-    }
-
-//modal
-const classes = useStyles();
-const [modalStyle] = react.useState(getModalStyle);
-const [open , setOpen] = react.useState(false);
-
-const handleOpen = ()=>{
-  setOpen(true);
-};
-const handleClose = () =>
-{
-  setOpen(false);
-};
-const body = (
-  <div style={modalStyle} className={classes.paper}>
-    <h2 id="simple-modal-title">Text in a modal</h2>
-      <p id="simple-modal-description">
-        Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-      </p>
-   
-    </div>
-);
-
-
-    console.log(props);
-    
-    useEffect(() => {
-      if(!img || !name || !price || !description || !category || !detailImgPath)
-        {
-          if(typeof props.location.state == "undefined")
-          {
-            getRefreshData();
-          }
-          else{
-            setImg(props.location.state.data.img);
-            setName(props.location.state.data.name);
-            setPrice(props.location.state.data.price);
-            setDescription(props.location.state.data.detail);
-            setCategory(props.location.state.data.category);
-           
-          }
-         }
-      }, [props]);
-
-
-      
-
-      
-
-    const handleOrderStock = e =>
-    {
-      setOrderStock(e.target.value);
-
-    }
-
-
-    const handelDetailImg = () =>
-    {
-
-      if(typeof props.location.state =="undefined")
-      {
-
-      }
-      else{
-        console.log(props)
-        console.log(props.location)
-      console.log(props.location.state)
-      console.log(props.location.state.data)
-      const result = [];
-      for(let i= 0 ; i < props.location.state.data.detailImg.length; i++)
-      {
-        result.push(
-          <Img src={require('../assets/images/products/'+props.location.state.data.detailImg[i]).default} />
-            
-          
-        )
-      }
-      return result;
-    }
-    }
-
-
+  const handleWishList = async () => {
+    const { data: res } = await axios.post('/api/addTowishlist', {
+      productId: id,
+      quantity: orderStock
+    })
+    alert('장바구니에 추가되었습니다.')
+    setWishListFlag(true)
+  }
 
     return (
-
-        <ContentsWrapper wide>
-        
-        
-       
-        <TopContainer id= 'topmenu'>
-            <div>
-            <Category>{category}</Category>
-      
-            {img ? <Img src={require('../assets/images/products/' + img).default} /> : 
-             '...loading'}
-             
-           
-            
-            </div>
-
-           
-          <Container id='name, price , etc'>
-                <div id= 'product name'>상품이름 : {name}</div>
-                <div id='product price'>
-                    상품 가격 :{price}
-                </div>
-            <InputContainer id='count, delivery' > 
-                <div id='count'>
-                  상품수량
-                  <select
-                    value ={ orderStock }
-                    onChange ={handleOrderStock}>
-                      <option value = "1">1</option>
-                      <option value = "2">2</option>
-                      <option value = "3">3</option>
-                      <option value = "4">4</option>
-                      <option value = "5">5</option>
-                      <option value = "6">6</option>
-                      <option value = "7">7</option>
-                      <option value = "8">8</option>
-                      <option value = "9">9</option>
-
-
-                  </select>
-                </div>
-               
-                <div id='delivery'>
-                  <Button onClick={()=>
-                  {
-                    /*history.push(
-                     {
-                       pathname : '/user/PostList'
-                    }  
-                    )*/
-                    //popup()
-
-
-                    handleOpen()
-                  }}>
-                  배송지 추가
-                  </Button>
-                  <Modal
-                  open={open}
-                  onClose={handleClose}  aria-labelledby="simple-modal-title"
-                  aria-describedby="simple-modal-description"
+      <>
+        <Title>{category}</Title>
+        <TopContainer>
+          {(img && detailImg) ? <ProductImage img={img} detailImg={detailImg} />
+          : '...loading'}
+          <InfoContainer>
+            <Name>{name}</Name>
+            <Price>&#8361;{price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</Price>
+            <ButtonContainer>
+              <FormControl className={classes.formControl}>
+                <InputLabel id="demo-simple-select-label">수량</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  value={orderStock}
+                  onChange={handleOrderStock}
                 >
-                 {<UserPostList/>}
-
-
-                  </Modal>
-                  
-                  
-                  
-                </div>
-                </InputContainer>
-                
-                  
-            <div id='basket, buy'>
-                <div id='basket'></div>
-                <div id='buy'></div>
-            </div>
-            
-        </Container>
-    </TopContainer>    
-    <BottomContainer id='product detail description'>
-    {
-        handelDetailImg()
-    }
-
-    
-    {
-      <div>
-        {description}
-      </div>
-    }
-    
-    </BottomContainer>    
-
-
-    </ContentsWrapper>
-    )
-
-
-
-
+                  <MenuItem value={1}>1</MenuItem>
+                  <MenuItem value={2}>2</MenuItem>
+                  <MenuItem value={3}>3</MenuItem>
+                  <MenuItem value={4}>4</MenuItem>
+                  <MenuItem value={5}>5</MenuItem>
+                  <MenuItem value={6}>6</MenuItem>
+                  <MenuItem value={7}>7</MenuItem>
+                  <MenuItem value={8}>8</MenuItem>
+                  <MenuItem value={9}>9</MenuItem>
+                </Select>
+              </FormControl>
+              
+              <Button onClick={() => {
+                /*history.push(
+                  {
+                    pathname : '/user/PostList'
+                }  
+                )*/
+                //popup()
+                handleOpen()
+              }}>
+                배송지 선택
+              </Button>
+              {/* <Modal
+                open={open}
+                onClose={handleClose}  aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+                >{<UserPostList/>}
+              </Modal> */}
+            </ButtonContainer>
+            <ButtonContainer>
+              <Button onClick={handleWishList}>
+                장바구니 담기
+              </Button>
+              <Button background='primary'>
+                바로 구매하기
+              </Button>
+            </ButtonContainer>
+          </InfoContainer>
+        </TopContainer>
+        <Price>상품 설명</Price>
+        <Description>{description}</Description>
+      </>
+  )
 }
 
 export default ProductData;

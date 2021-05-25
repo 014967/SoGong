@@ -1,10 +1,13 @@
-import React, { useContext, useCallback } from 'react'
+import React, { useState, useEffect, useContext, useCallback } from 'react'
 import { useLocation, useHistory } from 'react-router'
 import styled from 'styled-components'
+import axios from 'axios'
 import { ProductListContext } from '../pages/App'
+import { WishListContext } from '../pages/App'
 import Logo from './elements/Logo'
 import Login from './Login'
 import HeaderSearchBar from './HeaderSearchBar'
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 const Container = styled.div`
   position: fixed;
@@ -28,6 +31,19 @@ const BaseContainer = styled.div`
   }
   & > * + * {
     margin-left: 16px;
+  }
+`
+
+const LoginContainer = styled.div`
+  display: flex;
+`
+const WishList = styled.div`
+  display: flex;
+  cursor: pointer;
+  margin-right: 12px;
+  margin-top: 12px;
+  & > *:last-child {
+    font-size: 10px;
   }
 `
 
@@ -61,24 +77,55 @@ const Header = () => {
   const location = useLocation()
   const history = useHistory()
   const { category, setCategory, setSearch, setStartPrice, setEndPrice, submitFlag, setSubmitFlag } = useContext(ProductListContext)
+  const { wishListFlag, setWishListFlag } = useContext(WishListContext)
+  
+  const [wishList, setWishList] = useState(0)
 
   const handleCategory = (cate) => {
     setCategory(cate)
     setSearch('')
     setStartPrice(0)
     setEndPrice(200000)
-    if (!location.pathname.includes('list'))
+    if (!location.pathname.includes('/list'))
       history.push('/list')
     setSubmitFlag(true)
   }
 
+  const handleWishList = () => {
+    history.push('/user/wishlist')
+  }
+
+  const getWishList = async () => {
+    const {data: wl} = await axios.get('/api/wishlist')
+    setWishList(wl.wishlist.length)
+  }
+
   const handleColor = useCallback((cate) => (category === cate ? 'primary' : 'secondary'), [submitFlag])
+
+  useEffect(() => {
+    getWishList()
+  }, [])
+
+  useEffect(() => {
+    console.log('call3')
+    if (wishListFlag) {
+      console.log('call4')
+      getWishList()
+      setWishListFlag(false)
+    }
+  }, [wishListFlag])
 
     return (
       <Container>
         <BaseContainer>
           <Logo />
-          <Login />
+          <LoginContainer>
+            <WishList onClick={handleWishList}>
+              <ShoppingCartIcon />
+              <div>{wishList}</div>
+            </WishList>
+            <Login />
+          </LoginContainer>
         </BaseContainer>
         {
           !location.pathname.includes('manager') && (

@@ -18,6 +18,7 @@ const HomeContentCards = ({ data }) => {
           img={card.img}
           title={card.name}
           desc={card.price}
+          pid={card._id}
         />
       ))}
     </Container>

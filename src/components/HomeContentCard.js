@@ -1,6 +1,6 @@
 import React from 'react'
+import { useHistory } from 'react-router'
 import styled from 'styled-components'
-import Img1 from '../assets/images/item1.PNG'
 
 const Container = styled.div`
   display: flex;
@@ -29,9 +29,15 @@ const ContentDesc = styled.div`
   color: ${({ theme }) => theme.color.secondary};
 `
 
-const HomeContentCard = ({ img, title, desc }) => {
+const HomeContentCard = ({ img, title, desc, pid }) => {
+  const history = useHistory()
+
+  const handleClick = () => {
+    history.push(`/product/${pid}`)
+  }
+  
   return (
-    <Container>
+    <Container onClick={handleClick}>
       <Image src={require('../assets/images/products/' + img).default} />
       <ContentTitle>
         {title}

@@ -97,7 +97,7 @@ router.get('/products_by_id', (req, res) => {
 router.post("/addTowishlist", auth, (req, res) => {
 
     //먼저  User Collection에 해당 유저의 정보를 가져오기 
-    User.findOne({ _id: req.body._id },
+    User.findOne({ _id: req.user._id },
         (err, userInfo) => {
 
             // 가져온 정보에서 카트에다 넣으려 하는 상품이 이미 들어 있는지 확인 
@@ -188,8 +188,8 @@ get으로  http://localhost:8080/api/removeFromwishlist?id=${productId}하면 �
 
 */
 
-router.get("/wishlist/:id", auth, (req, res) => {
-    User.findById({_id:req.params.id}).select('wishlist').then(function(users){
+router.get("/wishlist", auth, (req, res) => {
+    User.findById({_id:req.user._id}).select('wishlist').then(function(users){
         res.send(users)  
     })
 });
