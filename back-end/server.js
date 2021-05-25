@@ -230,8 +230,6 @@ app.post('/productMutipleImg/:id', pupload.array('img', 5), (req, res) => {
   console.log(req.files);
   let images = req.files
   let i = 0
-  console.log(req.body.img)
-  
   images.forEach((image) => {
     const imgName = image.filename
     const imgPath = image.destination
@@ -243,8 +241,7 @@ app.post('/productMutipleImg/:id', pupload.array('img', 5), (req, res) => {
             detailImg: imgName,
             detailImgPath: '../assets/images/products/'+imgName
         }
-          })
-          .then(function(product){
+          }).then(function(product){
         Product.findOne({_id: req.params.id}).then(function(product){  
           console.log('successfully updated local image');
           res.send('Success');
