@@ -288,10 +288,9 @@ const EnterProduct = () =>
                     onChange={handleCategory}
                     >
                         <option value= "default">카테고리</option>
-                        <option value="Man Top">남성 상의</option>
-                        <option value="Man Bottom">남성 하의</option>
-                        <option value="Woman Top">여성 상의</option>
-                        <option value="Woman Bottom">여성 하의</option>
+                        <option value="Man">남성용</option>
+                        <option value="Woman">여성용</option>
+                       
                         <option value="Child">아동용</option>
 
                     </select>

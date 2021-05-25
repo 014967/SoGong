@@ -4,14 +4,17 @@ import DaumPop from './DaumPop'
 import Button from './elements/Button'
 import ReactDom from 'react-dom'
 
+
+import { makeStyles } from '@material-ui/core/styles';
 import ContentsWrapper from './elements/ContentsWrapper'
 import Title from './elements/Title'
+import { set } from 'js-cookie'
 
 
 const Container = styled.div`
   display: flex;
   width: 100%;
-  margin-top: 96px;
+  margin-top: 10px;
 `
 
 const ListCotainer = styled.div`
@@ -35,54 +38,64 @@ const Input = styled.input`
     max-width: 400px;
 `
 
-const  ZContainer = styled.div`
-position : fixed,
-top : 50%,
-left : 50%,
-transform : translate(-50%,-50%),
-padding : '50px',
-zIndex :1000
+const OutContainer = styled.div`
+
 `
 
 
-const Modal_wrapper = styled.div`
-position : fixed,
-top : 0,
-bottom :0 ,
-left :0,
-right : 0,
-`
-
-const Modal_backdrop = styled.div`
-position : fixed,
-top : 0,
-bottom : 0 ,
-left :0,
-right : 0,
-z-index : 100,
-background-color : rgba(0,0,0.3)
-`
-const Modal_box = styled.div`
-position : relative,
-top : 50%,
-left : 50%,
-transform : translate(-50%, -50%),
-height : 70%,
-width: 60%,
-overflow : auto,
-background-color : white,
-box-shadow : 0 0 10px rgba(0,0,0,0.25)
-z-index : 101,
-padding : 40px,
-` 
 
 
 
-const UserPostList = (openDelivery) =>
+
+
+
+function getModalStyle() {
+  const top = 50 ;
+  const left = 50 ;
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+
+
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    position: 'absolute',
+    /*width: 1275,
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),*/
+    width: 1275,
+    padding: "64px 64px 0",
+    marginbottom: "128px",
+    boxShadow: "0px 10px 40px #00000029",
+    borderRadius : "32px",
+    background: "white",
+
+  },
+}));
+
+
+
+
+
+const UserPostList = () =>
 {
+
+
+const classes = useStyles();
+const [modalStyle] = react.useState(getModalStyle);
+
     const [address ,setAddress ] = useState("");
     const [detailAddress ,setDetailAddress] = useState("");
     const [isOpen, setIsOpen]= useState(false);
+    const [fixedAddress, setFixedAddress] = useState({
+      totalAddress : []
+    });
     const togglePopup = () =>
     {
       setIsOpen(prev => !prev);
@@ -94,16 +107,19 @@ const UserPostList = (openDelivery) =>
         setDetailAddress(e.target.value);
     }
 
-
-    if(openDelivery)
+    const handleFixedAddress = () =>
     {
-      return ReactDom.createPortal(<Modal_wrapper>
-        <div className = {'model-background'}/>
-          <Modal_box>
-        {<ContentsWrapper wide>
+      setFixedAddress({
+        totalAddress :address + detailAddress
+      });
+    }
+
+   return(
+     <div style={modalStyle} className={classes.paper}>
+          
             <Container>
 
-            <ListCotainer>
+            <OutContainer>
             <Title>배송지 목록</Title>
             <Button onClick={togglePopup}>
                   배송지 검색
@@ -123,25 +139,31 @@ const UserPostList = (openDelivery) =>
                     
                     {
                       address !== "" ?
-                      <Button >
-                    배송지 추가
-                    </Button> : null
+                      <Button onClick={handleFixedAddress} >
+                          배송지 추가
+                      </Button> : null
                     }
+                      <ListCotainer>
+                      {
+
+                        fixedAddress ? fixedAddress[0] : null
+                        //이거 여러개 배열에 넣을 수 있도록해야함
+                        //한번 배송지 추가를 할 때마다 post를 해서 유재 배송지에 추가를 할수있도록 접근해야함
+                        //주소 옆에 버튼을 추가한다. 해당 버튼 클릭시에  상품상세 목록으로 데이터를 가져온다.
+                      }
+                      </ListCotainer>
                     </div>
 
-            </ListCotainer>
+                    </OutContainer>
            
 
             </Container>
            
-        </ContentsWrapper>
-
-
+        </div>
         
-        }   
-               </Modal_box>
-        </Modal_wrapper> , document.getElementById("modal-root"))
-    }
+
+   )
+                  
   
 
 }

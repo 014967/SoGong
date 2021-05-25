@@ -52,7 +52,6 @@ const App = () => {
                 <Route exact path= "/manager/Enter" component = {EnterProduct}/>
                 <Route exact path="/manager/Alter" component = {AlterProduct} />
                 <Route  path ="/manager/product/:id" component = {ProductData} />
-                <Route path ='/user/PostList' component ={UserPostList}/>
                 
                
                 <Footer />
