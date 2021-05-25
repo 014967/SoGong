@@ -80,7 +80,8 @@ const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').r
 
 
 const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order,
-   filter, minPrice, maxPrice,   value , min , max , priceFlag ,history}) =>
+   filter, minPrice, maxPrice,   value , min , max , priceFlag ,history
+  ,modifiedFlag ,setModifiedFlag}) =>
 {
 
 
@@ -127,6 +128,7 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
       const {data : products} = await axios.post("/api/products/unsorted", {
         page : page,
       })
+      
       setEnterProduct(
         {
           data: products
@@ -181,7 +183,7 @@ useEffect (() => {
       {
         try{
           console.log('no image occured')
-          setFlag(true)
+          setModifiedFlag(true)
     
         }
         catch(err)
@@ -195,13 +197,13 @@ useEffect (() => {
   },[productList.data])
  
   useEffect(() =>{
-    if(flag){
+    if(modifiedFlag){
         setIsLoading(true)
         getProductList()
-        setFlag(false)
+        setModifiedFlag(false)
     }
 
-  },[flag])
+  },[modifiedFlag])
 
 
   useEffect(()=>
@@ -256,6 +258,7 @@ useEffect (() => {
             )
           }} >수정</Button>
           </Row>
+          
         )
         
         )
