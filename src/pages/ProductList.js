@@ -18,10 +18,23 @@ const Result = styled.div`
 
 const Pagination = styled.div`
   display: flex;
+  width: 100%;
+  justify-content: center;
+  margin-bottom: 64px;
+  & > * + * {
+    margin-left: 16px;
+  }
 `
 
 const PageButton = styled.button`
-
+  color: ${(props) => props.theme.color[props.color] || props.theme.color.secondary};
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  &:focus {
+    outline: none;
+  }
 `
 
 const ProductList = () => {
@@ -114,8 +127,10 @@ const ProductList = () => {
               </Result>
               <ProductListCards data={products[page - 1]} />
               <Pagination>
-                {products.map((page, i) => (
-                  <PageButton key={i} onClick={() => setPage(i + 1)}>{i + 1}</PageButton>
+                {products.map((p, i) => (
+                  <PageButton key={i} 
+                  color={i + 1 === page && 'primary'}
+                  onClick={() => setPage(i + 1)}>{i + 1}</PageButton>
                 ))}
               </Pagination>
             </ContentsWrapper>

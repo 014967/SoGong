@@ -17,16 +17,25 @@ const FilterContainer = styled.div`
 `
 const ButtonContainer = styled.div`
   display: flex;
+  margin-right: 16px;
+  margin-bottom: 8px;
+  & > * + * {
+    margin-left: 4px;
+  }
 `
 
 const CategoryButton = styled(Button)`
   background: ${(props) => props.theme.color[props.background] || props.theme.color.secondary};
-  
+  width: 100px;
+  height: 30px;
+  font-size: 14px;
 `
 
 const PriceSlider = withStyles({
   root: {
-    color: '#DF988F'
+    color: '#DF988F',
+    width: '275px',
+    marginLeft: '16px'
   }
 })(Slider)
 

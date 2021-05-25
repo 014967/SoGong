@@ -346,6 +346,19 @@ get으로 http://localhost:8080/api/delivery/_id하면 유저의 배송지들을
 
 */
 
+router.get("/deliveryname/:deliveryname", auth, (req, res) => {
+    User.findOne({_id:req.user._id,"delivery.deliveryname": req.params.deliveryname}).then(function(users){
+            if(!users){res.send(false);}
+            else res.send(true) 
+        })
+});
+/*
+
+배송지 이름 중복확인
+
+get으로 http://localhost:8080/api/deliveryname/우리집11 하면 로그인한 유저의 배송지 중 우리집11이라는 이름의 배송지가 있는지 확인해줌
+
+*/
 
 // [USER API]
 
