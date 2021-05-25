@@ -69,8 +69,8 @@ const HeaderSearchBar = ({ location, history }) => {
           value={[startPrice, endPrice]}
           onChange={handlePrice}
           min={0}
-          max={100000}
-          step={100}
+          max={200000}
+          step={1000}
           valueLabelDisplay="auto"
           // getAriaValueText={valuetext}
         />

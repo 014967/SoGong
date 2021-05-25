@@ -30,7 +30,7 @@ const ProductList = () => {
     category: 'ALL',
     search: '',
     startPrice: 0,
-    endPrice: 100000
+    endPrice: 200000
   })
   const { category, setCategory, search, setSearch,
         startPrice, setStartPrice, endPrice, setEndPrice,
@@ -45,9 +45,9 @@ const ProductList = () => {
 
     const temp = data.filter(product => {
       let cate = ''
-      if (product.category.includes('남성')) {
+      if (product.category.includes('Man')) {
         cate = 'MEN'
-      } else if (product.category.includes('여성')) {
+      } else if (product.category.includes('Woman')) {
         cate = 'WOMEN'
       } else {
         cate = 'KIDS'
@@ -60,8 +60,9 @@ const ProductList = () => {
         product.price <= endPrice
       )
     })
+    temp.reverse()
     const temp2 = [] //20개씩 slice
-    for (let i = 0; i < temp.length / 20 + 1; i++) {
+    for (let i = 0; i < Math.floor(temp.length / 20) + 1; i++) {
       if (temp.length - i * 20 < 20) {
         temp2[temp2.length] = temp.slice(i * 20)
       } else {
@@ -85,12 +86,12 @@ const ProductList = () => {
       setCategory('ALL')
       setSearch('')
       setStartPrice(0)
-      setEndPrice('100000')
+      setEndPrice('200000')
       setCurrentState({
         category: 'ALL',
         search: '',
         startPrice: 0,
-        endPrice: 100000
+        endPrice: 200000
       })
     }
   }, [])
@@ -108,8 +109,8 @@ const ProductList = () => {
               <Title>{currentState.category}</Title>
               <Result>
                 {currentState.search.length !== 0 && `"${currentState.search}"`}
-                {(currentState.startPrice !== 0 || currentState.endPrice !== 100000) && `, W${currentState.startPrice} ~ ${currentState.endPrice}`}
-                {(currentState.search.length !== 0 || (currentState.startPrice !== 0 || currentState.endPrice !== 100000)) && '의 검색 결과입니다.'}
+                {(currentState.startPrice !== 0 || currentState.endPrice !== 200000) && ` ₩${currentState.startPrice} ~ ₩${currentState.endPrice}`}
+                {(currentState.search.length !== 0 || (currentState.startPrice !== 0 || currentState.endPrice !== 200000)) && '의 검색 결과입니다.'}
               </Result>
               <ProductListCards data={products[page - 1]} />
               <Pagination>

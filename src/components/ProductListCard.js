@@ -6,15 +6,15 @@ const Container = styled.div`
   flex-direction: column;
   align-items: center;
   max-width: 252px;
-  margin-bottom: 48px;
+  margin: 0 8px 48px;
   & > * + * {
     margin-top: 8px;
   }
   cursor: pointer;
 `
 const Image = styled.img`
-  width: 253px;
-  height: 253px;
+  width: 252px;
+  height: 252px;
 `
 const ContentTitle = styled.h3`
   font-size: 28px;

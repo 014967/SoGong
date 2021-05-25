@@ -55,7 +55,7 @@ const App = () => {
     const [category, setCategory] = useState('ALL')
     const [search, setSearch] = useState('')
     const [startPrice, setStartPrice] = useState(0)
-    const [endPrice, setEndPrice] = useState(100000)
+    const [endPrice, setEndPrice] = useState(200000)
     const [submitFlag, setSubmitFlag] = useState(false)
     const productListContextValue = useMemo(() => ({
         category, setCategory, search, setSearch, startPrice, setStartPrice, endPrice, setEndPrice, submitFlag, setSubmitFlag

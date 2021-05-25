@@ -7,9 +7,9 @@ const Container = styled.div`
   flex-wrap: wrap;
   width: 100%;
   margin-bottom: 48px;
-  & > * + * {
+  /* & > * + * {
     margin-left: 20px;
-  }
+  } */
 `
 
 const ProductListCards = ({ data }) => {

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useCallback } from 'react'
 import { useLocation, useHistory } from 'react-router'
 import styled from 'styled-components'
 import { ProductListContext } from '../pages/App'
@@ -60,19 +60,19 @@ const Header = () => {
   
   const location = useLocation()
   const history = useHistory()
-  const { category, setCategory, setSearch, setStartPrice, setEndPrice, setSubmitFlag } = useContext(ProductListContext)
+  const { category, setCategory, setSearch, setStartPrice, setEndPrice, submitFlag, setSubmitFlag } = useContext(ProductListContext)
 
   const handleCategory = (cate) => {
     setCategory(cate)
     setSearch('')
     setStartPrice(0)
-    setEndPrice(100000)
+    setEndPrice(200000)
     if (!location.pathname.includes('list'))
       history.push('/list')
     setSubmitFlag(true)
   }
 
-  const handleColor = (cate) => category === cate ? 'primary' : 'secondary'
+  const handleColor = useCallback((cate) => (category === cate ? 'primary' : 'secondary'), [submitFlag])
 
     return (
       <Container>
