@@ -572,15 +572,15 @@ router.post('/products/sorted', function(req, res){
     let page = req.body.page
     if(page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
-    .limit(20)
+    .limit(10)
    .then(function(product){
         res.send(product);
     });
 
     if(page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
-    .skip( (page-1) * 20 )
-    .limit(20)
+    .skip( (page-1) * 10 )
+    .limit(10)
    .then(function(product){
         res.send(product);
     });
@@ -611,14 +611,14 @@ router.post('/products/unsorted', function(req, res){
     
     
     if(req.body.page == 1) Product.find({}).sort({date: -1})
-    .limit(20)
+    .limit(10)
    .then(function(product){
         res.send(product)
     });
 
     if(req.body.page!=1) Product.find({}).sort({date: -1})
-    .skip( (req.body.page-1) * 20 )
-    .limit(20)
+    .skip( (req.body.page-1) * 10 )
+    .limit(10)
    .then(function(product){
         res.send(product)
 
@@ -637,15 +637,15 @@ router.post('/products/sorted/:category', function(req, res){
     console.log(req.params.category)
     if(page == 1) Product.find({'category' : req.params.category, 'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
-    .limit(20)
+    .limit(10)
    .then(function(product){
         res.send(product);
     });
 
     if(page!=1) Product.find({'category' : req.params.category, 'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}}).sort({price: req.body.order})
-    .skip( (page-1) * 20 )
-    .limit(20)
+    .skip( (page-1) * 10 )
+    .limit(10)
    .then(function(product){
         res.send(product);
     });
@@ -677,14 +677,14 @@ router.post('/products/unsorted/:category', function(req, res){
     
     
     if(req.body.page == 1) Product.find({category: req.params.category}).sort({date: -1})
-    .limit(20)
+    .limit(10)
    .then(function(product){
         res.send(product);
     });
 
     if(req.body.page!=1) Product.find({category: req.params.category}).sort({date: -1})
-    .skip( (req.body.page-1) * 20 )
-    .limit(20)
+    .skip( (req.body.page-1) * 10 )
+    .limit(10)
    .then(function(product){
         res.send(product);
     });
