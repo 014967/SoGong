@@ -196,6 +196,12 @@ const EnterProduct = () =>
             alert("필수 입력 사항을 입력하지 않으셨습니다");
             return
         }
+        if(price > 200000)
+        {
+            alert("가격을 20만원 이하로 책정해주세요");
+            return
+        }
+        
         console.log(productTitle, productDescription, price, stock, category)
         const formData = new FormData()
         console.log(file.files)

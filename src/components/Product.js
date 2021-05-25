@@ -82,7 +82,7 @@ const Product = ({selected, history}) => {
   const [filter , setFilter] = useState(false);
   const [checked, setChecked] = useState([false]);
   const [checkedAll ,setCheckedAll] = useState(false);
-  const [modifiedFlag, setMoodifiedFlag] = useState(false);
+  const [modifiedFlag, setModifiedFlag] = useState(false);
   const [buttonColor, setButtonColor] = useState('disabled');
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice , setMaxPrice] = useState(10000000);
@@ -128,7 +128,23 @@ const Product = ({selected, history}) => {
       // console.log("location :" + location)
       // console.log("location state :" + location.state)
       //console.log("location state selected :" +location.state.selected)
-      ( location.state  == undefined ) ?
+      
+      const Ids = []
+      checked.forEach((isChecked, i) =>
+      {
+     
+        if(isChecked)
+        {
+          Ids.push(enterProduct.data[i]._id)
+        }
+      })
+      const res = await axios.post('/api/products/unavailable' , { productIds : Ids})
+      .catch((error) => console.log('error'))
+    }
+      
+      
+      
+    ( location.state  == undefined ) ?
       
       
         history.replace(
@@ -148,11 +164,13 @@ const Product = ({selected, history}) => {
       
   
     alert("삭제되었습니다")
+    setEnterProduct({
+      data : []
+    })
+    setModifiedFlag(true)
     
-    setMoodifiedFlag(true)
     
     
-    }
   }
 
   const handleOrder = () => 
@@ -257,7 +275,7 @@ const handleMaxPrice = e =>
                 </TableHeader>
                 {<GetProductData productList={enterProduct}  setEnterProduct= {setEnterProduct} setAlter = {setAlter} order = {order} setOrder = {setOrder} 
                 maxPrice = {maxPrice} minPrice = {minPrice}  value={value}  filter ={filter} priceFlag={ priceFlag}
-                 checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setMoodifiedFlag={setMoodifiedFlag} history={history}
+                 checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setModifiedFlag={setModifiedFlag} history={history}
                  selected={selected} /> }
               </>
             )
