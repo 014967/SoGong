@@ -2,7 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 import Search from '@material-ui/icons/Search'
 
-const Container = styled.div`
+const Form = styled.form`
   display: flex;
 `
 
@@ -32,14 +32,15 @@ const Input = styled.input`
 const SearchButton = styled(Search)`
   color: ${({ theme }) => theme.color.primary};
   margin-left: 12px;
+  cursor: pointer;
 `
 
-const SearchBar = () => {
+const SearchBar = ({ search, setSearch, handleSubmit }) => {
     return (
-      <Container>
-        <Input />
-        <SearchButton style={{fontSize: 80}} />
-      </Container>
+      <Form onSubmit={handleSubmit}>
+        <Input value={search} onChange={(e) => setSearch(e.target.value)} />
+        <SearchButton onClick={handleSubmit} style={{fontSize: 80}} />
+      </Form>
     )
 }
 

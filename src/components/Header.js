@@ -1,6 +1,7 @@
-import React from 'react'
-import { useLocation } from 'react-router'
+import React, { useContext } from 'react'
+import { useLocation, useHistory } from 'react-router'
 import styled from 'styled-components'
+import { ProductListContext } from '../pages/App'
 import Logo from './elements/Logo'
 import Login from './Login'
 import HeaderSearchBar from './HeaderSearchBar'
@@ -45,7 +46,7 @@ const Categories = styled.nav`
 const Category = styled.button`
   font-size: 64px;
   font-family: ${({ theme }) => theme.font.medium};
-  color: ${({ theme }) => theme.color.secondary};
+  color: ${(props) => props.theme.color[props.color] || props.theme.color.secondary};
   border: none;
   background: none;
   cursor: pointer;
@@ -56,8 +57,23 @@ const Category = styled.button`
 `
 
 const Header = () => {
+  
   const location = useLocation()
-  console.log(location)
+  const history = useHistory()
+  const { category, setCategory, setSearch, setStartPrice, setEndPrice, setSubmitFlag } = useContext(ProductListContext)
+
+  const handleCategory = (cate) => {
+    setCategory(cate)
+    setSearch('')
+    setStartPrice(0)
+    setEndPrice(100000)
+    if (!location.pathname.includes('list'))
+      history.push('/list')
+    setSubmitFlag(true)
+  }
+
+  const handleColor = (cate) => category === cate ? 'primary' : 'secondary'
+
     return (
       <Container>
         <BaseContainer>
@@ -68,12 +84,11 @@ const Header = () => {
           !location.pathname.includes('manager') && (
             <ExtensionContainer>
             <Categories>
-              <Category>NEW</Category>
-              <Category>MEN</Category>
-              <Category>WOMEN</Category>
-              <Category>KIDS</Category>
+              <Category color={handleColor('MEN')} onClick={() => handleCategory('MEN')}>MEN</Category>
+              <Category color={handleColor('WOMEN')} onClick={() => handleCategory('WOMEN')}>WOMEN</Category>
+              <Category color={handleColor('KIDS')} onClick={() => handleCategory('KIDS')}>KIDS</Category>
             </Categories>
-            <HeaderSearchBar />
+            <HeaderSearchBar location={location} history={history} />
             </ExtensionContainer>
           )
         }
