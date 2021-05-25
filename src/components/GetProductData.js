@@ -79,12 +79,11 @@ font: normal normal 300 20px/29px Spoqa Han Sans Neo;
 const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').replace('-', '.').slice(2)
 
 
-const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order,
-   filter, minPrice, maxPrice,   value , min , max , priceFlag ,history
-  ,modifiedFlag ,setModifiedFlag}) =>
+const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order, filter,
+    minPrice, maxPrice,   value  ,history , submit ,setSubmit ,modifiedFlag ,setModifiedFlag}) =>
 {
 
-
+ 
 
   const [isLoading , setIsLoading] = useState(true);
 
@@ -94,7 +93,63 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
 
   const [page ,setPage] = useState(1);
 
- // console.log('priceFlag' + priceFlag);
+  const [option ,setOption] = useState({
+    order : null,
+    search : "",
+    min : 0,
+    max : 100000,
+    page : 1,
+  })
+
+ 
+
+ 
+
+  useEffect(()=>
+  {
+    setOption(option => ({...option , order : order}));
+  },[order])
+
+  useEffect(()=>
+  {
+    setOption(option => ({...option , search : value}));
+  },[value])
+  useEffect(()=>
+  {
+    setOption(option => ({...option , min : minPrice}));
+  },[minPrice])
+  useEffect(()=>
+  {
+    setOption(option => ({...option , max : maxPrice}));
+  },[maxPrice])
+  useEffect(()=>
+  {
+    setOption(option => ({...option , page : page}));
+  },[page])
+
+
+
+  useEffect(()=>
+  {
+    getProductList(option)
+  },[option])
+
+useEffect(()=>
+{
+  console.log(option)
+},[option])
+
+useEffect(()=>
+{
+  if(filter==false)
+  {
+    setOption(option => ({...option, order : null , min : 0 , max : 100000 , search : ""}));
+  }
+
+},[filter])
+
+
+
 
   const pageCount = () => {
       const result = [];
@@ -111,27 +166,45 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
       }
     return result;
   }
-  const getProductList = async (productOrder) => {
+
+
+  const getProductList = async (option) => {
     const {data : productLength} = await axios.get("/api/products/")
     setProductCount(productLength.length)
-    if(productOrder) {
+
+
+    if(option.order !== null) {
       const {data : sortedProducts} = await axios.post("/api/products/sorted", {
-        search : value,
-        order : productOrder,
-        page : page,
-        min : minPrice,
-        max : maxPrice,
-    })
+        search : option.search,
+        order : option.value,
+        page : option.page,
+        min : option.min,
+        max : option.max,
+        available : "available",
+    }
+    )
+
+    setProductCount(sortedProducts.length)
+    
+    setSubmit(prev => !prev)
       setEnterProduct({ data: sortedProducts })
       setChecked([...Array(sortedProducts.length).fill(false)])
-    } else {
+      
+    } 
+    else //option.order ==null (최신순) 
+    {
       const {data : products} = await axios.post("/api/products/unsorted", {
         page : page,
+        search : value,
+        min : minPrice,
+        max : maxPrice,
+        available : "available",
       })
       
+      //setProductCount(products.length)
       setEnterProduct(
         {
-          data: products
+          data: products,
         }
       )
       setChecked([...Array(products.length).fill(false)])
@@ -148,31 +221,9 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
 
   useEffect(()=>
   {
-   
-    getProductList()
-  },[page])
-
-
-  
-
-  
-useEffect (() => { 
-  setIsLoading(true)
-  console.log(order)
-  if(order === "최저가 순")
-  {
-    getProductList('asc')
-  }
-  else if (order === "최고가 순")
-  {
-    getProductList('-1')
-  }
-  
-  else if (order ==="최신 순"){
-    getProductList(null)
-  }
-}, [order])
-
+    console.log(option)
+   getProductList(option)
+  },[submit])
 
   useEffect(() =>
   {
@@ -206,9 +257,7 @@ useEffect (() => {
   },[modifiedFlag])
 
 
-  useEffect(()=>
-  {
-  },[productList.data])
+
 
 
     return (

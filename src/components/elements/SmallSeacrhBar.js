@@ -34,7 +34,7 @@ const SearchButton = styled(Search)`
   margin-left: 12px;
 `
 
-const SmallSearchBar = ({value, setValue}) => {
+const SmallSearchBar = ({value, setValue,setSubmit}) => {
 
 
   const [text ,setText] = useState("");
@@ -46,6 +46,7 @@ const SmallSearchBar = ({value, setValue}) => {
   useEffect(()=>
   {
     
+    setValue(text)  
   },[text])
   useEffect(()=>
   {
@@ -54,21 +55,25 @@ const SmallSearchBar = ({value, setValue}) => {
     if(click)
     {
       
-      setValue(text)  
+      setSubmit(true)
+      
 
     }
   },[click])
+
+
     return (
       <Container>
-        <Input onChange={handleInput} />
-        <SearchButton style={{fontSize: 80}} 
-        onClick={()=>
-        {
-          console.log("click")
-          setClick(true)
-        }}/>
+        <Input  onChange={handleInput} placeholder="단어 입력"/>
+       
       </Container>
     )
 }
 
 export default SmallSearchBar;
+/* <SearchButton style={{fontSize: 80}} 
+onClick={()=>
+  {
+    console.log("click")
+    setClick(true)
+  }}/>*/
