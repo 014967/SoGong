@@ -109,6 +109,10 @@ const PriceText = styled.div`
     padding: 0 16px 0 8px;
 `
 
+const ImgNameDiv = styled.div`
+
+
+`
 
 
 const EnterProduct = () =>
@@ -126,22 +130,67 @@ const EnterProduct = () =>
     const [productImg , setProductImg] = useState(null);
     const [imgFileName, setImgFileName] = useState("이미지는 정사각형으로 표시됩니다");
     const [price, setPrice] = useState();
-    const [category, setCategory] = useState("남성 상의");
+    const [category, setCategory] = useState("default");
     const [stock , setStock ] = useState([]);
   
+    const [flag ,setFlag] = useState(false);
   
    
+    const [file , setFile] = useState({
+        files : [],
+    });
+
+
+
+    const fileSelectedHandler = (e)=>
+    {
+        setFlag(true)
+        setFile({ files : [ ...e.target.files]})
+        
+    }
+    
+
+    useEffect(()=>
+    {
+        console.log(file)
+        console.log(file.files);
+        
+    },[file])
+
 
     
     
+    const handleImgName = () =>
+    {
+        
+    
+       const result =[];
+       console.log("hello")
+       console.log(file.files.length);
+       console.log(file.files[0].name);
+       for(let i=0; i<file.files.length ; i++)
+       {
 
+       
+            result.push(
+                <FileName key ={i+1}>
+                  {
+                  file.files[i].name
+                  }
+                </FileName>
+            )
+       }
+       
+       return result;
+    }
     const handleSubmit = async (e) =>
     {
 
       
         
         e.preventDefault()
-        if(!productTitle || !productDescription || !productImg || !price || !stock || !category)
+
+        if(!productTitle || !productDescription || !file.files || !price || !stock || category==="default")
         {
             
             alert("필수 입력 사항을 입력하지 않으셨습니다");
@@ -149,7 +198,12 @@ const EnterProduct = () =>
         }
         console.log(productTitle, productDescription, price, stock, category)
         const formData = new FormData()
-        formData.append('img', productImg)
+        console.log(file.files)
+        for( let i =0; i<file.files.length; i++)
+        {
+
+            formData.append('img', file.files[i])
+        }
       
         const response = await axios.post("/api/products/", {
             name: productTitle,
@@ -163,10 +217,13 @@ const EnterProduct = () =>
         }) 
         .catch((err) => console.log(err))
         
-        const responseImg = await axios.post(`/productImg/${response.data._id}/` , formData)
+        console.log(formData)
+        console.log(response.data._id)
+        const responseImg = await axios.post(`/productMutipleImg/${response.data._id}` , formData)
+       
         .catch((err) => console.log(err))
         .then(
-        
+          
             //setEnter({enter : false}),
             //selected =="product",
             history.replace(
@@ -178,6 +235,7 @@ const EnterProduct = () =>
             
             
         )
+       
     }
 
     
@@ -229,6 +287,7 @@ const EnterProduct = () =>
                     value={category}
                     onChange={handleCategory}
                     >
+                        <option value= "default">카테고리</option>
                         <option value="Man Top">남성 상의</option>
                         <option value="Man Bottom">남성 하의</option>
                         <option value="Woman Top">여성 상의</option>
@@ -244,8 +303,12 @@ const EnterProduct = () =>
             <InputContainer>
                     <Title>대표 이미지*</Title>
                     <LabelButton for="file_input">이미지 업로드</LabelButton>
-                    <FileInput type="file" accept="image/x-png,image/jpeg" id ="file_input" name="img" onChange={getImg} />
-                    <FileName>{imgFileName}</FileName>
+                    <FileInput type="file" accept="image/x-png,image/jpeg" id ="file_input" name="img" multiple onChange={fileSelectedHandler} />
+                    <ImgNameDiv>{
+                        flag ? 
+                        handleImgName() : 
+                        "이미지는 정사각형으로 표시됩니다"
+                    }</ImgNameDiv>
             </InputContainer>
             <InputContainer>
                 <Title>상품 수량</Title>

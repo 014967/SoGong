@@ -226,24 +226,45 @@ app.post('/productImg/:id', pupload.single('img'), (req, res) => {
 });
 
 // mutiple product images upload below.
-app.post('/productDetailImg/:id', pupload.array('img', 5), (req, res) => {
+app.post('/productMutipleImg/:id', pupload.array('img', 5), (req, res) => {
   console.log(req.files);
   let images = req.files
+  let i = 0
+  console.log(req.body.img)
+  
   images.forEach((image) => {
     const imgName = image.filename
     const imgPath = image.destination
-    Product.findByIdAndUpdate(
-      {_id: req.params.id}, {
-        $push: {
-          detailImg: imgName,
-          detailImgPath: '../assets/images/products/'+imgName
-      }
-        }).then(function(product){
-      Product.findOne({_id: req.params.id}).then(function(product){  
-        console.log('successfully updated local image');
-        res.send('Success');
+    if(i !=0 ){ 
+      i++
+      Product.findByIdAndUpdate(
+        {_id: req.params.id}, {
+          $push: {
+            detailImg: imgName,
+            detailImgPath: '../assets/images/products/'+imgName
+        }
+          })
+          .then(function(product){
+        Product.findOne({_id: req.params.id}).then(function(product){  
+          console.log('successfully updated local image');
+          res.send('Success');
+        })
       })
-    })
+
+    }
+    if(i == 0){ 
+      i++
+      Product.findByIdAndUpdate(
+        {_id: req.params.id}, {img: imgName, imgPath: '../assets/images/products/'+imgName}).then(function(product){
+    
+        Product.findOne({_id: req.params.id}).then(function(product){
+          console.log('successfully updated local thumbnail image');
+          res.send('Success');
+        })
+      })
+    
+    }
+    
   })
 });
 /*
