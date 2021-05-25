@@ -35,12 +35,15 @@ const ProductList = () => {
   const { category, setCategory, search, setSearch,
         startPrice, setStartPrice, endPrice, setEndPrice,
         submitFlag, setSubmitFlag } = useContext(ProductListContext)
+
   const [products, setProducts] = useState([])
+  const [page, setPage] = useState(1)
 
   const getProduct = async () => {
     const { data } = await axios.get("/api/products/")
     .catch(err => console.log(err))
-    setProducts(data.filter(product => {
+
+    const temp = data.filter(product => {
       let cate = ''
       if (product.category.includes('남성')) {
         cate = 'MEN'
@@ -56,7 +59,18 @@ const ProductList = () => {
         product.price >= startPrice &&
         product.price <= endPrice
       )
-    }))
+    })
+    const temp2 = [] //20개씩 slice
+    for (i = 0; i < temp.length / 20 + 1; i++) {
+      if (temp.length - i * 20 < 20) {
+        temp2[temp2.length] = temp.slice(i * 20)
+      } else {
+        temp2[temp2.length] = temp.slice(i * 20, (i + 1) * 20)
+      }
+    }
+    console.log(temp2)
+    setProducts(temp2)
+
     setCurrentState({
       category,
       search,
@@ -64,7 +78,7 @@ const ProductList = () => {
       endPrice
     })
   }
-
+  
   useEffect(() => {
     getProduct()
     return () => {
@@ -97,11 +111,11 @@ const ProductList = () => {
                 {(currentState.startPrice !== 0 || currentState.endPrice !== 100000) && `, W${currentState.startPrice} ~ ${currentState.endPrice}`}
                 {(currentState.search.length !== 0 || (currentState.startPrice !== 0 || currentState.endPrice !== 100000)) && '의 검색 결과입니다.'}
               </Result>
-              <ProductListCards data={products} />
+              <ProductListCards data={products[page - 1]} />
               <Pagination>
-                <PageButton>1</PageButton>
-                <PageButton>2</PageButton>
-                <PageButton>3</PageButton>
+                {products.map((page, i) => (
+                  <PageButton key={i} onClick={() => setPage(i + 1)}>{i + 1}</PageButton>
+                ))}
               </Pagination>
             </ContentsWrapper>
         </Wrapper>
