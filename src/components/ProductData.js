@@ -1,6 +1,6 @@
 import react , {useState, useEffect } from 'react'
 import {useHistory, useLocation} from 'react-router'
-
+import {useParams} from 'react-router-dom'
 import styled from 'styled-components'
 import axios from 'axios'
 import ContentsWrapper from './elements/ContentsWrapper'
@@ -8,6 +8,8 @@ import Title from './elements/Title'
 
 
 import Button from './elements/Button'
+import { PowerInputSharp } from '@material-ui/icons'
+import UserPostList from './UserPostList'
 
 
 const Container = styled.div`
@@ -58,18 +60,17 @@ const InputContainer = styled.div`
 
 
 
-
-
-
 const ProductData = (props) =>
 { 
 
   
-
+  let params = useParams();
+  console.log(params);
   
-  const history = useHistory();
-  console.log(props)
 
+  const history = useHistory();
+
+  console.log(history);
 
     const [category, setCategory] = useState();
     const [img , setImg] = useState();
@@ -78,24 +79,40 @@ const ProductData = (props) =>
     const [description, setDescription] = useState();
     const [orderStock, setOrderStock] = useState(1);
 
+    const [detailImg , setDetailImg] = useState();
 
+    const [detailImgPath, setDetailImgPath] = useState(
+      {
+        path : []
+      }
+    );
+
+
+    const [openDelivery,setOpenDelivery] =useState(false);
+
+    const popup = ()=>
+    {
+      setOpenDelivery(prev => !prev);
+    }
 
 
     console.log(props);
     
     useEffect(() => {
+      if(!img || !name || !price || !description || !category || !detailImgPath)
+        {
         setImg(props.location.state.data.img);
         setName(props.location.state.data.name);
         setPrice(props.location.state.data.price);
         setDescription(props.location.state.data.detail);
         setCategory(props.location.state.data.category);
-
+        }
       }, [props]);
 
 
+      
 
-      console.log(img);
-
+      
 
     const handleOrderStock = e =>
     {
@@ -104,12 +121,29 @@ const ProductData = (props) =>
     }
 
 
+    const handelDetailImg = () =>
+    {
+
+      const result = [];
+      for(let i= 0 ; i < props.location.state.data.detailImg.length; i++)
+      {
+        result.push(
+          <Img src={require('../assets/images/products/'+props.location.state.data.detailImg[i]).default} />
+            
+          
+        )
+      }
+      return result;
+    }
+
 
 
     return (
 
         <ContentsWrapper wide>
-
+        
+        
+       
         <TopContainer id= 'topmenu'>
             <div>
             <Category>{category}</Category>
@@ -121,6 +155,7 @@ const ProductData = (props) =>
             
             </div>
 
+           
           <Container id='name, price , etc'>
                 <div id= 'product name'>상품이름 : {name}</div>
                 <div id='product price'>
@@ -145,6 +180,7 @@ const ProductData = (props) =>
 
                   </select>
                 </div>
+               
                 <div id='delivery'>
                   <Button onClick={()=>
                   {
@@ -153,13 +189,18 @@ const ProductData = (props) =>
                        pathname : '/user/PostList'
                     }  
                     )
+                    //popup()
+
                   }}>
                   배송지 추가
                   </Button>
                   
                   
+                  
                 </div>
                 </InputContainer>
+                
+                  
             <div id='basket, buy'>
                 <div id='basket'></div>
                 <div id='buy'></div>
@@ -168,8 +209,16 @@ const ProductData = (props) =>
         </Container>
     </TopContainer>    
     <BottomContainer id='product detail description'>
-    {description}
+    {
+        handelDetailImg()
+    }
+
     
+    {
+      <div>
+        {description}
+      </div>
+    }
     
     </BottomContainer>    
 

@@ -15,6 +15,9 @@ import Product from '../components/Product';
 import AlterProduct from '../components/AlterProduct';
 import UserPostList from '../components/UserPostList';
 
+
+import {useHistory, useLocation} from 'react-router'
+
 export const LoginContext = createContext({
     ID: '',
     setID: () => {},
@@ -32,6 +35,9 @@ const App = () => {
         ID, setID, PW, setPW, success, setSuccess 
     }), [ID, setID, PW, setPW, success, setSuccess])
 
+
+    
+
     return (
         <LoginContext.Provider value={value}>
             <GlobalStyle />
@@ -45,8 +51,10 @@ const App = () => {
                 <Route exact path="/manager/alterevent" component = {AlterEventNotice} />
                 <Route exact path= "/manager/Enter" component = {EnterProduct}/>
                 <Route exact path="/manager/Alter" component = {AlterProduct} />
-                <Route exact path ="/product/:id" component = {ProductData} />
-                <Route exact path ='/user/PostList' component ={UserPostList}/>
+                <Route  path ="/manager/product/:id" component = {ProductData} />
+                <Route path ='/user/PostList' component ={UserPostList}/>
+                
+               
                 <Footer />
             </Router>
         </LoginContext.Provider>
@@ -54,5 +62,4 @@ const App = () => {
 }
 
 
-//Route exact path="/manager/:id" component = {ProductData}/>
 export default App

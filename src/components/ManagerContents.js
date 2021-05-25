@@ -89,13 +89,13 @@ const ManagerContents = ({ history }) => {
             {
               selected === 'event' && (
                 
-                <EventNotice selected={selected}/>
+                <EventNotice selected={selected} history={history}/>
               )
             }
             {
               selected === 'product' && (
                 
-                <Product selected={selected} />
+                <Product selected={selected} history ={history}/>
               )
             }
           </Container>

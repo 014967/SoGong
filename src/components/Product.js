@@ -66,10 +66,9 @@ const orderList = ["최신 순", "최저가 순" , "최고가 순"];
 const regDate = date => date.split('.')[0].replace('T','').replace('-','').replace(':','').replace(':','').slice(2)
 
 
-const Product = ({selected}) => {
+const Product = ({selected, history}) => {
 
   const selectedProduct = selected;
-  const history = useHistory();
   const location = useLocation();
   const [enterProduct, setEnterProduct] = useState(
     {
@@ -85,8 +84,8 @@ const Product = ({selected}) => {
   const [checkedAll ,setCheckedAll] = useState(false);
   const [modifiedFlag, setMoodifiedFlag] = useState(false);
   const [buttonColor, setButtonColor] = useState('disabled');
-  const [minPrice, setMinPrice] = useState();
-  const [maxPrice , setMaxPrice] = useState();
+  const [minPrice, setMinPrice] = useState(0);
+  const [maxPrice , setMaxPrice] = useState(10000000);
 
   
   const [priceFlag , setPriceFlag] = useState(false);
@@ -240,6 +239,7 @@ const handleMaxPrice = e =>
                             ()=>
                             {
                                setPriceFlag(true)
+                               
                             }
                           }>
                             가격 전송
@@ -257,7 +257,7 @@ const handleMaxPrice = e =>
                 </TableHeader>
                 {<GetProductData productList={enterProduct}  setEnterProduct= {setEnterProduct} setAlter = {setAlter} order = {order} setOrder = {setOrder} 
                 maxPrice = {maxPrice} minPrice = {minPrice}  value={value}  filter ={filter} priceFlag={ priceFlag}
-                 checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setMoodifiedFlag={setMoodifiedFlag}
+                 checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setMoodifiedFlag={setMoodifiedFlag} history={history}
                  selected={selected} /> }
               </>
             )

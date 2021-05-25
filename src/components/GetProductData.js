@@ -80,12 +80,11 @@ const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').r
 
 
 const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order,
-   filter, minPrice, maxPrice,   value , min , max , priceFlag}) =>
+   filter, minPrice, maxPrice,   value , min , max , priceFlag ,history}) =>
 {
 
 
 
-  const history = useHistory();
   const [isLoading , setIsLoading] = useState(true);
 
   const [flag ,setFlag] = useState(false);
@@ -94,7 +93,7 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
 
   const [page ,setPage] = useState(1);
 
-  console.log('priceFlag' + priceFlag);
+ // console.log('priceFlag' + priceFlag);
 
   const pageCount = () => {
       const result = [];
@@ -114,7 +113,6 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   const getProductList = async (productOrder) => {
     const {data : productLength} = await axios.get("/api/products/")
     setProductCount(productLength.length)
-    console.log(minPrice,maxPrice)
     if(productOrder) {
       const {data : sortedProducts} = await axios.post("/api/products/sorted", {
         search : value,
@@ -158,6 +156,7 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   
 useEffect (() => { 
   setIsLoading(true)
+  console.log(order)
   if(order === "최저가 순")
   {
     getProductList('asc')
@@ -244,7 +243,7 @@ useEffect (() => {
           <Price>{data.price}</Price>
           <Button background="secondary" onClick= { () => {history.push(
             {
-              pathname : `/product/${data._id}`,
+              pathname : `/manager/product/${data._id}/`,
               state : {data : data}
             })}} >확인</Button>
           <Button background="primary" onClick={ () =>

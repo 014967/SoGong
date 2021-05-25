@@ -130,7 +130,7 @@ const EnterProduct = () =>
     const [productImg , setProductImg] = useState(null);
     const [imgFileName, setImgFileName] = useState("이미지는 정사각형으로 표시됩니다");
     const [price, setPrice] = useState();
-    const [category, setCategory] = useState("남성 상의");
+    const [category, setCategory] = useState("default");
     const [stock , setStock ] = useState([]);
   
     const [flag ,setFlag] = useState(false);
@@ -190,7 +190,7 @@ const EnterProduct = () =>
         
         e.preventDefault()
 
-        if(!productTitle || !productDescription || !file.files || !price || !stock || !category)
+        if(!productTitle || !productDescription || !file.files || !price || !stock || category==="default")
         {
             
             alert("필수 입력 사항을 입력하지 않으셨습니다");
@@ -198,7 +198,12 @@ const EnterProduct = () =>
         }
         console.log(productTitle, productDescription, price, stock, category)
         const formData = new FormData()
-        formData.append('img', file.files)
+        console.log(file.files)
+        for( let i =0; i<file.files.length; i++)
+        {
+
+            formData.append('img', file.files[i])
+        }
       
         const response = await axios.post("/api/products/", {
             name: productTitle,
@@ -212,10 +217,13 @@ const EnterProduct = () =>
         }) 
         .catch((err) => console.log(err))
         
-        const responseImg = await axios.post(`/productDetailImg/${response.data._id}/` , formData)
+        console.log(formData)
+        console.log(response.data._id)
+        const responseImg = await axios.post(`/productMutipleImg/${response.data._id}` , formData)
+       
         .catch((err) => console.log(err))
         .then(
-        
+          
             //setEnter({enter : false}),
             //selected =="product",
             history.replace(
@@ -227,6 +235,7 @@ const EnterProduct = () =>
             
             
         )
+       
     }
 
     
@@ -278,6 +287,7 @@ const EnterProduct = () =>
                     value={category}
                     onChange={handleCategory}
                     >
+                        <option value= "default">카테고리</option>
                         <option value="Man Top">남성 상의</option>
                         <option value="Man Bottom">남성 하의</option>
                         <option value="Woman Top">여성 상의</option>
