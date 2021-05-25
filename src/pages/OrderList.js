@@ -1,21 +1,21 @@
 import React from 'react'
 import styled from 'styled-components'
-import SignUpInput from '../components/SignUpInput'
+import OrderListContents from '../components/OrderListContents'
 
 const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 320px;
+    padding-top: 218px;
 `
 
-const SignUp = () => {
+const OrderList = () => {
     return (
         <Wrapper>
-         <SignUpInput />
+         <OrderListContents />
          
         </Wrapper>
     );
 };
 
-export default SignUp;
+export default OrderList;

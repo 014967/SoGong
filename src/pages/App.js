@@ -15,8 +15,8 @@ import Product from '../components/Product';
 import AlterProduct from '../components/AlterProduct';
 import UserPostList from '../components/UserPostList';
 import ProductList from './ProductList'
-
-
+import WishList from './WishList';
+import OrderList from './OrderList';
 import {useHistory, useLocation} from 'react-router'
 
 export const LoginContext = createContext({
@@ -72,15 +72,13 @@ const App = () => {
                     <Route exact path="/manager" component={ManagerHomePage} />
                     <Route exact path="/signup" component={SignUp} />
                     <Route exact path="/data" component={Data} />
-                    
-                    <Route exact path="/manager/alterevent" component = {AlterEventNotice} />
                     <Route exact path= "/manager/Enter" component = {EnterProduct}/>
                     <Route exact path="/manager/Alter" component = {AlterProduct} />
                     <Route exact path="/list" component={ProductList} />
                     <Route  path ="/manager/product/:id" component = {ProductData} />
                     <Route path ='/user/PostList' component ={UserPostList}/>
-                    
-                
+                    <Route exact path ='/user/wishlist' component ={WishList}/>
+                    <Route exact path ='/user/orderlist' component ={OrderList}/>
                     <Footer />
                 </Router>
             </ProductListContext.Provider>

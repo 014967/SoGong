@@ -10,7 +10,7 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 218px;
+    padding-top: 320px;
 `
 const Result = styled.div`
   margin-bottom: 64px;
@@ -61,7 +61,7 @@ const ProductList = () => {
       )
     })
     const temp2 = [] //20개씩 slice
-    for (i = 0; i < temp.length / 20 + 1; i++) {
+    for (let i = 0; i < temp.length / 20 + 1; i++) {
       if (temp.length - i * 20 < 20) {
         temp2[temp2.length] = temp.slice(i * 20)
       } else {
@@ -78,7 +78,7 @@ const ProductList = () => {
       endPrice
     })
   }
-  
+
   useEffect(() => {
     getProduct()
     return () => {

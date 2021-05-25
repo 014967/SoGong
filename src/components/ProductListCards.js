@@ -15,7 +15,7 @@ const Container = styled.div`
 const ProductListCards = ({ data }) => {
   return (
     <Container>
-      {data.map((card, i) => (
+      {data && data.map((card, i) => (
         <ProductListCard key={i}
           img={card.img}
           title={card.name}
