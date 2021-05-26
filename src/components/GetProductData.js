@@ -178,7 +178,7 @@ useEffect(()=>
     if (productList.data !==Array(0))
     {
       
-      if(productList.data.some(product => product.imgPath === 'no image'))
+      if(productList.data.some(product => product.img === 'no image'))
       {
         try{
           console.log('no image occured')
@@ -373,7 +373,7 @@ const handleChecked = index => () => {
             
             flag ? 
               "이미지준비중" :
-              <StyleImg src={require('../assets/images/products/' + data.img).default}
+              <StyleImg src={data.img}
               onError={(e)=>
                 {
                   console.log(e);
