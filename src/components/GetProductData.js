@@ -131,99 +131,23 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
 
   useEffect(()=>
   {
+    console.log(option)
+    console.log("option")
     getProductList(option)
   },[option])
 
-useEffect(()=>
-{
-  console.log(option)
-},[option])
 
 useEffect(()=>
 {
+  
   if(filter==false)
   {
+    console.log("hello")
     setOption(option => ({...option, order : null , min : 0 , max : 100000 , search : ""}));
   }
 
 },[filter])
 
-
-
-
-  const pageCount = () => {
-      const result = [];
-      for(let i =0; i<= productCount/10 ; i++)
-      {
-        result.push(
-          <PageButton key={i+1} onClick={()=>
-          {
-            setPage(i+1)
-           
-          }
-          }>{i+1}</PageButton>
-        )
-      }
-    return result;
-  }
-
-
-  const getProductList = async (option) => {
-    const {data : productLength} = await axios.get("/api/products/")
-    setProductCount(productLength.length)
-
-
-    if(option.order !== null) {
-      const {data : sortedProducts} = await axios.post("/api/products/sorted", {
-        search : option.search,
-        order : option.value,
-        page : option.page,
-        min : option.min,
-        max : option.max,
-        available : "available",
-    }
-    )
-
-    setProductCount(sortedProducts.length)
-    
-    setSubmit(prev => !prev)
-      setEnterProduct({ data: sortedProducts })
-      setChecked([...Array(sortedProducts.length).fill(false)])
-      
-    } 
-    else //option.order ==null (최신순) 
-    {
-      const {data : products} = await axios.post("/api/products/unsorted", {
-        page : page,
-        search : value,
-        min : minPrice,
-        max : maxPrice,
-        available : "available",
-      })
-      
-      //setProductCount(products.length)
-      setEnterProduct(
-        {
-          data: products,
-        }
-      )
-      setChecked([...Array(products.length).fill(false)])
-    }
-    setIsLoading(false)
-  }
-
-  const handleChecked = index => () => {
-    setChecked(prev => [...prev.map((v,i) =>
-      i === index ? !v : v
-      )])
-  }
-
-
-  useEffect(()=>
-  {
-    console.log(option)
-   getProductList(option)
-  },[submit])
 
   useEffect(() =>
   {
@@ -258,6 +182,77 @@ useEffect(()=>
 
 
 
+  const pageCount = () => {
+    const result = [];
+    for(let i =0; i<= productCount/10 ; i++)
+    {
+      result.push(
+        <PageButton key={i+1} onClick={()=>
+        {
+          setPage(i+1)
+         
+        }
+        }>{i+1}</PageButton>
+      )
+    }
+  return result;
+}
+
+
+const getProductList = async (option) => {
+  const {data : productLength} = await axios.get("/api/products/")
+  setProductCount(productLength.length)
+
+
+  if(option.order !== null) {
+    const {data : sortedProducts} = await axios.post("/api/products/sorted", {
+      search : option.search,
+      order : option.value,
+      page : option.page,
+      min : option.min,
+      max : option.max,
+      available : "available",
+  }
+  )
+
+  setProductCount(sortedProducts.length)
+  
+  setSubmit(prev => !prev)
+    setEnterProduct({ data: sortedProducts })
+    setChecked([...Array(sortedProducts.length).fill(false)])
+    
+  } 
+  else //option.order ==null (최신순) 
+  {
+    const {data : products} = await axios.post("/api/products/unsorted", {
+      page : page,
+      search : value,
+      min : minPrice,
+      max : maxPrice,
+      available : "available",
+    })
+    
+    //setProductCount(products.length)
+    setEnterProduct(
+      {
+        data: products,
+      }
+    )
+    setChecked([...Array(products.length).fill(false)])
+  }
+  setIsLoading(false)
+}
+
+const handleChecked = index => () => {
+  setChecked(prev => [...prev.map((v,i) =>
+    i === index ? !v : v
+    )])
+}
+
+
+
+
+
 
 
     return (
@@ -284,9 +279,7 @@ useEffect(()=>
                   console.log(e);
                 }}/> 
             
-         
-            
-            
+          
            
           }
           </div>

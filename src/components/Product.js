@@ -228,6 +228,7 @@ const handleMaxPrice = e =>
   const getText = () =>
   {
     const result = [];
+   
     if(order === null)
     {
       result.push("최신순")
