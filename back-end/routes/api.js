@@ -333,8 +333,8 @@ patch로  http://localhost:8080/api/delivery/:deliveryname하면 해당 delivery
 
 */
 
-router.get("/delivery/:id", auth, (req, res) => {
-    User.findById({_id:req.params.id}).select('delivery').then(function(users){
+router.get("/delivery", auth, (req, res) => {
+    User.findById({_id:req.user._id}).select('delivery').then(function(users){
         res.send(users)  
     })
 });

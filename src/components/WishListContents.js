@@ -112,7 +112,7 @@ const WishListContents = () => {
 
   const getWishList = async () => {
     const { data: wl } = await axios.get('/api/wishlist')
-    if (wl.wishlist.length === 0) return
+    if (!wl.wishlist) return
     
     wl.wishlist.forEach(v => {
       setQuantity(prev => [...prev, v.quantity])
@@ -160,13 +160,19 @@ const WishListContents = () => {
     )])
   }
 
-  useEffect(() => {
-    if (success)
+  const checkLogin = async () => {
+    const { data: response } = await axios.get('/api/auth')
+    console.log(response.isAuth)
+    if (response.isAuth)
       getWishList()
     else {
       alert('먼저 로그인 해주세요.')
       history.push('/')
     }
+  }
+
+  useEffect(() => {
+    checkLogin()
   }, [])
 
   useEffect(() => {
@@ -174,11 +180,6 @@ const WishListContents = () => {
     setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
   }, [checked])
 
-  useEffect(() => {
-    if (!success) { //로그아웃 시
-      history.push('/')
-    }
-  }, [success])
 
     return (
         <ContentsWrapper>

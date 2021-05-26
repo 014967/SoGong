@@ -75,7 +75,7 @@ const Login = ({ location, history }) => {
       setSuccess(false)
       setID('')
       setPW('')
-      if (location.pathname.includes('manager')) {
+      if (location.pathname.includes('manager') || location.pathname.includes('wishlist')) {
         history.push('/')
       }
     }
