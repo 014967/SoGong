@@ -38,7 +38,7 @@ const ProductListCard = ({ img, title, desc, pid }) => {
 
   return (
     <Container onClick={handleClick}>
-      <Image src={require('../assets/images/products/' + img).default} />
+      <Image src={img} />
       <ContentTitle>
         {title}
       </ContentTitle>
