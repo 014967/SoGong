@@ -181,6 +181,9 @@ const bucketName = process.env.AWS_BUCKET_NAME
 const region = process.env.AWS_BUCKET_REGION
 const accessKeyId = process.env.AWS_ACCESS_KEY
 const secretAccessKey = process.env.AWS_SECRET_KEY
+require('dotenv').config()
+const fs = require('fs')
+const S3 = require('aws-sdk/clients/s3')
 
 const s3 = new S3({
    region,
@@ -197,7 +200,7 @@ const s3 = new S3({
       cb(null, '../src/assets/images/products/'+new Date().valueOf() + '_'+file.originalname)
      }
    })
-  }).single("file")
+  }).array("files")
 
   const uploadS3Event = multer({
     storage: multerS3({
