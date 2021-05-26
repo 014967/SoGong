@@ -47,7 +47,7 @@ const ProductImage = ({ img, detailImg }) => {
             <Slider {...settings}>
                {
                   [img].concat(detailImg).map((image, i) => (
-                     <Image key={i} src={require('../../assets/images/products/' + image).default} />
+                     <Image key={i} src={image} />
                   ))
                }
             </Slider>
