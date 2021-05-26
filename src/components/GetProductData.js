@@ -20,8 +20,6 @@ const PageContainer = styled.div`
   align-items : center;
   justify-content: center;
   margin-top : 100px;
-
-
 `
 
 const PageButton = styled.button`
@@ -50,11 +48,11 @@ const Row = styled.div`
     margin-right: 64px;
   }
   & > *:last-child {
-    margin-left: 64px;
+    margin-left: 16px;
   }
 `
 const Title = styled.div`
-  width: 619px;
+  width: 600px;
   text-align: center;
 `
 
@@ -94,7 +92,6 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
     minPrice, maxPrice,   value  ,history , submit ,setSubmit ,modifiedFlag ,setModifiedFlag ,setDeleteFlag , deleteFlag,getText}) =>
 {
 
- 
 
   const [isLoading , setIsLoading] = useState(true);
 
@@ -111,10 +108,6 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
     max : 200000,
     page : 1,
   })
-
- 
-
- 
 
   useEffect(()=>
   {
@@ -237,8 +230,6 @@ useEffect(()=>
   return result;
 }
 
-
-
 const getProductList = async (option) => {
   const {data : productLength} = await axios.get("/api/products/")
   
@@ -303,9 +294,6 @@ const getProductList = async (option) => {
         available : "available",
     }
     )
-  
-    console.log(sortedProducts)
-    //setProductCount(sortedProducts.length)
     
     setSubmit(prev => !prev)
     setEnterProduct({ data: sortedProducts })
@@ -331,15 +319,7 @@ const getProductList = async (option) => {
       )
       setChecked([...Array(products.length).fill(false)])
     }
-   
-
-
-
   }
-  
-  
-  
-  
   setIsLoading(false)
 }
 
@@ -348,29 +328,17 @@ const handleChecked = index => () => {
     i === index ? !v : v
     )])
 }
-
-
-
-
-
-
-
     return (
    
       <Container>
       {
-        
          isLoading ? 'Loading...' :  productList.data.map((data,index) =>
         (
-          
           <Row key={data._id}>
             
           <CheckBox checked={checked[index]} onChange={handleChecked(index)} />   
           <div>
           {
-            
-          
-            
             flag ? 
               "이미지준비중" :
               <StyleImg src={data.img}
@@ -378,9 +346,6 @@ const handleChecked = index => () => {
                 {
                   console.log(e);
                 }}/> 
-            
-          
-           
           }
           </div>
           <Title>{data.name}</Title>
@@ -402,9 +367,7 @@ const handleChecked = index => () => {
           </Row>
           
         )
-        
         )
-        
       }
     { 
       
