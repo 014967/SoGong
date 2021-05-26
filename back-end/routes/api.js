@@ -663,15 +663,12 @@ router.post('/products/unsorted', function(req, res){
     
     if(req.body.page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
-    .limit(10)
    .then(function(product){
         res.send(product)
     });
 
     if(req.body.page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
-    .skip( (req.body.page-1) * 10 )
-    .limit(10)
    .then(function(product){
         res.send(product)
 

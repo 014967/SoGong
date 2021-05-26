@@ -175,6 +175,40 @@ app.get('/upload/:filename', (req, res) => {
 // [SERVERSIDE UPLOAD WITH MULTER]
 const Event = require('./models/events');
 const Product = require('./models/products');
+const bucketName = process.env.AWS_BUCKET_NAME
+const region = process.env.AWS_BUCKET_REGION
+const accessKeyId = process.env.AWS_ACCESS_KEY
+const secretAccessKey = process.env.AWS_SECRET_KEY
+
+const s3 = new S3({
+   region,
+   accessKeyId,
+   secretAccessKey
+  })
+
+  const uploadS3Product = multer({
+   storage: multerS3({
+     s3: s3,
+     bucket: bucketName,
+     acl: 'public-read',
+     key: function(req, file, cb) {
+      cb(null, '../src/assets/images/products/'+new Date().valueOf() + '_'+file.originalname)
+     }
+   })
+  }).single("file")
+
+  const uploadS3Event = multer({
+    storage: multerS3({
+      s3: s3,
+      bucket: bucketName,
+      acl: 'public-read',
+      key: function(req, file, cb) {
+       cb(null, '../src/assets/images/banners/'+new Date().valueOf() + '_'+file.originalname)
+      }
+    })
+   }).single("file")
+
+/////////////////////////////
 
   const mupload = multer({
     storage: multer.diskStorage({
@@ -198,7 +232,7 @@ const Product = require('./models/products');
     }),
   });
 
-app.post('/eventImg/:id', mupload.single('img'), (req, res) => {
+app.post('/eventImg/:id', uploadS3Product.single('img'), (req, res) => {
   console.log(req.file);
   const imgName = req.file.filename
   const imgPath = req.file.destination
@@ -226,7 +260,7 @@ app.post('/productImg/:id', pupload.single('img'), (req, res) => {
 });
 
 // mutiple product images upload below.
-app.post('/productMutipleImg/:id', pupload.array('img', 5), (req, res) => {
+app.post('/productMutipleImg/:id', uploadS3Event.array('img', 5), (req, res) => {
   console.log(req.files);
   let images = req.files
   let i = 0
