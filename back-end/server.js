@@ -195,9 +195,15 @@ AWS.config.update({
 
 const s3 = new AWS.S3({
   apiVersion: "2006-03-01",
-  params: {Bucket: bucket},
+  params: { 
+    Bucket: bucket,
+    accessKeyId: AWSAccessKeyId,
+    secretAccessKey: AWSSecretKey,
+    region: AWS_config_region,
+  },
   accessKeyId: AWSAccessKeyId,
-  secretAccessKey: AWSSecretKey
+  secretAccessKey: AWSSecretKey,
+  region: AWS_config_region,
 });
 
 const uploadS3Product = multer({
