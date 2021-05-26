@@ -1,0 +1,4 @@
++ RESTful API사용
++ users 컬랙션 추가
++ 필수정보 누락시 error handler 추가
++ events 컬랙션 추가
