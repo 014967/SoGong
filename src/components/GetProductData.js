@@ -116,10 +116,20 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   },[value])
   useEffect(()=>
   {
+    if(minPrice=="")
+    {
+      setOption(option => ({...option, min : "0"}))
+    }
+    else
     setOption(option => ({...option , min : minPrice}));
   },[minPrice])
   useEffect(()=>
   {
+    if(maxPrice=="")
+    {
+      setOption(option => ({...option, max : "200000"}))
+    }
+    else
     setOption(option => ({...option , max : maxPrice}));
   },[maxPrice])
   useEffect(()=>
@@ -207,7 +217,7 @@ const getProductList = async (option) => {
   if(option.order !== null) {
     const {data : sortedProducts} = await axios.post("/api/products/sorted", {
       search : option.search,
-      order : option.value,
+      order : option.order,
       page : option.page,
       min : option.min,
       max : option.max,
