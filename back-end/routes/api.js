@@ -636,6 +636,21 @@ router.post('/products/sorted', function(req, res){
         res.send(product);
     });
 });
+
+router.post('/products/sortedPage', function(req, res){
+    let page = req.body.page
+    if(page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({price: req.body.order})
+   .then(function(product){
+        res.send(product);
+    });
+
+    if(page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({price: req.body.order})
+   .then(function(product){
+        res.send(product);
+    });
+});
 /*
  JSON FORMAT of request to '/products/sorted'
 
@@ -659,6 +674,23 @@ Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
 
 
 router.post('/products/unsorted', function(req, res){
+
+
+    if(req.body.page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
+   .then(function(product){
+        res.send(product)
+    });
+
+    if(req.body.page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
+   .then(function(product){
+        res.send(product)
+
+    });
+});
+
+router.post('/products/unsortedPage', function(req, res){
 
 
     if(req.body.page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
