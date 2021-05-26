@@ -7,6 +7,7 @@ const mongoose     = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors         = require('cors');
 const fs = require('fs');
+const router = express.Router()
 
 // [SETUP EXPRESS APP]
 const app          = express();
@@ -190,30 +191,32 @@ AWS.config.update({
   region : AWS_config_region,
   credentials : new AWS.CognitoIdentityCredentials({
     IdentityPoolId: AWS_IDENTITYPOOLID
-})
-})
-
-const s3 = new AWS.S3({
-  apiVersion: "2006-03-01",
-  params: { 
-    Bucket: bucket,
-    accessKeyId: AWSAccessKeyId,
-    secretAccessKey: AWSSecretKey,
-    region: AWS_config_region,
-  },
+  }),
   accessKeyId: AWSAccessKeyId,
   secretAccessKey: AWSSecretKey,
-  region: AWS_config_region,
-});
+})
+
+const s3 = new AWS.S3()
+// const s3 = new AWS.S3({
+//   apiVersion: "2006-03-01",
+//   params: { 
+//     Bucket: bucket,
+//     accessKeyId: AWSAccessKeyId,
+//     secretAccessKey: AWSSecretKey,
+//     region: AWS_config_region,
+//   },
+//   accessKeyId: AWSAccessKeyId,
+//   secretAccessKey: AWSSecretKey,
+//   region: AWS_config_region,
+// });
 
 const uploadS3Product = multer({
   storage: multerS3({
     s3: s3,
     bucket: bucket,
     contentType: multerS3.AUTO_CONTENT_TYPE, // 자동으로 콘텐츠 타입 세팅
-    acl: "public-read",
+    acl: "public-read-write",
     key: (req, file, cb) => {
-      let extension = path.extname(file.originalname)
       cb(null, 'products/'+new Date().valueOf() + '_'+file.originalname);
     }
   }),
@@ -226,7 +229,6 @@ const uploadS3Event = multer({
     contentType: multerS3.AUTO_CONTENT_TYPE, // 자동으로 콘텐츠 타입 세팅
     acl: "public-read",
     key: (req, file, cb) => {
-      let extension = path.extname(file.originalname)
       cb(null, 'banners/'+new Date().valueOf() + '_'+file.originalname);
     }
   }),
@@ -292,7 +294,7 @@ const s3 = new S3({
   //   }),
   // });
 
-app.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
+router.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
   console.log(req.file)
   console.log(req)
   console.log(req.file.location ? 'zz' : 'z')
