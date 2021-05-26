@@ -175,6 +175,8 @@ app.get('/upload/:filename', (req, res) => {
 // [SERVERSIDE UPLOAD WITH MULTER]
 const Event = require('./models/events');
 const Product = require('./models/products');
+const multerS3 = require('multer-s3');
+const AWS = require('aws-sdk');
 const bucketName = process.env.AWS_BUCKET_NAME
 const region = process.env.AWS_BUCKET_REGION
 const accessKeyId = process.env.AWS_ACCESS_KEY
