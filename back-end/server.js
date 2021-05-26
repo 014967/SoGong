@@ -237,7 +237,7 @@ const s3 = new S3({
     }),
   });
 
-app.post('/eventImg/:id', uploadS3Product.single('img'), (req, res) => {
+app.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
   console.log(req.file);
   const imgName = req.file.filename
   const imgPath = req.file.destination
@@ -265,7 +265,7 @@ app.post('/productImg/:id', pupload.single('img'), (req, res) => {
 });
 
 // mutiple product images upload below.
-app.post('/productMutipleImg/:id', uploadS3Event.array('img', 5), (req, res) => {
+app.post('/productMutipleImg/:id', uploadS3Product.array('img', 5), (req, res) => {
   console.log(req.files);
   let images = req.files
   let i = 0
