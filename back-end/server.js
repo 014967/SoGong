@@ -285,6 +285,7 @@ const s3 = new S3({
 
 app.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
   Event.findByIdAndUpdate(
+    console.log(req.file.location)
     {_id: req.params.id}, {img: req.file.location, imgPath: req.file.location}).then(function(event){
 
     Event.findOne({_id: req.params.id}).then(function(event){
@@ -293,16 +294,16 @@ app.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
   })
 });
 
-app.post('/productImg/:id', uploadS3Event.single('img'), (req, res) => {
-  Product.findByIdAndUpdate(
-    {_id: req.params.id}, {img: req.file.location, imgPath: req.file.location}).then(function(product){
+// app.post('/productImg/:id', uploadS3Event.single('img'), (req, res) => {
+//   Product.findByIdAndUpdate(
+//     {_id: req.params.id}, {img: req.file.location, imgPath: req.file.location}).then(function(product){
 
-    Product.findOne({_id: req.params.id}).then(function(product){
-      console.log('successfully updated local image');
-      res.send('Success');
-    })
-  })
-});
+//     Product.findOne({_id: req.params.id}).then(function(product){
+//       console.log('successfully updated local image');
+//       res.send('Success');
+//     })
+//   })
+// });
 
 // mutiple product images upload below.
 app.post('/productMutipleImg/:id', uploadS3Product.array('img', 5), (req, res) => {
