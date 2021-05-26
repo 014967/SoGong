@@ -6,6 +6,7 @@ import Button from './elements/Button'
 import Slider from '@material-ui/core/Slider'
 import { withStyles } from '@material-ui/core/styles'
 import { ProductListContext } from '../pages/App'
+import ValueLabel from "@material-ui/core/Slider/ValueLabel";
 
 const Container = styled.div`
   display: flex;
@@ -36,9 +37,27 @@ const PriceSlider = withStyles({
     color: '#DF988F',
     width: '275px',
     marginLeft: '16px'
-  }
+  },
 })(Slider)
 
+const StyledValueLabel = withStyles({
+  offset: {
+    top: -50,
+    left: -18
+  },
+  circle: {
+    width: 50,
+    height: 50
+  },
+  label: {
+  }
+})(ValueLabel);
+
+const ValueLabelComponent = styled.div`
+  width: 100px;
+  height: 100px;
+  background: ${({ theme }) => theme.color.secondary};
+`
 
 const HeaderSearchBar = ({ location, history }) => {
 
@@ -81,6 +100,8 @@ const HeaderSearchBar = ({ location, history }) => {
           max={200000}
           step={1000}
           valueLabelDisplay="auto"
+          valueLabelFormat={(x) => '₩' + x}
+          ValueLabelComponent={StyledValueLabel}
           // getAriaValueText={valuetext}
         />
       </FilterContainer>

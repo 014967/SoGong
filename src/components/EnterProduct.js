@@ -128,7 +128,7 @@ const EnterProduct = () =>
     const [productTitle ,setProductTitle] =useState('');
     const [productDescription , setProductDescription] = useState('');
     const [productImg , setProductImg] = useState(null);
-    const [imgFileName, setImgFileName] = useState("이미지는 정사각형으로 표시됩니다");
+    const [imgFileName, setImgFileName] = useState("이미지는 다중 선택이 가능하며, 최대 5장까지 등록됩니다.");
     const [price, setPrice] = useState();
     const [category, setCategory] = useState("default");
     const [stock , setStock ] = useState([]);
@@ -312,7 +312,7 @@ const EnterProduct = () =>
                     <ImgNameDiv>{
                         flag ? 
                         handleImgName() : 
-                        "이미지는 정사각형으로 표시됩니다"
+                        "이미지는 다중 선택이 가능하며, 최대 5장까지 등록됩니다."
                     }</ImgNameDiv>
             </InputContainer>
             <InputContainer>

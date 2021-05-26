@@ -130,7 +130,7 @@ const EnterEventNotice = ({ setEnter }) => {
     const [description, setDiscription] = useState('')
     const [imgFile, setImgFile] = useState(null)
     const [priority , setPriority] = useState('1')
-    const [imgFileName, setImgFileName] = useState('*배너로 사용할 이미지의 가로/세로 비율은 고정해주세요.')
+    const [imgFileName, setImgFileName] = useState('*배너로 사용할 이미지는 2560X740px 크기로 설정해주세요.')
 
     const handleTitle = e => {
         setTitle(e.target.value)
