@@ -23,8 +23,19 @@ const PageContainer = styled.div`
 
 
 `
+
 const PageButton = styled.button`
-margin-right : 10px;
+  color: ${(props) => props.theme.color[props.color] || props.theme.color.secondary};
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  &:focus {
+    outline: none;
+  }
+  & + & {
+    margin-left: 16px;
+  }
 `
 
 

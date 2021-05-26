@@ -126,7 +126,7 @@ const AlterProduct = () =>
     const [productTitle ,setProductTitle] =useState('');
     const [productDescription , setProductDescription] = useState('');
     const [productImg , setProductImg] = useState(null);
-    const [imgFileName, setImgFileName] = useState("이미지는 정사각형으로 표시됩니다");
+    const [imgFileName, setImgFileName] = useState("이미지는 다중 선택이 가능하며, 최대 5장까지 등록됩니다.");
     const [price, setPrice] = useState();
     const [category, setCategory] = useState("카테고리");
     const [stock , setStock ] = useState();
@@ -346,12 +346,13 @@ const AlterProduct = () =>
                 
             </InputContainer>
             <InputContainer>
-            <Title>상품 가격</Title>
+            <Title>상품 가격 (20만원 이하)</Title>
             <Input  value={price} type='number'  min="0" max="200000" onChange={handlePrice}></Input>
             <PriceText>원</PriceText>
 
             
             </InputContainer>
+            <div>*최대 20만원 까지 가능합니다.</div>
         </Container>
            </div>
        

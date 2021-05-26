@@ -188,10 +188,6 @@ const EventNotice = () => {
       setEventList(prev => [...prev.filter(evt => {
         const newEndDate = new Date(endDate)
         newEndDate.setDate(newEndDate.getDate() + 1)
-        console.log(regDate(evt.date))
-        console.log(regDate(evt.due))
-        console.log(regDate2(startDate))
-        console.log(regDate2(newEndDate))
         return (
           regDate(evt.date) > regDate2(startDate) &&
           regDate(evt.due) < regDate2(newEndDate)
@@ -213,9 +209,15 @@ const EventNotice = () => {
                 <Header>
                 <CheckBox checked={checkedAll} onChange={handleCheckedAll} />
                 <ButtonsContainer>
-                  <HeaderButton background={buttonColor} onClick={handleAvailable}>선택 활성화</HeaderButton>
-                  <HeaderButton background={buttonColor} onClick={handleUnavailable}>선택 비활성화</HeaderButton>
-                  <HeaderButton background={buttonColor} onClick={handleDelete}>선택 삭제</HeaderButton>
+                  <HeaderButton background={buttonColor} onClick={handleAvailable}
+                    disabled={buttonColor === 'disabled'}
+                  >선택 활성화</HeaderButton>
+                  <HeaderButton background={buttonColor} onClick={handleUnavailable}
+                    disabled={buttonColor === 'disabled'}
+                  >선택 비활성화</HeaderButton>
+                  <HeaderButton background={buttonColor} onClick={handleDelete}
+                    disabled={buttonColor === 'disabled'}
+                  >선택 삭제</HeaderButton>
                   <HeaderButton background="secondary" onClick={handleOrder}>
                     {order ? '최신 순' : '오래된 순'}
                   </HeaderButton>

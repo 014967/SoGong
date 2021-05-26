@@ -224,6 +224,10 @@ const handleMaxPrice = e =>
     
   }, [enterProduct.enter])
 
+  useEffect(() => {
+    setCheckedAll(checked.every(v => v) && enterProduct.data !== Array(0))
+    setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
+  }, [checked])
 
   
   const getText = () =>

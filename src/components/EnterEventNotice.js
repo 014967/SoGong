@@ -203,9 +203,22 @@ const EnterEventNotice = ({ setEnter }) => {
                 </InputContainer>
                 <InputContainer>
                     <Title>진행 기간*</Title>
-                    <StyledDatePicker selected={startDate} onChange={date => setStartDate(date)} />
+                    <StyledDatePicker 
+                        dateFormat="yyyy/MM/dd"
+                        selected={startDate} 
+                        selectsStart
+                        startDate={startDate}
+                        endDate={endDate}
+                        onChange={date => setStartDate(date)} />
                     <DateText>부터</DateText>
-                    <StyledDatePicker selected={endDate} onChange={date => _setEndDate(date)} />
+                    <StyledDatePicker 
+                      dateFormat="yyyy/MM/dd"
+                        selected={endDate}
+                        selectsEnd
+                        startDate={startDate}
+                        endDate={endDate}
+                        minDate={startDate}
+                        onChange={date => _setEndDate(date)} />
                     <DateText>까지</DateText>
                 </InputContainer>
             </Container>

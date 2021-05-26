@@ -57,6 +57,8 @@ const SignUpInput = () => {
             const { data: response } = await axios.post('/api/login', { id, password })
             setSignUpFlag(true)
             history.push('/')
+        } else {
+            alert('필수정보가 입력되지 않았습니다.')
         }
     };
 
