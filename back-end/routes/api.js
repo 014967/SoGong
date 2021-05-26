@@ -461,7 +461,6 @@ router.get('/eventsAvailable', function(req, res){
             const regDate2 = date => `${date.getFullYear()}${date.getMonth() < 9 ? 0 : ''}${date.getMonth() + 1}${date.getDate() < 9 ? 0 : ''}${date.getDate()}${date.getHours() < 9 ? 0 : ''}${date.getHours()}${date.getMinutes() < 9 ? 0 : ''}${date.getMinutes()}${date.getSeconds() < 9 ? 0 : ''}${date.getSeconds()}`
 
             events.forEach((event) => {
-                console.log(regDate2(date), regDate(event.due))
                 if (regDate2(date) > regDate(event.due)){
                     Event.updateOne({_id: event._id}, {available : false}).then(() =>{console.log('changed available')})
                     
