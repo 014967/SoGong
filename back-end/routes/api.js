@@ -643,6 +643,10 @@ router.post('/products/sorted', function(req, res){
         res.send(product);
     });
 });
+
+
+
+
 /*
  JSON FORMAT of request to '/products/sorted'
 

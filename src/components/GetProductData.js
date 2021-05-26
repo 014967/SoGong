@@ -145,6 +145,8 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
   },[maxPrice])
   useEffect(()=>
   {
+    console.log(page)
+
     setOption(option => ({...option , page : page}));
   },[page])
 
@@ -229,6 +231,7 @@ useEffect(()=>
         <PageButton key={i+1} onClick={()=>
         {
           setPage(i+1)
+
          
         }
         }>{i+1}</PageButton>
@@ -248,9 +251,16 @@ const getProductList = async (option) => {
   
   if(filter)
   {
+    
+
 
     if( typeof option !=="undefined" && option.order !== null) {
-      const {data : sortedProducts} = await axios.post("/api/products/sorted", {
+      console.log("옵션 필터 " + option.page)
+      //const sortedPage = await axios.post('/api/products/sorted/') //하나는 전체를 가져오는 api 이것을 통해서 페이징을 넘긴다. 해당하는 옵션에 해당하는 개수를 가져와야함
+      //console.log(sortedPage.length)
+      //setProductCount(sortedPage.length)
+
+      const {data : sortedProducts} = await axios.post("/api/products/sorted/", {  //여기는 옵션의 page를 가져와서 해당하는 옵션의 page를 보여줘야함
         search : option.search,
         order : option.order,
         page : option.page,
@@ -270,6 +280,8 @@ const getProductList = async (option) => {
     } 
     else //option.order ==null (최신순) 
     {
+
+      console.log("최신 순 필터 " + page)
       const {data : products} = await axios.post("/api/products/unsorted", {
         page : page,
         search : value,
@@ -292,12 +304,13 @@ const getProductList = async (option) => {
   else //필터링 오프
   {
 
-
+    
     if( typeof option !=="undefined" && option.order !== null) {
+      console.log("필터링 없는 옵션 page " +option.page) // 사용자가 원하는 page를 찍게 됌. 
       const {data : sortedProducts} = await axios.post("/api/products/sorted", {
         search : option.search,
         order : option.order,
-        page : option.page,
+        page : option.page, //option을 통해서 사용자가 원하는 데이터를 가져온다 .
         min : option.min,
         max : option.max,
         available : "available",
@@ -314,15 +327,14 @@ const getProductList = async (option) => {
     } 
     else //option.order ==null (최신순) 
     {
-      
+      console.log("최신순 노 필터 " + page)
       const {data : products} = await axios.post("/api/products/unsorted", {
-        page : page,
+        page : page, //기본 default 페이지 1을  1에 해당하는 데이터들을 가져오게된다.
         search : value,
         min : 0,
         max : 100000,
         available : "available",
       })
-      console.log(products)
       setProductCount(productLength.length)
       setEnterProduct(
         {
