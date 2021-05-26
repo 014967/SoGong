@@ -38,16 +38,9 @@ const PageButton = styled.button`
 `
 
 const ProductList = () => {
-  
-  const [currentState, setCurrentState] = useState({
-    category: 'ALL',
-    search: '',
-    startPrice: 0,
-    endPrice: 200000
-  })
   const { category, setCategory, search, setSearch,
         startPrice, setStartPrice, endPrice, setEndPrice,
-        submitFlag, setSubmitFlag } = useContext(ProductListContext)
+        currentState, setCurrentState, submitFlag, setSubmitFlag } = useContext(ProductListContext)
 
   const [products, setProducts] = useState([])
   const [page, setPage] = useState(1)

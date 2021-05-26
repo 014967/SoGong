@@ -14,6 +14,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import UserPostList from './UserPostList'
 import { WishListContext } from '../pages/App'
+import { LoginContext } from '../pages/App'
 
 const TopContainer = styled.div`
   display: flex;
@@ -56,14 +57,6 @@ const Description = styled.div`
   margin-bottom: 128px;
 `
 
-const Stock = styled.select`
-  width: 120px;
-  border: 1px solid ${({ theme }) => theme.color.secondary};
-  &:focus {
-    outline: none;
-  }
-`
-
 const getModalStyle = () => {
   const top = 50
   const left = 50
@@ -103,16 +96,8 @@ const ProductData = (props) => {
 
   const params = useParams()
   const id = params.id
-   /*
-    if (window.performance) {
-      if (performance.navigation.type == 1) {
-        getRefreshData()
-      } else {
-        console.log( "This page is not reloaded");
-      }
+  const history = useHistory()
 
-    }*/
-  const [d1, setD1] = useState([]);
   const [category, setCategory] = useState('');
   const [img, setImg] = useState('');
   const [name, setName] = useState('');
@@ -120,9 +105,9 @@ const ProductData = (props) => {
   const [description, setDescription] = useState('');
   const [orderStock, setOrderStock] = useState('수량');
   const [detailImg, setDetailImg] = useState([])
-  const [detailImgPath, setDetailImgPath] = useState({ path: [] })
   const [openDelivery, setOpenDelivery] =useState(false);
 
+  const { success } = useContext(LoginContext)
   const { wishListFlag, setWishListFlag } = useContext(WishListContext)
   const classes = useStyles();
   
@@ -139,6 +124,22 @@ const ProductData = (props) => {
     }
   }
 
+  const handleOrderStock = e => {
+    setOrderStock(e.target.value);
+  }
+
+  const handleWishList = async () => {
+    if (success) {
+      const { data: res } = await axios.post('/api/addTowishlist', {
+        productId: id,
+        quantity: orderStock
+      })
+      alert('장바구니에 추가되었습니다.')
+      setWishListFlag(true)
+    } else
+      alert('먼저 로그인 해주세요.')
+  }
+
   useEffect(() => {
     getProductData()
   }, [])
@@ -148,24 +149,15 @@ const ProductData = (props) => {
   const [open, setOpen] = react.useState(false);
 
   const handleOpen = () => {
-    setOpen(true);
+    if (success) { 
+      setOpen(true);
+    } else {
+      alert('먼저 로그인 해주세요.')
+    }
   };
   const handleClose = () => {
     setOpen(false);
   };
-
-  const handleOrderStock = e => {
-    setOrderStock(e.target.value);
-  }
-
-  const handleWishList = async () => {
-    const { data: res } = await axios.post('/api/addTowishlist', {
-      productId: id,
-      quantity: orderStock
-    })
-    alert('장바구니에 추가되었습니다.')
-    setWishListFlag(true)
-  }
 
     return (
       <>
@@ -197,23 +189,12 @@ const ProductData = (props) => {
                 </Select>
               </FormControl>
               
-              <Button onClick={() => {
-                /*history.push(
-                  {
-                    pathname : '/user/PostList'
-                }  
-                )*/
-                //popup()
-                handleOpen()
-              }}>
+              <Button onClick={handleOpen}>
                 배송지 선택
               </Button>
-              {/* <Modal
-                open={open}
-                onClose={handleClose}  aria-labelledby="simple-modal-title"
-                aria-describedby="simple-modal-description"
-                >{<UserPostList/>}
-              </Modal> */}
+              <Modal open={open} onClose={handleClose}>
+                <UserPostList />
+              </Modal>
             </ButtonContainer>
             <ButtonContainer>
               <Button onClick={handleWishList}>

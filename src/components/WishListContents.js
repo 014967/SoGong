@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useHistory } from 'react-router'
 import styled from 'styled-components'
 import axios from 'axios'
 import Title from './elements/Title'
@@ -6,8 +7,7 @@ import ContentsWrapper from './elements/ContentsWrapper'
 import Button from './elements/Button';
 import CheckBox from './elements/CheckBox'
 import { WishListContext } from '../pages/App'
-import HeaderButton from './elements/HeaderButton';
-import { WifiLockRounded } from '@material-ui/icons';
+import { LoginContext } from '../pages/App'
 
 const Container = styled.div`
   
@@ -100,16 +100,20 @@ const ButtonsContainer2 = styled.div`
 `
 
 const WishListContents = () => {
-  const [selected, setSelected] = useState('event');
   const [wishList, setWishList] = useState([])
   const [checked, setChecked] = useState([])
   const [checkedAll, setCheckedAll] = useState(false)
-  const { wishListFlag, setWishListFlag } = useContext(WishListContext)
   const [buttonColor, setButtonColor] = useState('disabled')
   const [quantity, setQuantity] = useState([])
+  const { setWishListFlag } = useContext(WishListContext)
+  const { success } = useContext(LoginContext)
+
+  const history = useHistory()
 
   const getWishList = async () => {
     const { data: wl } = await axios.get('/api/wishlist')
+    if (wl.wishlist.length === 0) return
+    
     wl.wishlist.forEach(v => {
       setQuantity(prev => [...prev, v.quantity])
     })
@@ -157,13 +161,24 @@ const WishListContents = () => {
   }
 
   useEffect(() => {
-    getWishList()
+    if (success)
+      getWishList()
+    else {
+      alert('먼저 로그인 해주세요.')
+      history.push('/')
+    }
   }, [])
 
   useEffect(() => {
     setCheckedAll(checked.every(v => v) && wishList.length !== 0)
     setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
   }, [checked])
+
+  useEffect(() => {
+    if (!success) { //로그아웃 시
+      history.push('/')
+    }
+  }, [success])
 
     return (
         <ContentsWrapper>
@@ -180,14 +195,14 @@ const WishListContents = () => {
             <TableHeaderContent width="250px">금액</TableHeaderContent>
           </TableHeader>
           {wishList.length !== 0 && wishList.map((v, i) => (
-            <Row key={i}>
-                <CheckBox checked={checked[i]} onChange={handleChecked(i)}/>
-                <Image src={require('../assets/images/products/' + v.product.img).default} />
-                <Name>{v.product.name}</Name>
-                <Quantity value={quantity[i]} onChange={(e) => handleQuantity(e, i)} type='number' />
-                <Price>{(quantity[i] * v.product.price).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</Price>
-            </Row>
-          ))}
+              <Row key={i}>
+                  <CheckBox checked={checked[i]} onChange={handleChecked(i)}/>
+                  <Image src={require('../assets/images/products/' + v.product.img).default} />
+                  <Name>{v.product.name}</Name>
+                  <Quantity value={quantity[i]} onChange={(e) => handleQuantity(e, i)} type='number' />
+                  <Price>{(quantity[i] * v.product.price).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</Price>
+              </Row>
+            ))}
           </Container>
           <Row>
               총 금액 :&nbsp;

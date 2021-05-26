@@ -8,6 +8,7 @@ import Logo from './elements/Logo'
 import Login from './Login'
 import HeaderSearchBar from './HeaderSearchBar'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+import { LoginContext } from '../pages/App'
 
 const Container = styled.div`
   position: fixed;
@@ -76,9 +77,10 @@ const Header = () => {
   
   const location = useLocation()
   const history = useHistory()
-  const { category, setCategory, setSearch, setStartPrice, setEndPrice, submitFlag, setSubmitFlag } = useContext(ProductListContext)
+  const { setCategory, setSearch, setStartPrice, setEndPrice, currentState, setSubmitFlag } = useContext(ProductListContext)
   const { wishListFlag, setWishListFlag } = useContext(WishListContext)
-  
+  const { success } = useContext(LoginContext)
+
   const [wishList, setWishList] = useState(0)
 
   const handleCategory = (cate) => {
@@ -100,16 +102,16 @@ const Header = () => {
     setWishList(wl.wishlist.length)
   }
 
-  const handleColor = useCallback((cate) => (category === cate ? 'primary' : 'secondary'), [submitFlag])
+  const handleColor = useCallback((cate) => (currentState.category === cate ? 'primary' : 'secondary'), [currentState])
 
   useEffect(() => {
-    getWishList()
-  }, [])
+    if (success) {
+      getWishList()
+    }
+  }, [success])
 
   useEffect(() => {
-    console.log('call3')
     if (wishListFlag) {
-      console.log('call4')
       getWishList()
       setWishListFlag(false)
     }
@@ -120,10 +122,11 @@ const Header = () => {
         <BaseContainer>
           <Logo />
           <LoginContainer>
+            {success && 
             <WishList onClick={handleWishList}>
               <ShoppingCartIcon />
               <div>{wishList}</div>
-            </WishList>
+            </WishList>}
             <Login />
           </LoginContainer>
         </BaseContainer>

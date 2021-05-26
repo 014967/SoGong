@@ -38,6 +38,8 @@ export const ProductListContext = createContext({
     setStartPrice: () => {},
     endPrice: 0,
     setEndPrice: () => {},
+    currentState: {},
+    setCurrentState: () => {},
     submitFlag: false,
     setSubmitFlag: () => {}
 })
@@ -60,10 +62,16 @@ const App = () => {
     const [search, setSearch] = useState('')
     const [startPrice, setStartPrice] = useState(0)
     const [endPrice, setEndPrice] = useState(200000)
+    const [currentState, setCurrentState] = useState({
+        category: 'ALL',
+        search: '',
+        startPrice: 0,
+        endPrice: 200000
+      })
     const [submitFlag, setSubmitFlag] = useState(false)
     const productListContextValue = useMemo(() => ({
-        category, setCategory, search, setSearch, startPrice, setStartPrice, endPrice, setEndPrice, submitFlag, setSubmitFlag
-    }), [category, setCategory, search, setSearch, startPrice, setStartPrice, endPrice, setEndPrice, submitFlag, setSubmitFlag])
+        category, setCategory, search, setSearch, startPrice, setStartPrice, endPrice, currentState, setCurrentState, setEndPrice, submitFlag, setSubmitFlag
+    }), [category, setCategory, search, setSearch, startPrice, setStartPrice, endPrice, currentState, setCurrentState, setEndPrice, submitFlag, setSubmitFlag])
     
     const [wishListFlag, setWishListFlag] = useState(false)
     const wishListContextValue = useMemo(() => ({
