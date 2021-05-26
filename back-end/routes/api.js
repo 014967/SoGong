@@ -633,15 +633,12 @@ router.post('/products/sorted', function(req, res){
     let page = req.body.page
     if(page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({price: req.body.order})
-    .limit(10)
    .then(function(product){
         res.send(product);
     });
 
     if(page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({price: req.body.order})
-    .skip( (page-1) * 10 )
-    .limit(10)
    .then(function(product){
         res.send(product);
     });
@@ -669,25 +666,21 @@ Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
 
 
 router.post('/products/unsorted', function(req, res){
-    
-    
+
+
     if(req.body.page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
-    .limit(10)
    .then(function(product){
         res.send(product)
     });
 
     if(req.body.page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
-    .skip( (req.body.page-1) * 10 )
-    .limit(10)
    .then(function(product){
         res.send(product)
 
     });
 });
-
 /* [ JSON FORMAT of request to '/products/unsorted' ]
 {
     "search": "string",

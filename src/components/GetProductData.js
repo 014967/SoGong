@@ -91,7 +91,7 @@ const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').r
 
 
 const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order, filter,
-    minPrice, maxPrice,   value  ,history , submit ,setSubmit ,modifiedFlag ,setModifiedFlag ,setDeleteFlag , deleteFlag}) =>
+    minPrice, maxPrice,   value  ,history , submit ,setSubmit ,modifiedFlag ,setModifiedFlag ,setDeleteFlag , deleteFlag,getText}) =>
 {
 
  
@@ -108,7 +108,7 @@ const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, s
     order : null,
     search : "",
     min : 0,
-    max : 100000,
+    max : 200000,
     page : 1,
   })
 
@@ -163,8 +163,11 @@ useEffect(()=>
   
   if(filter==false)
   {
-    console.log("hello")
-    setOption(option => ({...option, order : null , min : 0 , max : 100000 , search : ""}));
+    console.log("필터 " + filter)
+    setOption(option => ({...option, order : null , min : 0 , max : 200000 , search : ""}));
+  }
+  else{
+    console.log("필터 " + filter)
   }
 
 },[filter])
@@ -211,9 +214,15 @@ useEffect(()=>
   } ,[deleteFlag])
 
 
+  useEffect(()=>
+  {
+    console.log(productCount)
+    pageCount()
+  },[productCount])
 
   const pageCount = () => {
     const result = [];
+    console.log("pageCount  실행" + productCount)
     for(let i =0; i<= productCount/10 ; i++)
     {
       result.push(
@@ -229,50 +238,108 @@ useEffect(()=>
 }
 
 
+
 const getProductList = async (option) => {
   const {data : productLength} = await axios.get("/api/products/")
+  
   setProductCount(productLength.length)
 
-
   
-  console.log(option)
-  console.log(option.order)
-  if( typeof option !=="undefined" && option.order !== null) {
-    const {data : sortedProducts} = await axios.post("/api/products/sorted", {
-      search : option.search,
-      order : option.order,
-      page : option.page,
-      min : option.min,
-      max : option.max,
-      available : "available",
-  }
-  )
-
-  setProductCount(sortedProducts.length)
   
-  setSubmit(prev => !prev)
+  if(filter)
+  {
+
+    if( typeof option !=="undefined" && option.order !== null) {
+      const {data : sortedProducts} = await axios.post("/api/products/sorted", {
+        search : option.search,
+        order : option.order,
+        page : option.page,
+        min : option.min,
+        max : option.max,
+        available : "available",
+    }
+    )
+  
+    console.log(sortedProducts)
+    setProductCount(sortedProducts.length)
+    
+    setSubmit(prev => !prev)
     setEnterProduct({ data: sortedProducts })
     setChecked([...Array(sortedProducts.length).fill(false)])
-    
-  } 
-  else //option.order ==null (최신순) 
-  {
-    const {data : products} = await axios.post("/api/products/unsorted", {
-      page : page,
-      search : value,
-      min : minPrice,
-      max : maxPrice,
-      available : "available",
-    })
-    
-    //setProductCount(products.length)
-    setEnterProduct(
-      {
-        data: products,
-      }
-    )
-    setChecked([...Array(products.length).fill(false)])
+      
+    } 
+    else //option.order ==null (최신순) 
+    {
+      const {data : products} = await axios.post("/api/products/unsorted", {
+        page : page,
+        search : value,
+        min : minPrice,
+        max : maxPrice,
+        available : "available",
+      })
+      console.log(products)
+      
+      setProductCount(products.length)
+      setEnterProduct(
+        {
+          data: products,
+        }
+      )
+      setChecked([...Array(products.length).fill(false)])
+    }
+
   }
+  else //필터링 오프
+  {
+
+
+    if( typeof option !=="undefined" && option.order !== null) {
+      const {data : sortedProducts} = await axios.post("/api/products/sorted", {
+        search : option.search,
+        order : option.order,
+        page : option.page,
+        min : option.min,
+        max : option.max,
+        available : "available",
+    }
+    )
+  
+    console.log(sortedProducts)
+    //setProductCount(sortedProducts.length)
+    
+    setSubmit(prev => !prev)
+    setEnterProduct({ data: sortedProducts })
+    setChecked([...Array(sortedProducts.length).fill(false)])
+      
+    } 
+    else //option.order ==null (최신순) 
+    {
+      
+      const {data : products} = await axios.post("/api/products/unsorted", {
+        page : page,
+        search : value,
+        min : 0,
+        max : 100000,
+        available : "available",
+      })
+      console.log(products)
+      setProductCount(productLength.length)
+      setEnterProduct(
+        {
+          data: products,
+        }
+      )
+      setChecked([...Array(products.length).fill(false)])
+    }
+   
+
+
+
+  }
+  
+  
+  
+  
   setIsLoading(false)
 }
 

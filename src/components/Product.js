@@ -251,6 +251,7 @@ const handleMaxPrice = e =>
   }
 
 
+
   
 
  
@@ -302,7 +303,7 @@ const handleMaxPrice = e =>
                 maxPrice = {maxPrice} minPrice = {minPrice}  value={value}  filter ={filter} priceFlag={ priceFlag}
                  checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setModifiedFlag={setModifiedFlag} history={history}
                  selected={selected} 
-                 submit ={submit} setSubmit={setSubmit} deleteFlag={deleteFlag} setDeleteFlag={setDeleteFlag}/> }
+                 submit ={submit} setSubmit={setSubmit} deleteFlag={deleteFlag} setDeleteFlag={setDeleteFlag} getText={getText}/> }
               </>
             )
           }

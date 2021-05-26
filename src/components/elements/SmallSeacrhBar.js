@@ -48,18 +48,7 @@ const SmallSearchBar = ({value, setValue,setSubmit}) => {
     
     setValue(text)  
   },[text])
-  useEffect(()=>
-  {
-    console.log(click)
-
-    if(click)
-    {
-      
-      setSubmit(true)
-      
-
-    }
-  },[click])
+ 
 
 
     return (
