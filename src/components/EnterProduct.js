@@ -317,13 +317,13 @@ const EnterProduct = () =>
             </InputContainer>
             <InputContainer>
                 <Title>상품 수량</Title>
-                <Input placeholder="상품 수량 입력"  type='number' onChange={handleStock}></Input>
+                <Input placeholder="상품 수량 입력"  type='number' min="0" onChange={handleStock}></Input>
                 <PriceText>개</PriceText>
                 
             </InputContainer>
             <InputContainer>
             <Title>상품 가격</Title>
-            <Input placeholder="상품 가격 입력" type='number' onChange={handlePrice}></Input>
+            <Input placeholder="상품 가격 입력" type='number' min="0" max="200000" onChange={handlePrice}></Input>
             <PriceText>원</PriceText>
             </InputContainer>
 
