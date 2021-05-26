@@ -98,7 +98,9 @@ const ProductData = () => {
   const [description, setDescription] = useState('');
   const [orderStock, setOrderStock] = useState(null);
   const [detailImg, setDetailImg] = useState([])
-  const [address, setAddress] =useState('');
+  const [address, setAddress] =useState('등록된 배송지가 없습니다.');
+  const [modalStyle] = react.useState(getModalStyle);
+  const [open, setOpen] = react.useState(false);
 
   const { success } = useContext(LoginContext)
   const { wishListFlag, setWishListFlag } = useContext(WishListContext)
@@ -119,7 +121,14 @@ const ProductData = () => {
 
   const getAddress = async () => {
     const { data: ad } = await axios.get('/api/delivery')
-    if (!ad.delivery) return
+    if (!ad.delivery) {
+      setAddress('등록된 배송지가 없습니다.')
+      return
+    }
+    if (ad.delivery.length === 0) {
+      setAddress('등록된 배송지가 없습니다.')
+      return
+    }
     setAddress(ad.delivery[0].address + ', ' + ad.delivery[0].detailaddress)
   }
 
@@ -148,9 +157,13 @@ const ProductData = () => {
     getAddress()
   }, [])
 
+  useEffect(() => {
+    if (!open) {
+      getAddress()
+    }
+  }, [open])
+
   //modal
-  const [modalStyle] = react.useState(getModalStyle);
-  const [open, setOpen] = react.useState(false);
 
   const handleOpen = () => {
     if (success) { 
