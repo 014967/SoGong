@@ -2,10 +2,10 @@ import React, { useState, useEffect, forwardRef } from 'react';
 import styled from 'styled-components';
 import axios from 'axios'
 import HeaderButton from './elements/HeaderButton';
-import CheckBox from './elements/CheckBox'
 import Button from './elements/Button'
 import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
+import DaumPop from './DaumPop'
 
 const Container = styled.div`
   display: flex;
@@ -34,7 +34,6 @@ const TableHeader = styled.div`
   align-items: center;
   width: 100%;
   height: 64px;
-  padding: 0 242px 0 120px;
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
 `
 
@@ -54,17 +53,17 @@ const Row = styled.div`
   & > *:first-child {
     margin-right: 64px;
   }
-  & > *:last-child {
-    margin-left: 64px;
+  & > * + * {
+    margin-left: 16px;
   }
 `
 const Name = styled.div`
-  width: 619px;
+  width: 201px;
   text-align: center;
 `
 
 const Address = styled.div`
-  width: 201px;
+  width: 500px;
   text-align: center;
 `
 const getModalStyle = () => {
@@ -89,26 +88,30 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const UserPostList = () => {
-  const [enter, setEnter] = useState(false)
-  const [checked, setChecked] = useState([])
+const UserPostList = ({ setOpenP }) => {
   const [buttonColor, setButtonColor] = useState('disabled')
   const [postList, setPostList] = useState([])
+  const [open, setOpen] = useState(false)
   const classes = useStyles();
   const [modalStyle] = React.useState(getModalStyle);
 
-  const handleEnter = () => {
-    setEnter(true)
+  const handleOpen = () => {
+    setOpen(true)
   }
 
-  const handleChecked = index => () => {
-    setChecked(prev => [...prev.map((v, i) => 
-      i === index ? !v : v
-    )])
+  const handleClose = () => {
+    setOpen(false)
   }
 
-  const handleDelete = () => {
+  const handleSelect = () => {
+    setOpenP(false)
+  }
 
+  const handleDelete = async (name) => {
+    if (window.confirm('삭제하시겠습니까?')) {
+      const {data: res} = await axios.get(`/api/removeFromdelivery?deliveryname=${name}`)
+      getPostList()
+    }
   }
 
   const getPostList = async () => {
@@ -116,7 +119,6 @@ const UserPostList = () => {
     if (!pl.delivery) return
     console.log(pl.delivery)
     setPostList(pl.delivery)
-    setChecked([...Array(pl.delivery.length).fill(false)])
   }
 
   useEffect(() => {
@@ -141,38 +143,36 @@ const UserPostList = () => {
   //   }
   // }
 
-  useEffect(() => {
-    setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
-  }, [checked])
 
+  useEffect(() => {
+    if (!open) {
+      getPostList()
+    }
+  }, [open])
 
   return (
       <Container style={modalStyle} className={classes.paper}>
-        {
-          enter ? ( <div>z</div>
-          ) : (
-            <>
-              <Header>
-              <ButtonsContainer>
-                <HeaderButton background={buttonColor} onClick={handleDelete}>선택 삭제</HeaderButton>
-                <HeaderButton background="primary" right onClick={handleEnter}>등록</HeaderButton>
-              </ButtonsContainer>
-              </Header>
-              <TableHeader>
-                <TableHeaderContent width="201px">이름</TableHeaderContent>
-                <TableHeaderContent width="619px">주소</TableHeaderContent>
-              </TableHeader>
-              {postList.length !== 0 && postList.map((post, index) => (
-                <Row key={index}>
-                  <CheckBox checked={checked[index]} onChange={handleChecked(index)}/>
-                  <Name>{post.deliveryname}</Name>
-                  <Address>{post.address}</Address>
-                  <Button background="primary">수정</Button>
-                </Row>
-              ))}
-            </>
-          )
-        }
+        <Header>
+        <ButtonsContainer>
+          <HeaderButton background="primary" right onClick={handleOpen}>등록</HeaderButton>
+          <Modal open={open} onClose={handleClose}>
+            <DaumPop setOpen={setOpen} />
+          </Modal>
+        </ButtonsContainer>
+        </Header>
+        <TableHeader>
+          <TableHeaderContent width="150px">이름</TableHeaderContent>
+          <TableHeaderContent width="450px">주소</TableHeaderContent>
+        </TableHeader>
+        {postList.length !== 0 && postList.map((post, index) => (
+          <Row key={index}>
+            <Name>{post.deliveryname}{index === 0 && '(기본 배송지)'}</Name>
+            <Address>{`${post.address}, ${post.detailaddress}`}</Address>
+            <Button>수정</Button>
+            <Button onClick={() => handleDelete(post.deliveryname)}>삭제</Button>
+            <Button background="primary" onClick={handleSelect}>선택</Button>
+          </Row>
+        ))}
       </Container>
   )
 }

@@ -41,7 +41,7 @@ export const ProductListContext = createContext({
     currentState: {},
     setCurrentState: () => {},
     submitFlag: false,
-    setSubmitFlag: () => {}
+    setSubmitFlag: () => {},
 })
 
 export const WishListContext = createContext({

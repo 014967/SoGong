@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
+import { useLocation, useHistory } from 'react-router'
 import styled from 'styled-components'
 import axios from 'axios'
 import { ProductListContext } from '../pages/App'
@@ -92,7 +93,7 @@ const ProductList = () => {
       setCategory('ALL')
       setSearch('')
       setStartPrice(0)
-      setEndPrice('200000')
+      setEndPrice(200000)
       setCurrentState({
         category: 'ALL',
         search: '',

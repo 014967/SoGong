@@ -47,14 +47,18 @@ const Price = styled.div`
   font-size: 24px;
   font-family: ${({ theme }) => theme.font.regular};
   margin-top: 16px;
-  margin-bottom: 256px;
+  margin-bottom: 200px;
   color: ${({ theme }) => theme.color.secondary};
 `
 
 const Description = styled.div`
-  margin-top: 64px;
   padding-left: 64px;
   margin-bottom: 128px;
+`
+
+const Address = styled.div`
+  font-size: 14px;
+  width: 300px;
 `
 
 const getModalStyle = () => {
@@ -69,21 +73,10 @@ const getModalStyle = () => {
 }
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    position: 'absolute',
-    width: 400,
-    backgroundColor: theme.palette.background.paper,
-    border: '2px solid #000',
-    boxShadow: theme.shadows[5],
-    padding: theme.spacing(2, 4, 3),
-  },
   formControl: {
     margin: theme.spacing(1),
     minWidth: 120,
-  },
-  selectEmpty: {
-    marginTop: theme.spacing(2),
-  },
+  }
 }));
 
 const categoryMap = {
@@ -92,7 +85,7 @@ const categoryMap = {
   Child: 'KIDS',
 }
 
-const ProductData = (props) => {  
+const ProductData = () => {  
 
   const params = useParams()
   const id = params.id
@@ -103,9 +96,9 @@ const ProductData = (props) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState(0);
   const [description, setDescription] = useState('');
-  const [orderStock, setOrderStock] = useState('수량');
+  const [orderStock, setOrderStock] = useState(null);
   const [detailImg, setDetailImg] = useState([])
-  const [openDelivery, setOpenDelivery] =useState(false);
+  const [address, setAddress] =useState('');
 
   const { success } = useContext(LoginContext)
   const { wishListFlag, setWishListFlag } = useContext(WishListContext)
@@ -124,17 +117,27 @@ const ProductData = (props) => {
     }
   }
 
+  const getAddress = async () => {
+    const { data: ad } = await axios.get('/api/delivery')
+    if (!ad.delivery) return
+    setAddress(ad.delivery[0].address + ', ' + ad.delivery[0].detailaddress)
+  }
+
   const handleOrderStock = e => {
     setOrderStock(e.target.value);
   }
 
   const handleWishList = async () => {
     if (success) {
-      const { data: res } = await axios.post('/api/addTowishlist', {
-        productId: id,
-        quantity: orderStock
-      })
-      alert('장바구니에 추가되었습니다.')
+      if (!orderStock) {
+        alert('먼저 수량을 선택해주세요.')
+      } else {
+        const { data: res } = await axios.post('/api/addTowishlist', {
+          productId: id,
+          quantity: orderStock
+        })
+        alert('장바구니에 추가되었습니다.')
+      }
       setWishListFlag(true)
     } else
       alert('먼저 로그인 해주세요.')
@@ -142,6 +145,7 @@ const ProductData = (props) => {
 
   useEffect(() => {
     getProductData()
+    getAddress()
   }, [])
 
   //modal
@@ -168,6 +172,9 @@ const ProductData = (props) => {
           <InfoContainer>
             <Name>{name}</Name>
             <Price>&#8361;{price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</Price>
+            <Address>
+                기본 배송지: {address}
+              </Address>
             <ButtonContainer>
               <FormControl className={classes.formControl}>
                 <InputLabel id="demo-simple-select-label">수량</InputLabel>
@@ -193,7 +200,7 @@ const ProductData = (props) => {
                 배송지 선택
               </Button>
               <Modal open={open} onClose={handleClose}>
-                <UserPostList />
+                <UserPostList setOpenP={setOpen}/>
               </Modal>
             </ButtonContainer>
             <ButtonContainer>

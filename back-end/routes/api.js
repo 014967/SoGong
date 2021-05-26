@@ -155,13 +155,13 @@ router.post("/addTowishlist", auth, (req, res) => {
 
 */
 
-router.get('/removeFromwishlist', auth, (req, res) => {
+router.post('/removeFromwishlist', auth, (req, res) => {
 
     User.findOneAndUpdate(
         { _id: req.user._id },
         {
             "$pull":
-                { "wishlist": { "id": req.query.id } }
+                { "wishlist": { "id": {$in : req.body.productIds} } }
         },
         { new: true },
         (err, userInfo) => {
@@ -184,7 +184,10 @@ router.get('/removeFromwishlist', auth, (req, res) => {
 
 장바구니 삭제
 
-get으로  http://localhost:8080/api/removeFromwishlist?id=${productId}하면 해당 productId가 있는 장바구니 항목 삭제
+{
+    "productIds" : ["60acfea8175cd0590036cd4e", "60acfe7d175cd0590036cd4d"]
+}
+productIds: 삭제할 물품id의 배열
 
 */
 
@@ -203,8 +206,43 @@ get으로 http://localhost:8080/api/wishlist/productId하면 장바구니의 해
 
 router.post("/adddelivery", auth, (req, res) => {
 
-    User.findOne({ _id: req.body._id },
+    //먼저  User Collection에 해당 유저의 정보를 가져오기 
+    User.findOne({ _id: req.user._id },
+        (err, userInfo) => {
 
+            // 가져온 정보에서 default가 true인지 확인 
+
+            let duplicate = false;
+                if (false !== req.body.default) {
+                    duplicate = true;
+                }
+
+            //default가 true일 때
+            if (duplicate) 
+            User.findOneAndUpdate(
+                { _id: req.user._id },
+                {
+                    $push: {
+                        delivery: {
+                            $each:[{
+                            deliveryname: req.body.deliveryname,
+                            name: req.body.name,
+                            address: req.body.address,
+                            detailaddress: req.body.detailaddress,
+                            zonecode: req.body.zonecode,
+                            phonenumber: req.body.phonenumber
+                            }], $position: 0
+                        }
+                    }
+                },
+                { new: true },
+                (err, userInfo) => {
+                    if (err) return res.status(400).json({ success: false, err })
+                    res.status(200).send(userInfo.delivery)
+                }
+            )
+            //defualt가 false일 때 
+            else {
                 User.findOneAndUpdate(
                     { _id: req.user._id },
                     {
@@ -225,14 +263,17 @@ router.post("/adddelivery", auth, (req, res) => {
                         res.status(200).send(userInfo.delivery)
                     }
                 )
-        )
+            }
+        })
 });
+
 /*
 
 배송지 추가
 
 {
 "_id":"60a8bcb15faf4952ec13fe45",
+"default": false,
 "deliveryname":"우리집1",
 "name":"홍길동",
 "address":"서울특별시 ~구 ~동 ~로 100",

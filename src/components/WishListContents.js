@@ -92,8 +92,8 @@ const ButtonsContainer2 = styled.div`
   width: 100%;
   padding-left: 64px;
   justify-content : flex-end;
-  margin-top : 10px;
-  margin-bottom : 10px;
+  margin-top : 16px;
+  margin-bottom : 64px;
   & > * + * {
     margin-left: 16px;
   };
@@ -146,8 +146,8 @@ const WishListContents = () => {
           console.log(ids)
         }
       })
-      await ids.forEach(async id => {
-        const { data: res } = await axios.get(`/api/removeFromwishlist?id=${id}`)
+      const {data: res} = await axios.post(`/api/removeFromwishlist`, {
+        productIds: ids
       })
       setWishListFlag(true)
       getWishList()
@@ -156,7 +156,7 @@ const WishListContents = () => {
 
   const handleQuantity = (e, index) => {
     setQuantity(prev => [...prev.map((v, i) => 
-      i === index ? e.target.value : v
+      i === index ? Math.floor(e.target.value) : v
     )])
   }
 
@@ -200,7 +200,7 @@ const WishListContents = () => {
                   <CheckBox checked={checked[i]} onChange={handleChecked(i)}/>
                   <Image src={require('../assets/images/products/' + v.product.img).default} />
                   <Name>{v.product.name}</Name>
-                  <Quantity value={quantity[i]} onChange={(e) => handleQuantity(e, i)} type='number' />
+                  <Quantity min={0} value={quantity[i]} onChange={(e) => handleQuantity(e, i)} type='number' />
                   <Price>{(quantity[i] * v.product.price).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</Price>
               </Row>
             ))}
