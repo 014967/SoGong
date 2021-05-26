@@ -182,7 +182,7 @@ var multerS3 = require("multer-s3");
 const dotenv = require('dotenv') 
 dotenv.config()
 
-const { AWS_config_region, AWS_IDENTITYPOOLID } = process.env
+const { AWS_config_region, AWS_IDENTITYPOOLID, AWSAccessKeyId, AWSSecretKey } = process.env
 console.log(AWS_IDENTITYPOOLID)
 const bucket = "sogong17"
 
@@ -195,7 +195,9 @@ AWS.config.update({
 
 const s3 = new AWS.S3({
   apiVersion: "2006-03-01",
-  params: {Bucket: bucket}
+  params: {Bucket: bucket},
+  accessKeyId: AWSAccessKeyId,
+  secretAccessKey: AWSSecretKey
 });
 
 const uploadS3Product = multer({
