@@ -3,6 +3,7 @@ import React, {useEffect, useState} from 'react';
 import Button from './elements/Button';
 import axios from 'axios'
 import { useHistory , useLocation} from 'react-router';
+import { AirlineSeatFlatAngled, FastForward } from '@material-ui/icons';
 
 
 const Header = styled.div`
@@ -127,10 +128,36 @@ const AlterProduct = () =>
     const [productImg , setProductImg] = useState(null);
     const [imgFileName, setImgFileName] = useState("이미지는 정사각형으로 표시됩니다");
     const [price, setPrice] = useState();
-    const [category, setCategory] = useState("남성 상의");
+    const [category, setCategory] = useState("카테고리");
     const [stock , setStock ] = useState();
+    const [flag, setFlag ]= useState(false);
+    const [file, setFile] =useState({
+        files : [],
+    });
   
-  
+
+    console.log(location);
+
+    const handleDetailImg = () =>
+    {
+
+        console.log(location.state.data.detailImg.length);
+        const result =[];
+        for(let i=0; i<location.state.data.detailImg.length ; i++)
+        {
+            result.push(
+                <FileName key = {i+1}>
+                    {
+                        location.state.data.detailImg[i]
+                    }
+                </FileName>
+            )
+        }
+    
+        return result;
+    }
+
+
     useEffect(()=>
     {
         if(location.state !== "undefined")
@@ -174,6 +201,8 @@ const AlterProduct = () =>
             stock : stock,
         }
         ).catch((err)=> console.log('error'))
+
+        const responseImg = await axios.post(`/productMutipleImg/${response.data_id}`, formData)
         .then(
             history.replace(
                 {
@@ -194,11 +223,38 @@ const AlterProduct = () =>
     {
         setProductDescription(e.target.value);
     }
-    const getImg = e =>
+
+    const fileSelectedHandler = (e)=>
     {
-        setProductImg(e.target.files[0]);
-        setImgFileName(e.target.files[0].name);
+        setFlag(true)
+        setFile({files : [...e.target.files]})
     }
+
+    const handleImgName = () =>
+    {
+        
+    
+       const result =[];
+       console.log("hello")
+       console.log(file.files.length);
+       console.log(file.files[0].name);
+       for(let i=0; i<file.files.length ; i++)
+       {
+
+       
+            result.push(
+                <FileName key ={i+1}>
+                  {
+                  file.files[i].name
+                  }
+                </FileName>
+            )
+       }
+       
+       return result;
+    }
+
+    
     const handlePrice = e =>
     {
         setPrice(e.target.value);
@@ -211,7 +267,26 @@ const AlterProduct = () =>
     const handleCategory = e =>
     {
         setCategory(e.target.value);
+
+
     }
+
+    useEffect(()=>
+    {
+        if(location.state.data.detailImg === Array(0))
+        {
+
+            setFlag(true)
+            
+        }
+        else
+        {
+            setFlag(false)
+            
+        }
+
+    },[location.state])
+ 
 
     return(
         <>
@@ -235,10 +310,8 @@ const AlterProduct = () =>
                     value={category}
                     onChange={handleCategory}
                     >
-                        <option value="Man Top">남성 상의</option>
-                        <option value="Man Bottom">남성 하의</option>
-                        <option value="Woman Top">여성 상의</option>
-                        <option value="Woman Bottom">여성 하의</option>
+                        <option value="Man">남성용</option>
+                        <option value="Woman">여성용</option>
                         <option value="Child">아동용</option>
 
                     </select>
@@ -251,8 +324,20 @@ const AlterProduct = () =>
             <InputContainer>
                     <Title>대표 이미지*</Title>
                     <LabelButton for="file_input">이미지 업로드</LabelButton>
-                    <FileInput type="file" accept="image/x-png,image/jpeg" id ="file_input" name="img" onChange={getImg} />
-                    <FileName>{imgFileName}</FileName>
+                    <FileInput type="file" accept="image/x-png,image/jpeg" id ="file_input" name="img" multiple onChange={fileSelectedHandler} />
+               
+                    <FileName >
+                        {
+                            flag ? 
+                            
+                              
+                              handleImgName()
+                               :  <div>{imgFileName}
+                                {handleDetailImg()}</div>
+                            
+                            
+                        }
+                    </FileName>
             </InputContainer>
             <InputContainer>
                 <Title>상품 수량</Title>

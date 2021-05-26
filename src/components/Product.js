@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState , useLayoutEffect } from 'react';
 import styled from 'styled-components';
 import Button from './elements/Button';
 import HeaderButton from './elements/HeaderButton';
@@ -60,8 +60,21 @@ const TableHeaderContent = styled.div`
   width: ${(props) => props.width};
   font-size: 20px;
   text-align: center;
+
+
 `
-const orderList = ["최신 순", "최저가 순" , "최고가 순"];
+
+const FilterBox = styled.div`
+display: flex;
+`
+
+const orderList = [
+  null , //null
+   "asc" , //asc
+    "-1"]; //-1
+
+
+
 
 const regDate = date => date.split('.')[0].replace('T','').replace('-','').replace(':','').replace(':','').slice(2)
 
@@ -77,7 +90,6 @@ const Product = ({selected, history}) => {
       index : [],
     })
   const [alter , setAlter] = useState(false);
-  const [order, setOrder] = useState("최신 순");
 
   const [filter , setFilter] = useState(false);
   const [checked, setChecked] = useState([false]);
@@ -93,6 +105,12 @@ const Product = ({selected, history}) => {
 
   const [index, setIndex] = useState(0);
 
+
+  const [order, setOrder] = useState(null);
+  const [orderText, setOrderText] = useState("최신순");
+
+  const [submit, setSubmit] = useState(false);
+
   const handleCheckedAll = () =>
   {
     setCheckedAll(prev=> !prev)
@@ -104,30 +122,7 @@ const Product = ({selected, history}) => {
   {
     if(window.confirm('삭제하시곘습니까?'))
     {
-    //  const ids = []
-    //  const paths = []
-     // checked.forEach((isChecked, i ) =>
-      //{
-       // if(isChecked)
-        //{
-         // ids.push(enterProduct.data[i]._id)
-         // paths.push(enterProduct.data[i].imgPath)
-       // }
-      //})
-     // const res = await axios.post('/api/products/delete', { productIds: ids})
-      //.catch((err)=> console.log('error'))
-      //const resImg = await axios.post('/productImgDel', { imgPaths : paths })
-      //.catch((err) => console.log('error'))
-      //.then(setEnterProduct(
-       // {
-        //  data : [],
-          
-        //}
-
-      //),
-      // console.log("location :" + location)
-      // console.log("location state :" + location.state)
-      //console.log("location state selected :" +location.state.selected)
+    
       
       const Ids = []
       checked.forEach((isChecked, i) =>
@@ -175,14 +170,17 @@ const Product = ({selected, history}) => {
 
   const handleOrder = () => 
   {
-    setOrder(prev => {
-      if (prev === '최신 순')
-        return '최저가 순'
-      else if (prev === '최저가 순')
-        return '최고가 순'
-      else return '최신 순'
+     setOrder(prev => {
+      if (prev === null)
+        return 'asc'
+      else if (prev === 'asc')
+        return '-1'
+      else return null
     })
   }
+
+
+ 
 
 
   const handleEnter = () => {
@@ -225,6 +223,32 @@ const handleMaxPrice = e =>
     
   }, [enterProduct.enter])
 
+
+  
+  const getText = () =>
+  {
+    const result = [];
+    if(order === null)
+    {
+      result.push("최신순")
+    }
+    else if(order === "asc")
+    {
+      result.push("최저가 순")
+    }
+    else if (order ==="-1")
+    {
+      result.push("최고가 순")
+    }
+    return result;
+    
+  }
+
+
+  
+
+ 
+
  
   return (
       <Container>
@@ -241,30 +265,25 @@ const handleMaxPrice = e =>
                   <ButtonsContainer>
                     <HeaderButton background={buttonColor} onClick={handleDelete}>선택 삭제</HeaderButton>
                     <HeaderButton background="secondary" onClick={handleOrder}>
-                      {order}
+                      {
+
+                          getText()
+                      }
                     </HeaderButton>
                     <HeaderButton background="secondary" onClick={handleFilter}>
                     {
-                      filter ? '가격필터링on' : '가격필터링off'
+                      filter ? '필터링on' : '필터링off'
                     }
                     </HeaderButton>
                     {
                       filter ? 
-                      <div>
-                          <Input placeholder="상품 최소 가격" type='number' onChange={handleMinPrice} />
-                          <Input placeholder="상품 최대 가격" type='number' onChange={handleMaxPrice} />
-                          <button onClick={
-                            ()=>
-                            {
-                               setPriceFlag(true)
-                               
-                            }
-                          }>
-                            가격 전송
-                          </button>
-                      </div> : null
+                      <FilterBox>
+                          <Input  placeholder="상품 최소 가격" type='number' onChange={handleMinPrice} />
+                          <Input  placeholder="상품 최대 가격" type='number' onChange={handleMaxPrice} />
+                          <SmallSearchBar value={value} setValue={setValue} setSubmit={setSubmit}/>
+                      </FilterBox> : null
                     }
-                    <SmallSearchBar value={value} setValue={setValue}/>
+                    
                   </ButtonsContainer>
                   <Button background="primary" onClick={handleEnter}>등록</Button>
                 </Header>
@@ -276,7 +295,8 @@ const handleMaxPrice = e =>
                 {<GetProductData productList={enterProduct}  setEnterProduct= {setEnterProduct} setAlter = {setAlter} order = {order} setOrder = {setOrder} 
                 maxPrice = {maxPrice} minPrice = {minPrice}  value={value}  filter ={filter} priceFlag={ priceFlag}
                  checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setModifiedFlag={setModifiedFlag} history={history}
-                 selected={selected} /> }
+                 selected={selected} 
+                 submit ={submit} setSubmit={setSubmit}/> }
               </>
             )
           }
