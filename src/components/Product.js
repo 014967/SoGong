@@ -104,6 +104,8 @@ const Product = ({selected, history}) => {
   const [value , setValue] = useState("");
 
   const [index, setIndex] = useState(0);
+  
+  const [deleteFlag, setDeleteFlag] = useState(false);
 
 
   const [order, setOrder] = useState(null);
@@ -159,10 +161,9 @@ const Product = ({selected, history}) => {
       
   
     alert("삭제되었습니다")
-    setEnterProduct({
-      data : []
-    })
-    setModifiedFlag(true)
+   
+   // setModifiedFlag(true)
+    setDeleteFlag(true)
     
     
     
@@ -297,7 +298,7 @@ const handleMaxPrice = e =>
                 maxPrice = {maxPrice} minPrice = {minPrice}  value={value}  filter ={filter} priceFlag={ priceFlag}
                  checked ={ checked } setChecked={setChecked} modifiedFlag={modifiedFlag} setModifiedFlag={setModifiedFlag} history={history}
                  selected={selected} 
-                 submit ={submit} setSubmit={setSubmit}/> }
+                 submit ={submit} setSubmit={setSubmit} deleteFlag={deleteFlag} setDeleteFlag={setDeleteFlag}/> }
               </>
             )
           }

@@ -80,7 +80,7 @@ const regDate = date => date.split('.')[0].replace('T', ' ').replace('-', '.').r
 
 
 const  GetProductData =  ({ setEnterProduct, checked, productList, setChecked, selected ,order, filter,
-    minPrice, maxPrice,   value  ,history , submit ,setSubmit ,modifiedFlag ,setModifiedFlag}) =>
+    minPrice, maxPrice,   value  ,history , submit ,setSubmit ,modifiedFlag ,setModifiedFlag ,setDeleteFlag , deleteFlag}) =>
 {
 
  
@@ -190,6 +190,15 @@ useEffect(()=>
 
   },[modifiedFlag])
 
+  useEffect(()=>
+  {
+    if(deleteFlag == true)
+    {
+      setOption(option => ({...option , order : null}));
+    }
+    setDeleteFlag(false);
+  } ,[deleteFlag])
+
 
 
   const pageCount = () => {
@@ -214,7 +223,10 @@ const getProductList = async (option) => {
   setProductCount(productLength.length)
 
 
-  if(option.order !== null) {
+  
+  console.log(option)
+  console.log(option.order)
+  if( typeof option !=="undefined" && option.order !== null) {
     const {data : sortedProducts} = await axios.post("/api/products/sorted", {
       search : option.search,
       order : option.order,
