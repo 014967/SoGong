@@ -142,8 +142,6 @@ const EventNotice = () => {
       })
       const res = await axios.post('/api/events/delete', { eventIds: ids })
         .catch((err) => console.log('error'))
-      const resImg = await axios.post('/eventImgDel', { imgPaths: paths })
-        .catch((err) => console.log('error', err))
       .then(setEventList([]))
       .then(setModifiedFlag(true))
     }

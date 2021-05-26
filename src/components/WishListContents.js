@@ -198,7 +198,7 @@ const WishListContents = () => {
           {wishList.length !== 0 && wishList.map((v, i) => (
               <Row key={i}>
                   <CheckBox checked={checked[i]} onChange={handleChecked(i)}/>
-                  <Image src={require('../assets/images/products/' + v.product.img).default} />
+                  <Image src={v.product.img} />
                   <Name>{v.product.name}</Name>
                   <Quantity min={0} value={quantity[i]} onChange={(e) => handleQuantity(e, i)} type='number' />
                   <Price>{(quantity[i] * v.product.price).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</Price>
