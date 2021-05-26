@@ -183,7 +183,6 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 const { AWS_config_region, AWS_IDENTITYPOOLID } = process.env
-
 const bucket = "sogong17"
 
 AWS.config.update({
@@ -206,7 +205,7 @@ const uploadS3Product = multer({
     acl: "public-read",
     key: (req, file, cb) => {
       let extension = path.extname(file.originalname)
-      cb(null, '../src/assets/images/products/'+new Date().valueOf() + '_'+file.originalname);
+      cb(null, 'products/'+new Date().valueOf() + '_'+file.originalname);
     }
   }),
 });
@@ -219,7 +218,7 @@ const uploadS3Event = multer({
     acl: "public-read",
     key: (req, file, cb) => {
       let extension = path.extname(file.originalname)
-      cb(null, '../src/assets/images/banners/'+new Date().valueOf() + '_'+file.originalname);
+      cb(null, 'banners/'+new Date().valueOf() + '_'+file.originalname);
     }
   }),
 });
@@ -262,34 +261,31 @@ const s3 = new S3({
 */
 /////////////////////////////
 
-  const mupload = multer({
-    storage: multer.diskStorage({
-      destination: function (req, file, cb) {
-        cb(null, '../src/assets/images/banners/');
-      },
-      filename: function (req, file, cb) {
-        cb(null, new Date().valueOf() + '_' + file.originalname);
-      }
-    }),
-  });
+  // const mupload = multer({
+  //   storage: multer.diskStorage({
+  //     destination: function (req, file, cb) {
+  //       cb(null, '../src/assets/images/banners/');
+  //     },
+  //     filename: function (req, file, cb) {
+  //       cb(null, new Date().valueOf() + '_' + file.originalname);
+  //     }
+  //   }),
+  // });
 
-  const pupload = multer({
-    storage: multer.diskStorage({
-      destination: function (req, file, cb) {
-        cb(null, '../src/assets/images/products/');
-      },
-      filename: function (req, file, cb) {
-        cb(null, new Date().valueOf() + '_' + file.originalname);
-      }
-    }),
-  });
+  // const pupload = multer({
+  //   storage: multer.diskStorage({
+  //     destination: function (req, file, cb) {
+  //       cb(null, '../src/assets/images/products/');
+  //     },
+  //     filename: function (req, file, cb) {
+  //       cb(null, new Date().valueOf() + '_' + file.originalname);
+  //     }
+  //   }),
+  // });
 
 app.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
-  console.log(req.file);
-  const imgName = req.file.filename
-  const imgPath = req.file.destination
   Event.findByIdAndUpdate(
-    {_id: req.params.id}, {img: imgName, imgPath: imgPath+imgName}).then(function(event){
+    {_id: req.params.id}, {img: req.file.location, imgPath: req.file.location}).then(function(event){
 
     Event.findOne({_id: req.params.id}).then(function(event){
       console.log('successfully updated local image');
@@ -297,12 +293,9 @@ app.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
   })
 });
 
-app.post('/productImg/:id', pupload.single('img'), (req, res) => {
-  console.log(req.file);
-  const imgName = req.file.filename
-  const imgPath = req.file.destination
+app.post('/productImg/:id', uploadS3Event.single('img'), (req, res) => {
   Product.findByIdAndUpdate(
-    {_id: req.params.id}, {img: imgName, imgPath: '../assets/images/products/'+imgName}).then(function(product){
+    {_id: req.params.id}, {img: req.file.location, imgPath: req.file.location}).then(function(product){
 
     Product.findOne({_id: req.params.id}).then(function(product){
       console.log('successfully updated local image');
@@ -317,15 +310,13 @@ app.post('/productMutipleImg/:id', uploadS3Product.array('img', 5), (req, res) =
   let images = req.files
   let i = 0
   images.forEach((image) => {
-    const imgName = image.filename
-    const imgPath = image.destination
-    if(i !=0 ){ 
+    if(i !== 0 ) { 
       i++
       Product.findByIdAndUpdate(
         {_id: req.params.id}, {
           $push: {
-            detailImg: imgName,
-            detailImgPath: '../assets/images/products/'+imgName
+            detailImg: image.location,
+            detailImgPath: image.location
         }
           }).then(function(product){
         Product.findOne({_id: req.params.id}).then(function(product){  
@@ -334,11 +325,10 @@ app.post('/productMutipleImg/:id', uploadS3Product.array('img', 5), (req, res) =
         })
       })
 
-    }
-    if(i == 0){ 
+    } else { 
       i++
       Product.findByIdAndUpdate(
-        {_id: req.params.id}, {img: imgName, imgPath: '../assets/images/products/'+imgName}).then(function(product){
+        {_id: req.params.id}, {img: image.location, imgPath: image.location}).then(function(product){
     
         Product.findOne({_id: req.params.id}).then(function(product){
           console.log('successfully updated local thumbnail image');
