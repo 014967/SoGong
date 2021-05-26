@@ -97,7 +97,7 @@ router.get('/products_by_id', (req, res) => {
 router.post("/addTowishlist", auth, (req, res) => {
 
     //먼저  User Collection에 해당 유저의 정보를 가져오기 
-    User.findOne({ _id: req.user._id },
+    User.findOne({ _id: req.body._id },
         (err, userInfo) => {
 
             // 가져온 정보에서 카트에다 넣으려 하는 상품이 이미 들어 있는지 확인 
@@ -191,8 +191,8 @@ productIds: 삭제할 물품id의 배열
 
 */
 
-router.get("/wishlist", auth, (req, res) => {
-    User.findById({_id:req.user._id}).select('wishlist').then(function(users){
+router.get("/wishlist/:id", auth, (req, res) => {
+    User.findById({_id:req.params.id}).select('wishlist').then(function(users){
         res.send(users)  
     })
 });
@@ -374,8 +374,8 @@ patch로  http://localhost:8080/api/delivery/:deliveryname하면 해당 delivery
 
 */
 
-router.get("/delivery", auth, (req, res) => {
-    User.findById({_id:req.user._id}).select('delivery').then(function(users){
+router.get("/delivery/:id", auth, (req, res) => {
+    User.findById({_id:req.params.id}).select('delivery').then(function(users){
         res.send(users)  
     })
 });
@@ -411,6 +411,13 @@ router.get('/users', function(req, res){
 
 router.get('/users/:id', function(req, res){
     User.find({id:req.params.id}).then(function(users){
+        if(users.length == 0){res.send(false);}
+        else res.send(true)
+    });
+});
+
+router.get('/usersEmail/:email', function(req, res){
+    User.find({email:req.params.email}).then(function(users){
         if(users.length == 0){res.send(false);}
         else res.send(true)
     });
@@ -463,8 +470,8 @@ router.get('/eventsAvailable', function(req, res){
             events.forEach((event) => {
                 console.log(regDate2(date), regDate(event.due))
                 if (regDate2(date) > regDate(event.due)){
-                    Event.findByIdAndUpdate({_id: event._id}, {available : false})
-                    console.log('changed available')
+                    Event.updateOne({_id: event._id}, {available : false}).then(() =>{console.log('changed available')})
+                    
                 }
             }) // 현재시각과 비교해 이벤트를 활성화 / 비활성화함
     })
@@ -656,6 +663,7 @@ order : 오름차순=asc 내림차순=-1
 page : 1페이지당 20개씩. 2면 21~40번 3이면 41~60 ....
 Users.find().skip(10).limit(5) // 11~15번째 사람 쿼리
 */
+
 
 
 
