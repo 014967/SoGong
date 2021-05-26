@@ -280,8 +280,8 @@ const handleMaxPrice = e =>
                     {
                       filter ? 
                       <FilterBox>
-                          <Input  placeholder="상품 최소 가격" type='number' onChange={handleMinPrice} />
-                          <Input  placeholder="상품 최대 가격" type='number' onChange={handleMaxPrice} />
+                          <Input  placeholder="상품 최소 가격" type='number' min="0" max="200000" onChange={handleMinPrice} />
+                          <Input  placeholder="상품 최대 가격" type='number' min="0" max="200000" onChange={handleMaxPrice} />
                           <SmallSearchBar value={value} setValue={setValue} setSubmit={setSubmit}/>
                       </FilterBox> : null
                     }
