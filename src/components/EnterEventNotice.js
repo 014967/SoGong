@@ -165,6 +165,7 @@ const EnterEventNotice = ({ setEnter }) => {
             bannerNo: priority.label,
         })
         const responseImg = await axios.post('/api/events/image/:id', formData)
+	    alert('zz')
     }
 
     return (

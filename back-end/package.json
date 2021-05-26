@@ -16,6 +16,7 @@
     "cors": "^2.8.5",
     "detect-file-type": "^0.2.8",
     "express": "^4.17.1",
+    "forever": "^3.0.4",
     "formidable": "^1.2.2",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.1",
