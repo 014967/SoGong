@@ -284,8 +284,8 @@ const s3 = new S3({
   // });
 
 app.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
+  console.log(req.file.location)
   Event.findByIdAndUpdate(
-    console.log(req.file.location)
     {_id: req.params.id}, {img: req.file.location, imgPath: req.file.location}).then(function(event){
 
     Event.findOne({_id: req.params.id}).then(function(event){
