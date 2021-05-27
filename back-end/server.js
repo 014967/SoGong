@@ -175,16 +175,20 @@ app.get('/upload/:filename', (req, res) => {
 // [SERVERSIDE UPLOAD WITH MULTER]
 const Event = require('./models/events');
 const Product = require('./models/products');
-const AWS = require('aws-sdk');
-var multerS3 = require("multer-s3");
-const dotenv = require('dotenv') 
-dotenv.config()
+const aws = require('aws-sdk');
+const multerS3 = require("multer-s3");
+// const dotenv = require('dotenv') 
+// dotenv.config()
 
-const bucketName = process.env.AWS_BUCKET_NAME
-const region = process.env.AWS_BUCKET_REGION
-const accessKeyId = process.env.AWS_ACCESS_KEY
-const secretAccessKey = process.env.AWS_SECRET_KEY
-console.log(process.env)
+// const bucketName = process.env.AWS_BUCKET_NAME
+// const region = process.env.AWS_BUCKET_REGION
+// const accessKeyId = process.env.AWS_ACCESS_KEY
+// const secretAccessKey = process.env.AWS_SECRET_KEY
+// console.log(process.env)
+
+aws.config.loadFromPath(__dirname + '/s3.json')
+console.log('zz')
+console.log(aws.config)
 /*
 const { AWS_config_region, AWS_IDENTITYPOOLID } = process.env
 const bucket = "sogong17"
@@ -238,29 +242,31 @@ require('dotenv').config()
 const S3 = require('aws-sdk/clients/s3')
 */
 
-const S3 = require('aws-sdk/clients/s3')
+// const S3 = require('aws-sdk/clients/s3')
 
-const s3 = new S3({
-   region,
-   accessKeyId,
-   secretAccessKey
-  })
+// const s3 = new S3({
+//    region,
+//    accessKeyId,
+//    secretAccessKey
+//   })
+
+const s3 = new aws.S3()
 
   const uploadS3Product = multer({
    storage: multerS3({
      s3: s3,
-     bucket: bucketName,
+     bucket: 'sogong17',
      acl: 'public-read',
      key: function(req, file, cb) {
       cb(null, 'products/'+new Date().valueOf() + '_'+file.originalname)
      }
    })
-  })
+  }, 'NONE')
 
   const uploadS3Event = multer({
     storage: multerS3({
       s3: s3,
-      bucket: bucketName,
+      bucket: 'sogong17',
       acl: 'public-read',
       key: function(req, file, cb) {
        cb(null, 'banners/'+new Date().valueOf() + '_'+file.originalname)
@@ -293,6 +299,7 @@ const s3 = new S3({
   // });
 
 app.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
+  console.log('call')
   Event.findByIdAndUpdate(
     {_id: req.params.id}, {img: req.file.location, imgPath: req.file.location}).then(function(event){
 
@@ -302,16 +309,16 @@ app.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
   })
 });
 
-app.post('/productImg/:id', uploadS3Event.single('img'), (req, res) => {
-  Product.findByIdAndUpdate(
-    {_id: req.params.id}, {img: req.file.location, imgPath: req.file.location}).then(function(product){
+// app.post('/productImg/:id', uploadS3Event.single('img'), (req, res) => {
+//   Product.findByIdAndUpdate(
+//     {_id: req.params.id}, {img: req.file.location, imgPath: req.file.location}).then(function(product){
 
-    Product.findOne({_id: req.params.id}).then(function(product){
-      console.log('successfully updated local image');
-      res.send('Success');
-    })
-  })
-});
+//     Product.findOne({_id: req.params.id}).then(function(product){
+//       console.log('successfully updated local image');
+//       res.send('Success');
+//     })
+//   })
+// });
 
 // mutiple product images upload below.
 app.post('/productMutipleImg/:id', uploadS3Product.array('img', 5), (req, res) => {
