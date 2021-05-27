@@ -207,11 +207,11 @@ useEffect(()=>
   } ,[deleteFlag])
 
 
-  useEffect(()=>
+ /* useEffect(()=>
   {
-    console.log(productCount)
+    
     pageCount()
-  },[productCount])
+  },[productCount])*/
 
   const pageCount = () => {
     const result = [];
@@ -240,44 +240,66 @@ const getProductList = async (option) => {
   if(filter)
   {
 
-    if( typeof option !=="undefined" && option.order !== null) {
-      const {data : sortedProducts} = await axios.post("/api/products/sorted", {
-        search : option.search,
-        order : option.order,
-        page : option.page,
-        min : option.min,
-        max : option.max,
-        available : "available",
-    }
-    )
-  
-    console.log(sortedProducts)
-    setProductCount(sortedProducts.length)
     
-    setSubmit(prev => !prev)
-    setEnterProduct({ data: sortedProducts })
-    setChecked([...Array(sortedProducts.length).fill(false)])
+
+    if( typeof option !=="undefined" && option.order !== null) 
+    {
+            const {data : fullSortedProducts} =await axios.post("/api/products/sorted",
+          {
+            search : option.search,
+            order : option.order,
+              page : option.page,
+              min : option.min,
+              max : option.max,
+              available : "available",
+          })
+
+          setProductCount(fullSortedProducts.length)
+
+            const {data : sortedProducts} = await axios.post("/api/products/sortedPage", {
+              search : option.search,
+              order : option.order,
+              page : option.page,
+              min : option.min,
+              max : option.max,
+              available : "available",
+          }
+          )
+        
+          
+          setSubmit(prev => !prev)
+          setEnterProduct({ data: sortedProducts })
+          setChecked([...Array(sortedProducts.length).fill(false)])
       
     } 
     else //option.order ==null (최신순) 
     {
-      const {data : products} = await axios.post("/api/products/unsorted", {
-        page : page,
-        search : value,
-        min : minPrice,
-        max : maxPrice,
-        available : "available",
-      })
-      console.log(products)
-      
-      setProductCount(products.length)
-      setEnterProduct(
-        {
-          data: products,
-        }
-      )
-      setChecked([...Array(products.length).fill(false)])
-    }
+      console.log(option.search, option.order, option.page, option.min, option.max)
+              const {data : fullUnsortedProducts} = await axios.post("/api/products/unsorted",
+              {
+                search : option.search,
+                order : option.order,
+                page : option.page,
+                min : option.min,
+                max : option.max,
+                available : "available",
+              })
+              const {data : products} = await axios.post("/api/products/unsortedPage", {
+                page : page,
+                search : value,
+                min : minPrice,
+                max : maxPrice,
+                available : "available",
+              })
+              
+              setProductCount(fullUnsortedProducts.length)
+              setEnterProduct(
+                {
+                  data: products,
+                }
+              )
+              setChecked([...Array(products.length).fill(false)])
+            }
 
   }
   else //필터링 오프
@@ -285,7 +307,9 @@ const getProductList = async (option) => {
 
 
     if( typeof option !=="undefined" && option.order !== null) {
-      const {data : sortedProducts} = await axios.post("/api/products/sorted", {
+
+      
+      const {data : sortedProducts} = await axios.post("/api/products/sortedPage", {
         search : option.search,
         order : option.order,
         page : option.page,
@@ -303,7 +327,7 @@ const getProductList = async (option) => {
     else //option.order ==null (최신순) 
     {
       
-      const {data : products} = await axios.post("/api/products/unsorted", {
+      const {data : products} = await axios.post("/api/products/unsortedPage", {
         page : page,
         search : value,
         min : 0,
