@@ -184,7 +184,7 @@ const dotenv = require('dotenv')
 dotenv.config()
 
 const { AWS_config_region, AWS_IDENTITYPOOLID, AWSAccessKeyId, AWSSecretKey } = process.env
-console.log(AWS_IDENTITYPOOLID)
+console.log(process.env.AWSAccessKeyId)
 const bucket = "sogong17"
 
 AWS.config.update({
