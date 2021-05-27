@@ -178,45 +178,39 @@ const Event = require('./models/events');
 const Product = require('./models/products');
 const AWS = require('aws-sdk');
 var multerS3 = require("multer-s3");
-
-
 const dotenv = require('dotenv') 
 dotenv.config()
 
-const { AWS_config_region, AWS_IDENTITYPOOLID, AWSAccessKeyId, AWSSecretKey } = process.env
-console.log(process.env.AWSAccessKeyId)
-const bucket = "sogong17"
+const bucketName = process.env.AWS_BUCKET_NAME
+const region = process.env.AWS_BUCKET_REGION
+const accessKeyId = process.env.AWS_ACCESS_KEY
+const secretAccessKey = process.env.AWS_SECRET_KEY
+console.log(process.env)
 
+/*
+const { AWS_config_region, AWS_IDENTITYPOOLID } = process.env
+const bucket = "sogong17"
+console.log(bucket)
 AWS.config.update({
   region : AWS_config_region,
   credentials : new AWS.CognitoIdentityCredentials({
     IdentityPoolId: AWS_IDENTITYPOOLID
-  }),
-  accessKeyId: AWSAccessKeyId,
-  secretAccessKey: AWSSecretKey,
+})
 })
 
-const s3 = new AWS.S3()
-// const s3 = new AWS.S3({
-//   apiVersion: "2006-03-01",
-//   params: { 
-//     Bucket: bucket,
-//     accessKeyId: AWSAccessKeyId,
-//     secretAccessKey: AWSSecretKey,
-//     region: AWS_config_region,
-//   },
-//   accessKeyId: AWSAccessKeyId,
-//   secretAccessKey: AWSSecretKey,
-//   region: AWS_config_region,
-// });
+const s3 = new AWS.S3({
+  apiVersion: "2006-03-01",
+  params: {Bucket: bucket}
+});
 
 const uploadS3Product = multer({
   storage: multerS3({
     s3: s3,
     bucket: bucket,
     contentType: multerS3.AUTO_CONTENT_TYPE, // 자동으로 콘텐츠 타입 세팅
-    acl: "public-read-write",
+    acl: "public-read",
     key: (req, file, cb) => {
+      let extension = path.extname(file.originalname)
       cb(null, 'products/'+new Date().valueOf() + '_'+file.originalname);
     }
   }),
@@ -229,17 +223,23 @@ const uploadS3Event = multer({
     contentType: multerS3.AUTO_CONTENT_TYPE, // 자동으로 콘텐츠 타입 세팅
     acl: "public-read",
     key: (req, file, cb) => {
+      let extension = path.extname(file.originalname)
       cb(null, 'banners/'+new Date().valueOf() + '_'+file.originalname);
     }
   }),
 });
-/*const multerS3 = require('multer-s3');
+*/
+/*
+const multerS3 = require('multer-s3');
 const AWS = require('aws-sdk');
 const bucketName = process.env.AWS_BUCKET_NAME
 const region = process.env.AWS_BUCKET_REGION
 const accessKeyId = process.env.AWS_ACCESS_KEY
 const secretAccessKey = process.env.AWS_SECRET_KEY
 require('dotenv').config()
+const S3 = require('aws-sdk/clients/s3')
+*/
+
 const S3 = require('aws-sdk/clients/s3')
 
 const s3 = new S3({
@@ -254,7 +254,7 @@ const s3 = new S3({
      bucket: bucketName,
      acl: 'public-read',
      key: function(req, file, cb) {
-      cb(null, '../src/assets/images/products/'+new Date().valueOf() + '_'+file.originalname)
+      cb(null, 'products/'+new Date().valueOf() + '_'+file.originalname)
      }
    })
   })
@@ -265,11 +265,10 @@ const s3 = new S3({
       bucket: bucketName,
       acl: 'public-read',
       key: function(req, file, cb) {
-       cb(null, '../src/assets/images/banners/'+new Date().valueOf() + '_'+file.originalname)
+       cb(null, 'banners/'+new Date().valueOf() + '_'+file.originalname)
       }
     })
    })
-*/
 /////////////////////////////
 
   // const mupload = multer({
