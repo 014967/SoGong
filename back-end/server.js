@@ -7,7 +7,6 @@ const mongoose     = require('mongoose');
 const cookieParser = require('cookie-parser');
 const cors         = require('cors');
 const fs = require('fs');
-const router = express.Router()
 
 // [SETUP EXPRESS APP]
 const app          = express();
@@ -186,7 +185,6 @@ const region = process.env.AWS_BUCKET_REGION
 const accessKeyId = process.env.AWS_ACCESS_KEY
 const secretAccessKey = process.env.AWS_SECRET_KEY
 console.log(process.env)
-
 /*
 const { AWS_config_region, AWS_IDENTITYPOOLID } = process.env
 const bucket = "sogong17"
@@ -269,6 +267,7 @@ const s3 = new S3({
       }
     })
    })
+
 /////////////////////////////
 
   // const mupload = multer({
@@ -293,10 +292,7 @@ const s3 = new S3({
   //   }),
   // });
 
-router.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
-  console.log(req.file)
-  console.log(req)
-  console.log(req.file.location ? 'zz' : 'z')
+app.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
   Event.findByIdAndUpdate(
     {_id: req.params.id}, {img: req.file.location, imgPath: req.file.location}).then(function(event){
 
@@ -306,16 +302,16 @@ router.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {
   })
 });
 
-// app.post('/productImg/:id', uploadS3Event.single('img'), (req, res) => {
-//   Product.findByIdAndUpdate(
-//     {_id: req.params.id}, {img: req.file.location, imgPath: req.file.location}).then(function(product){
+app.post('/productImg/:id', uploadS3Event.single('img'), (req, res) => {
+  Product.findByIdAndUpdate(
+    {_id: req.params.id}, {img: req.file.location, imgPath: req.file.location}).then(function(product){
 
-//     Product.findOne({_id: req.params.id}).then(function(product){
-//       console.log('successfully updated local image');
-//       res.send('Success');
-//     })
-//   })
-// });
+    Product.findOne({_id: req.params.id}).then(function(product){
+      console.log('successfully updated local image');
+      res.send('Success');
+    })
+  })
+});
 
 // mutiple product images upload below.
 app.post('/productMutipleImg/:id', uploadS3Product.array('img', 5), (req, res) => {
