@@ -192,6 +192,7 @@ const WishListContents = () => {
 
   useEffect(() => {
     checkLogin()
+
   }, [])
 
   useEffect(() => {
@@ -241,14 +242,17 @@ const WishListContents = () => {
                 wishList.length !== 0 &&
                 <Pay data={{
                   img: wishList[0].product.img,
-                  name: wishList[0].product.name,
-                  num: quantity[0],
-                  other: wishList.length - 1,
+                  product: wishList.map((p, i) => ({
+                    _id: p.id,
+                    name: p.product.name,
+                    quantity: quantity[i],
+                    price: p.product.price
+                  })),
                   address,
-                  price: wishList.reduce((pre, cur, i) => (
+                  totalPrice: wishList.reduce((pre, cur, i) => (
                       pre + cur.product.price * quantity[i]
                     ), 0),
-                  charge: 3000 //TODO: 최대 배송비 추가
+                  deliveryFee: 3000 //TODO: 최대 배송비 추가
                 }} />
               }
             </Modal>
