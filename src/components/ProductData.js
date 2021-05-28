@@ -239,12 +239,15 @@ const ProductData = () => {
               <Modal open={openPurchase} onClose={() => {setOpenPurchase(false)}}>
                 <Pay data={{
                   img,
-                  name,
-                  num: orderStock,
-                  other: 0, //장바구니에서만 사용
+                  product: [{
+                    _id: id,
+                    name,
+                    quantity: orderStock,
+                    price
+                  }],
                   address,
-                  price: price * orderStock,
-                  charge: 3000 //TODO: 배송비 추가
+                  totalPrice: price * orderStock,
+                  deliveryFee: 3000 //TODO: 배송비 추가
                 }} />
               </Modal>
             </ButtonContainer>
