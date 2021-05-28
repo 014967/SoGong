@@ -1,6 +1,5 @@
 import React, {createContext, useMemo, useState} from 'react';
-import styled from 'styled-components'
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, Route } from "react-router-dom";
 import GlobalStyle from '../styles/GlobalStyle'
 import ClientHomePage from './ClientHomePage'
 import ManagerHomePage from './ManagerHomePage'
@@ -8,7 +7,6 @@ import SignUp from './SignUp'
 import Data from './Data'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-import AlterEventNotice from '../components/AlterEventNotice'
 import EnterProduct from '../components/EnterProduct';
 import Product from './Product';
 import AlterProduct from '../components/AlterProduct';
@@ -16,7 +14,8 @@ import UserPostList from '../components/UserPostList';
 import ProductList from './ProductList'
 import WishList from './WishList';
 import OrderList from './OrderList';
-import {useHistory, useLocation} from 'react-router'
+import PaySuccess from './PaySuccess'
+import PayCancel from './PayCancel'
 
 export const LoginContext = createContext({
     ID: '',
@@ -49,6 +48,13 @@ export const WishListContext = createContext({
     setWishListFlag: () => {}
 })
 
+export const PayContext = createContext({
+    product: [],
+    setProduct: () => {},
+    totalPrice: 0,
+    setTotalPrice: () => {},
+})
+
 const App = () => {
     const [ID, setID] = useState('')
     const [PW, setPW] = useState('')
@@ -78,29 +84,40 @@ const App = () => {
         wishListFlag, setWishListFlag
     }), [wishListFlag, setWishListFlag])
 
+    const [product, setProduct] = useState([])
+    const [totalPrice, setTotalPrice] = useState(0)
+    const payContextValue = useMemo(() => ({
+        product, setProduct, totalPrice, setTotalPrice
+    }), [product, setProduct, totalPrice, setTotalPrice])
+
     return (
         <LoginContext.Provider value={loginContextValue}>
-            <ProductListContext.Provider value={productListContextValue}>
-                <WishListContext.Provider value={wishListContextValue}>
-                    <GlobalStyle />
-                    <Router>
-                        <Header />
-                        <Route exact path="/" component={ClientHomePage} />
-                        <Route exact path="/manager" component={ManagerHomePage} />
-                        <Route exact path="/signup" component={SignUp} />
-                        <Route exact path="/data" component={Data} />
-                        <Route exact path= "/manager/Enter" component = {EnterProduct}/>
-                        <Route exact path="/manager/Alter" component = {AlterProduct} />
-                        <Route exact path="/list" component={ProductList} />
-                        <Route path ="/product/:id" component={Product} />
-                        <Route path ="/manager/product/:id" component={Product} />
-                        <Route path ='/user/PostList' component ={UserPostList}/>
-                        <Route exact path ='/user/wishlist' component ={WishList}/>
-                        <Route exact path ='/user/orderlist' component ={OrderList}/>
-                        <Footer />
-                    </Router>
-                </WishListContext.Provider>
-            </ProductListContext.Provider>
+        <ProductListContext.Provider value={productListContextValue}>
+        <WishListContext.Provider value={wishListContextValue}>
+        <PayContext.Provider value={payContextValue}>
+            <GlobalStyle />
+            <Router>
+                <Header />
+                <Route exact path="/" component={ClientHomePage} />
+                <Route exact path="/manager" component={ManagerHomePage} />
+                <Route exact path="/signup" component={SignUp} />
+                <Route exact path="/data" component={Data} />
+                <Route exact path= "/manager/Enter" component = {EnterProduct}/>
+                <Route exact path="/manager/Alter" component = {AlterProduct} />
+                <Route exact path="/list" component={ProductList} />
+                <Route path ="/product/:id" component={Product} />
+                <Route path ="/manager/product/:id" component={Product} />
+                <Route path ='/user/PostList' component ={UserPostList}/>
+                <Route exact path ='/user/wishlist' component ={WishList}/>
+                <Route exact path ='/user/orderlist' component ={OrderList}/>
+                <Route exact path='/pay/success' component={PaySuccess} />
+                <Route exact path='/pay/cancel' component={PayCancel} />
+                
+                <Footer />
+            </Router>
+        </PayContext.Provider>
+        </WishListContext.Provider>
+        </ProductListContext.Provider>
         </LoginContext.Provider>
     );
 }
