@@ -933,7 +933,7 @@ router.get('/purchases/:id', function(req, res){
 });
 router.post('/purchases', function(req, res, next){
     Purchase.create(req.body).then(function(purchase){
-     res.send(purchase._id);
+     res.send(purchase);
     }).catch(next);
  });
 /*  [ JSON FORMAT of request to '/purchases' ]
@@ -946,7 +946,7 @@ router.post('/purchases', function(req, res, next){
                {"_id":"_id of product3","name":"아동용 신발","quantity":"2","price":"39000"}
               ],
     "status":"결제 완료",
-    "totalPrice": "172000"
+    "totalPrice": "172000",
     "address": "서울시노원구공릉동"
     }
 */
