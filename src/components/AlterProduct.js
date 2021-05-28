@@ -202,7 +202,7 @@ const AlterProduct = () =>
         }
         ).catch((err)=> console.log('error'))
 
-        const responseImg = await axios.post(`/productMutipleImg/${response.data_id}`, formData)
+        const responseImg = await axios.post(`/productMutipleImg/${response.data._id}`, formData)
         .then(
             history.replace(
                 {
