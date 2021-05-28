@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useLocation } from 'react-router'
 import styled from 'styled-components';
+import axios from 'axios'
 import Button from './elements/Button'
 import { makeStyles } from '@material-ui/core/styles';
 import Title from './elements/Title'
@@ -64,7 +66,21 @@ const useStyles = makeStyles((theme) => ({
 
 const Pay = ({ data }) => {
   const classes = useStyles();
-  const [modalStyle] = React.useState(getModalStyle);
+  const [modalStyle] = useState(getModalStyle);
+  const location = useLocation()
+
+  const handlePay = async () => {
+    const { data: user } = await axios.get('/api/auth')
+    const { data: res } = await axios.post('/api/purchases', {
+      user_id: user._id,
+    })
+    const { data: qr } = await axios.post('/pay/ready', {
+
+    })
+    
+    window.localStorage.setItem('history', location.pathname)
+    window.open(qr.qr, '_self')
+  }
 
   return (
       <Container style={modalStyle} className={classes.paper}>
@@ -89,7 +105,7 @@ const Pay = ({ data }) => {
           <div>총 결제 금액</div>
           <b>{(data.price + data.charge).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} 원</b>
         </InfoContainer>
-        <Button background="primary">결제</Button>
+        <Button background="primary" onClick={handlePay}>결제</Button>
       </Container>
   )
 }

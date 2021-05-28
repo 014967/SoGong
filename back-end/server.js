@@ -255,3 +255,96 @@ app.post('/productImgDel', (req, res) => {
 }
 삭제할 상품의 imgPath 의 배열.
 */
+
+
+//Kakao Pay API Usage
+
+//Using https and express.
+const https = require('https')
+
+//Pages for Simple messages. 
+app.get('/pay/success', (req, res) => {
+	res.send('Payment Success!')
+})
+app.get('/pay/cancel', (req, res) => {
+  res.send('Payment Canceled... -_-;;')
+})
+app.get('/pay/fail', (req, res) => {
+  res.send('Payment Failed... T_T')
+})
+
+//Put your Admin Key here.
+const admin_key = process.env.KAKAO_ADMIN_KEY
+
+//Using qs for parameters.
+const qs = require('qs')
+
+//Setting headers.
+const payOptions = {
+  hostname: 'kapi.kakao.com',
+  path: '/v1/payment/ready',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+    'Authorization': `KakaoAK ${admin_key}`
+  }
+}
+
+const url = 'http://localhost:3000/#' //EC2 올리면 바꾸기
+
+//Parameters - replace values as you want, **except cid**.
+
+app.post('/pay/ready', (req, res) => {
+  const pay = https.request(payOptions, res2 => {
+    res2.on('data', d => {
+      res.send({ qr: JSON.parse(d).next_redirect_pc_url, tid: JSON.parse(d).tid })
+    })
+  })
+  pay.on('error', error => {
+    console.error(error)
+  })
+  
+  pay.write(qs.stringify({
+    cid: 'TC0ONETIME',
+    partner_order_id: '00000001',
+    partner_user_id: 'test_user',
+    item_name: 'SeoulTech SE',
+    quantity: 1,
+    total_amount: 10000,
+    tax_free_amount: 10000,
+    approval_url: `${url}/pay/success`,
+    cancel_url: `${url}/pay/cancel`,
+    fail_url: `${url}/pay/cancel`
+  }))
+  pay.end()
+});
+
+// app.post('/pay/success', (req, res) => {
+//   const pay = https.request({
+//     ...payOptions,
+//     url: 'v1/payment/approve'
+//   }, res2 => {
+//     res2.on('data', d => {
+//       res.send(JSON.parse(d))
+//     })
+//   })
+//   pay.on('error', error => {
+//     console.error(error)
+//   })
+  
+//   pay.write(qs.stringify({
+//     cid: 'TC0ONETIME',
+//     partner_order_id: '00000001',
+//     partner_user_id: 'test_user',
+//     item_name: 'SeoulTech SE',
+//     quantity: 1,
+//     total_amount: 10000,
+//     tax_free_amount: 10000,
+//     approval_url: `${url}/pay/success`,
+//     cancel_url: `${url}/pay/cancel`,
+//     fail_url: `${url}/pay/cancel`,
+//     tid: req.body.tid,
+//     pg_token: req.body.pg_token
+//   }))
+//   pay.end()
+// });
