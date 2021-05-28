@@ -191,6 +191,10 @@ const AlterProduct = () =>
         
         e.preventDefault()
         const formData = new FormData()
+        for( let i =0; i<file.files.length; i++)
+        {
+            formData.append('img', file.files[i])
+        }
         const response = await axios.put("api/products/" +`${location.state.data._id}`,
         
         {
@@ -202,7 +206,7 @@ const AlterProduct = () =>
         }
         ).catch((err)=> console.log('error'))
 
-        const responseImg = await axios.post(`/productMutipleImg/${response.data_id}`, formData)
+        const responseImg = await axios.post(`/productMutipleImg/${response.data._id}`, formData)
         .then(
             history.replace(
                 {
