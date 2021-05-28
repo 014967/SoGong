@@ -933,23 +933,29 @@ router.get('/purchases/:id', function(req, res){
 });
 router.post('/purchases', function(req, res, next){
     Purchase.create(req.body).then(function(purchase){
-     res.send(purchase);
+     res.send(purchase._id);
     }).catch(next);
  });
 /*  [ JSON FORMAT of request to '/purchases' ]
  {  
     "user_id" : "_id of user",
-    "date" : "",
+    "date" : "default: 현재시각",
     "product":[
-               {"name":"여름용 나시","quantity":"1","price":"25000"},
-               {"name":"겨울용 파카 ","quantity":"1","price":"108000"},
-               {"name":"아동용 신발","quantity":"2","price":"39000"}
+               {"_id":"_id of product1","name":"여름용 나시","quantity":"1","price":"25000"},
+               {"_id":"_id of product2","name":"겨울용 파카 ","quantity":"1","price":"108000"},
+               {"_id":"_id of product3","name":"아동용 신발","quantity":"2","price":"39000"}
               ],
     "status":"결제 완료",
-    "totalPrice": "172000" ,
-    "rateString":"매우 만족",
-    "rateScore":"5"
+    "totalPrice": "172000"
+    "address": "서울시노원구공릉동"
     }
 */
+
+// 구매내역의 status 변경
+router.post('/purchaseStatus/:id', function(req, res, next){
+    Purchase.findByIdAndUpdate({_id:req.params.id}, {status:req.body.status}).then(function(purchase){
+     res.send(purchase.status);
+    }).catch(next);
+ });
 
 module.exports = router;

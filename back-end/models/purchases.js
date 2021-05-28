@@ -22,22 +22,21 @@ date:{
 },
 product:{
     type:Array,
-    name: { type:String},
-    quantity: { type:Number},
+    _id : {type:String},
+    name: {type:String},
+    quantity: {type:Number},
     price: {type:Number}
 },
 status: {
-    type:String
-}, //배송 상태; 결제 완료, 배송 중, 배송 완료, 구매 확정
+    type:String,
+    default : "결제 중"
+}, //배송 상태; 결제 중, 결제 완료, 배송 중, 배송 완료, 구매 확정
 totalPrice: {
     type:Number
 },//총금액
-rateString:{
+address: {
     type:String
-},//평가 내용(글)
-rateScore:{
-    type:Number
-}// 평가 점수(별점)
+}
 });
 
 const Purchase = mongoose.model('purchase', PurchaseSchema);
@@ -48,16 +47,19 @@ module.exports = Purchase;
 /*
 [JSON FORMAT]
 
-{
-"title":"특가세일이벤트",
-"detail":"특가세일",
-"available":"true",
-"due": "2021-06-25T23:59:59" ,
-"token":"false",
-"bannerNo":"0"
-}
-
+ {  
+    "user_id" : "_id of user",
+    "date" : "default: 현재시각",
+    "product":[
+               {"_id":"_id of product1","name":"여름용 나시","quantity":"1","price":"25000"},
+               {"_id":"_id of product2","name":"겨울용 파카 ","quantity":"1","price":"108000"},
+               {"_id":"_id of product3","name":"아동용 신발","quantity":"2","price":"39000"}
+              ],
+    "status":"결제 완료",
+    "totalPrice": "172000"
+    }
 */
+
 
 /*
 [
