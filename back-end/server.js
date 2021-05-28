@@ -69,10 +69,6 @@ console.log(process.env)
 
 
 
-
-const S3 = require('aws-sdk/clients/s3')
-
-
 const S3 = require('aws-sdk/clients/s3')
 
 const s3 = new S3({
