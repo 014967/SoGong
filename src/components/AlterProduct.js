@@ -191,6 +191,10 @@ const AlterProduct = () =>
         
         e.preventDefault()
         const formData = new FormData()
+        for( let i =0; i<file.files.length; i++)
+        {
+            formData.append('img', file.files[i])
+        }
         const response = await axios.put("api/products/" +`${location.state.data._id}`,
         
         {
@@ -201,8 +205,8 @@ const AlterProduct = () =>
             stock : stock,
         }
         ).catch((err)=> console.log('error'))
-
-        const responseImg = await axios.post(`/productMutipleImg/${response.data_id}`, formData)
+        console.log(location.state.data._id, response.data_id)
+        const responseImg = await axios.post(`/productMutipleImg/${response.data._id}`, formData)
         .then(
             history.replace(
                 {
@@ -346,7 +350,7 @@ const AlterProduct = () =>
                 
             </InputContainer>
             <InputContainer>
-            <Title>상품 가격 (20만원 이하)</Title>
+            <Title>상품 가격</Title>
             <Input  value={price} type='number'  min="0" max="200000" onChange={handlePrice}></Input>
             <PriceText>원</PriceText>
 
