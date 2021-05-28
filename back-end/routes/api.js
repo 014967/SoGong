@@ -2,6 +2,7 @@ const express = require('express');
 const { User } = require('../models/users');
 const Event = require('../models/events');
 const Product = require('../models/products');
+const Purchase = require('../models/purchases');
 const { auth } = require('../middleware/auth');
 const router = express.Router();
 const path = require("path");
@@ -914,6 +915,41 @@ router.post('/products/unavailable', function(req, res){
     "productIds" : ["116t4sdfi0315", "013532hf8dsa093"]
 }
 productIds: 비활성화할 상품id의 배열
+*/
+
+
+
+// 구매 목록을 get 또는 post
+router.get('/purchases', function(req, res){
+    Purchase.find({}).then(function(purchases){
+        res.send(purchases);
+    });
+});
+
+router.get('/purchases/:id', function(req, res){
+    Purchase.find({user_id : req.params.id}).then(function(purchase){
+        res.send(purchase);
+    });
+});
+router.post('/purchases', function(req, res, next){
+    Purchase.create(req.body).then(function(purchase){
+     res.send(purchase);
+    }).catch(next);
+ });
+/*  [ JSON FORMAT of request to '/purchases' ]
+ {  
+    "user_id" : "_id of user",
+    "date" : "",
+    "product":[
+               {"name":"여름용 나시","quantity":"1","price":"25000"},
+               {"name":"겨울용 파카 ","quantity":"1","price":"108000"},
+               {"name":"아동용 신발","quantity":"2","price":"39000"}
+              ],
+    "status":"결제 완료",
+    "totalPrice": "172000" ,
+    "rateString":"매우 만족",
+    "rateScore":"5"
+    }
 */
 
 module.exports = router;
