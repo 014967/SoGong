@@ -65,58 +65,6 @@ const region = process.env.AWS_BUCKET_REGION
 const accessKeyId = process.env.AWS_ACCESS_KEY
 const secretAccessKey = process.env.AWS_SECRET_KEY
 console.log(process.env)
-/*
-const { AWS_config_region, AWS_IDENTITYPOOLID } = process.env
-const bucket = "sogong17"
-console.log(bucket)
-AWS.config.update({
-  region : AWS_config_region,
-  credentials : new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: AWS_IDENTITYPOOLID
-})
-})
-
-const s3 = new AWS.S3({
-  apiVersion: "2006-03-01",
-  params: {Bucket: bucket}
-});
-
-const uploadS3Product = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: bucket,
-    contentType: multerS3.AUTO_CONTENT_TYPE, // 자동으로 콘텐츠 타입 세팅
-    acl: "public-read",
-    key: (req, file, cb) => {
-      let extension = path.extname(file.originalname)
-      cb(null, 'products/'+new Date().valueOf() + '_'+file.originalname);
-    }
-  }),
-});
-
-const uploadS3Event = multer({
-  storage: multerS3({
-    s3: s3,
-    bucket: bucket,
-    contentType: multerS3.AUTO_CONTENT_TYPE, // 자동으로 콘텐츠 타입 세팅
-    acl: "public-read",
-    key: (req, file, cb) => {
-      let extension = path.extname(file.originalname)
-      cb(null, 'banners/'+new Date().valueOf() + '_'+file.originalname);
-    }
-  }),
-});
-*/
-/*
-const multerS3 = require('multer-s3');
-const AWS = require('aws-sdk');
-const bucketName = process.env.AWS_BUCKET_NAME
-const region = process.env.AWS_BUCKET_REGION
-const accessKeyId = process.env.AWS_ACCESS_KEY
-const secretAccessKey = process.env.AWS_SECRET_KEY
-require('dotenv').config()
-const S3 = require('aws-sdk/clients/s3')
-*/
 
 const S3 = require('aws-sdk/clients/s3')
 
@@ -173,38 +121,49 @@ app.post('/productImg/:id', uploadS3Event.single('img'), (req, res) => {
 // mutiple product images upload below.
 app.post('/productMutipleImg/:id', uploadS3Product.array('img', 5), (req, res) => {
   console.log(req.files);
-  let images = req.files
-  let i = 0
-  images.forEach((image) => {
-    if(i !== 0 ) { 
-      i++
-      Product.findByIdAndUpdate(
-        {_id: req.params.id}, {
-          $push: {
-            detailImg: image.location,
-            detailImgPath: image.location
-        }
-          }).then(function(product){
-        Product.findOne({_id: req.params.id}).then(function(product){  
-          console.log('successfully updated local image');
-          res.send('Success');
-        })
-      })
-
-    } else { 
-      i++
-      Product.findByIdAndUpdate(
-        {_id: req.params.id}, {img: image.location, imgPath: image.location}).then(function(product){
-    
-        Product.findOne({_id: req.params.id}).then(function(product){
-          console.log('successfully updated local thumbnail image');
-          res.send('Success');
-        })
-      })
-    
+  if(req.files.length !== 0){
+  Product.findByIdAndUpdate(
+    {_id: req.params.id}, {
+      $set: {
+        detailImg: [],
+        detailImgPath: []
+             }
     }
-    
+  ).then(function(product){
+    let images = req.files
+    let i = 0
+    images.forEach((image) => {
+      if(i !== 0 ) { 
+        i++
+        Product.findByIdAndUpdate(
+          {_id: req.params.id}, {
+            $push: {
+              detailImg: image.location,
+              detailImgPath: image.location
+          }
+            }).then(function(product){
+          Product.findOne({_id: req.params.id}).then(function(product){  
+            console.log('successfully updated local image');
+            res.send('Success');
+          })
+        })
+  
+      } else { 
+        i++
+        Product.findByIdAndUpdate(
+          {_id: req.params.id}, {img: image.location, imgPath: image.location}).then(function(product){
+      
+          Product.findOne({_id: req.params.id}).then(function(product){
+            console.log('successfully updated local thumbnail image');
+            res.send('Success');
+          })
+        })
+      
+      }
+      
+    })
   })
+}
 });
 /*
 form data로 이미지를 여러 개 (MAX: 5개) 받아 서버에 업로드. 
@@ -292,7 +251,6 @@ const payOptions = {
 
 const url = 'http://localhost:3000/#' //EC2 올리면 바꾸기
 
-//Parameters - replace values as you want, **except cid**.
 
 app.post('/pay/ready', (req, res) => {
   const pay = https.request(payOptions, res2 => {
@@ -318,33 +276,3 @@ app.post('/pay/ready', (req, res) => {
   }))
   pay.end()
 });
-
-// app.post('/pay/success', (req, res) => {
-//   const pay = https.request({
-//     ...payOptions,
-//     url: 'v1/payment/approve'
-//   }, res2 => {
-//     res2.on('data', d => {
-//       res.send(JSON.parse(d))
-//     })
-//   })
-//   pay.on('error', error => {
-//     console.error(error)
-//   })
-  
-//   pay.write(qs.stringify({
-//     cid: 'TC0ONETIME',
-//     partner_order_id: '00000001',
-//     partner_user_id: 'test_user',
-//     item_name: 'SeoulTech SE',
-//     quantity: 1,
-//     total_amount: 10000,
-//     tax_free_amount: 10000,
-//     approval_url: `${url}/pay/success`,
-//     cancel_url: `${url}/pay/cancel`,
-//     fail_url: `${url}/pay/cancel`,
-//     tid: req.body.tid,
-//     pg_token: req.body.pg_token
-//   }))
-//   pay.end()
-// });

@@ -2,6 +2,7 @@ const express = require('express');
 const { User } = require('../models/users');
 const Event = require('../models/events');
 const Product = require('../models/products');
+const Purchase = require('../models/purchases');
 const { auth } = require('../middleware/auth');
 const router = express.Router();
 const path = require("path");
@@ -320,7 +321,6 @@ ${deliveryname} = 우리집1 //예시
 
 */
 router.patch('/delivery/:deliveryname', auth, (req, res) => {
-    console.log(req.body, req.params.deliveryname)
     User.findOne({ _id: req.user._id },
             (err, userInfo) => {
     
@@ -719,6 +719,24 @@ router.post('/products/sorted', function(req, res){
         res.send(product);
     });
 });
+
+router.post('/products/sortedPage', function(req, res){
+    let page = req.body.page
+    if(page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({price: req.body.order})
+    .limit(10)
+   .then(function(product){
+        res.send(product);
+    });
+
+    if(page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({price: req.body.order})
+    .skip( (page-1) * 10 )
+    .limit(10)
+   .then(function(product){
+        res.send(product);
+    });
+});
 /*
  JSON FORMAT of request to '/products/sorted'
 
@@ -752,6 +770,26 @@ router.post('/products/unsorted', function(req, res){
 
     if(req.body.page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
     price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
+   .then(function(product){
+        res.send(product)
+
+    });
+});
+
+router.post('/products/unsortedPage', function(req, res){
+    
+    
+    if(req.body.page == 1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
+    .limit(10)
+   .then(function(product){
+        res.send(product)
+    });
+
+    if(req.body.page!=1) Product.find({'name': {'$regex': req.body.search,'$options': 'i' },
+    price:{"$gte":req.body.min,"$lte":req.body.max}, available : true}).sort({date: -1})
+    .skip( (req.body.page-1) * 10 )
+    .limit(10)
    .then(function(product){
         res.send(product)
 
@@ -998,5 +1036,43 @@ router.get('/admin/product/review/:product_id/:user_id', auth, function(req, res
 관리자가 상품명 버튼을 누르면 사용자가 남긴 상품평을 확인할 수 있음
 
 */
+// 구매 목록을 get 또는 post
+router.get('/purchases', function(req, res){
+    Purchase.find({}).then(function(purchases){
+        res.send(purchases);
+    });
+});
+
+router.get('/purchases/:id', function(req, res){
+    Purchase.find({user_id : req.params.id}).then(function(purchase){
+        res.send(purchase);
+    });
+});
+router.post('/purchases', function(req, res, next){
+    Purchase.create(req.body).then(function(purchase){
+     res.send(purchase);
+    }).catch(next);
+ });
+/*  [ JSON FORMAT of request to '/purchases' ]
+ {  
+    "user_id" : "_id of user",
+    "date" : "default: 현재시각",
+    "product":[
+               {"_id":"_id of product1","name":"여름용 나시","quantity":"1","price":"25000"},
+               {"_id":"_id of product2","name":"겨울용 파카 ","quantity":"1","price":"108000"},
+               {"_id":"_id of product3","name":"아동용 신발","quantity":"2","price":"39000"}
+              ],
+    "status":"결제 완료",
+    "totalPrice": "172000",
+    "address": "서울시노원구공릉동"
+    }
+*/
+
+// 구매내역의 status 변경
+router.post('/purchaseStatus/:id', function(req, res, next){
+    Purchase.findByIdAndUpdate({_id:req.params.id}, {status:req.body.status}).then(function(purchase){
+     res.send(purchase.status);
+    }).catch(next);
+ });
 
 module.exports = router;
