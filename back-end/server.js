@@ -42,14 +42,21 @@ const conn = mongoose.createConnection(mongoURI);
 mongoose.connect('mongodb+srv://Junhyong:Junhyong@cluster0.bm9aa.mongodb.net/TeamDB?retryWrites=true&w=majority', { useUnifiedTopology: true, useCreateIndex: true, useNewUrlParser: true });
 mongoose.Promise = global.Promise;
 
-const path = require('path');
 // [GRIDFS STORAGE ENGINE]
+
+
+
+const multer = require('multer');
+const path = require('path');
+
+
+
 
 // [SERVERSIDE UPLOAD WITH MULTER]
 const Event = require('./models/events');
 const Product = require('./models/products');
 const AWS = require('aws-sdk');
-const multer = require('multer');
+
 var multerS3 = require("multer-s3");
 const dotenv = require('dotenv') 
 dotenv.config()
@@ -61,6 +68,9 @@ const secretAccessKey = process.env.AWS_SECRET_KEY
 console.log(process.env)
 
 
+
+
+const S3 = require('aws-sdk/clients/s3')
 
 
 const S3 = require('aws-sdk/clients/s3')
@@ -92,7 +102,6 @@ const s3 = new S3({
       }
     })
    })
-
 
 
 app.post('/eventImg/:id', uploadS3Event.single('img'), (req, res) => {

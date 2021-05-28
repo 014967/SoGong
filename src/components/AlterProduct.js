@@ -205,7 +205,6 @@ const AlterProduct = () =>
             stock : stock,
         }
         ).catch((err)=> console.log('error'))
-
         const responseImg = await axios.post(`/productMutipleImg/${response.data._id}`, formData)
         .then(
             history.replace(
@@ -350,7 +349,7 @@ const AlterProduct = () =>
                 
             </InputContainer>
             <InputContainer>
-            <Title>상품 가격 (20만원 이하)</Title>
+            <Title>상품 가격</Title>
             <Input  value={price} type='number'  min="0" max="200000" onChange={handlePrice}></Input>
             <PriceText>원</PriceText>
 
