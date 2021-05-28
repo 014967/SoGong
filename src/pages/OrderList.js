@@ -6,14 +6,13 @@ const Wrapper = styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 218px;
+    padding-top: 320px;
 `
 
 const OrderList = () => {
     return (
         <Wrapper>
-         <OrderListContents />
-         
+            <OrderListContents />
         </Wrapper>
     );
 };

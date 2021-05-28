@@ -15,6 +15,7 @@ import Modal from '@material-ui/core/Modal';
 import UserPostList from './UserPostList'
 import { WishListContext } from '../pages/App'
 import { LoginContext } from '../pages/App'
+import Pay from './Pay'
 
 const TopContainer = styled.div`
   display: flex;
@@ -89,7 +90,6 @@ const ProductData = () => {
 
   const params = useParams()
   const id = params.id
-  const history = useHistory()
 
   const [category, setCategory] = useState('');
   const [img, setImg] = useState('');
@@ -98,12 +98,12 @@ const ProductData = () => {
   const [description, setDescription] = useState('');
   const [orderStock, setOrderStock] = useState(null);
   const [detailImg, setDetailImg] = useState([])
-  const [address, setAddress] =useState('등록된 배송지가 없습니다.');
-  const [modalStyle] = react.useState(getModalStyle);
-  const [open, setOpen] = react.useState(false);
+  const [address, setAddress] = useState('등록된 배송지가 없습니다.');
+  const [open, setOpen] = useState(false);
+  const [openPurchase, setOpenPurchase] = useState(false)
 
   const { success } = useContext(LoginContext)
-  const { wishListFlag, setWishListFlag } = useContext(WishListContext)
+  const { setWishListFlag } = useContext(WishListContext)
   const classes = useStyles();
   
   const getProductData = async () => {
@@ -172,9 +172,22 @@ const ProductData = () => {
       alert('먼저 로그인 해주세요.')
     }
   };
+
   const handleClose = () => {
     setOpen(false);
   };
+
+  const handleOpenPurchase = () => {
+    if (success && img && orderStock) {
+      setOpenPurchase(true)
+    } else if (!success) {
+      alert('먼저 로그인 해주세요.')
+    } else if (!orderStock) {
+      alert('먼저 수량을 선택해주세요.')
+    } else {
+      alert('로딩 중입니다. 잠시만 기다려주세요.')
+    }
+  }
 
     return (
       <>
@@ -186,8 +199,8 @@ const ProductData = () => {
             <Name>{name}</Name>
             <Price>&#8361;{price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</Price>
             <Address>
-                기본 배송지: {address}
-              </Address>
+              기본 배송지: {address}
+            </Address>
             <ButtonContainer>
               <FormControl className={classes.formControl}>
                 <InputLabel id="demo-simple-select-label">수량</InputLabel>
@@ -220,9 +233,20 @@ const ProductData = () => {
               <Button onClick={handleWishList}>
                 장바구니 담기
               </Button>
-              <Button background='primary'>
+              <Button background='primary' onClick={handleOpenPurchase}>
                 바로 구매하기
               </Button>
+              <Modal open={openPurchase} onClose={() => {setOpenPurchase(false)}}>
+                <Pay data={{
+                  img,
+                  name,
+                  num: orderStock,
+                  other: 0, //장바구니에서만 사용
+                  address,
+                  price: price * orderStock,
+                  charge: 3000 //TODO: 배송비 추가
+                }} />
+              </Modal>
             </ButtonContainer>
           </InfoContainer>
         </TopContainer>

@@ -164,9 +164,14 @@ const Product = ({selected, history}) => {
   }, [checked])
 
   
-  const getText = () => {
+  const getText = (props) => {
     const result = [];
-   
+   console.log("props : " +props)
+    if(props ===false)
+    {
+     console.log("di") 
+      result.push("최신 순")
+    }
     if(order === null) {
       result.push("최신순")
     }
@@ -179,6 +184,14 @@ const Product = ({selected, history}) => {
     return result;
   }
 
+  useEffect(()=>
+  {
+    if(filter === false)
+    { 
+      getText(false)
+  
+    }
+    },[filter])
   return (
       <Container>
           {
