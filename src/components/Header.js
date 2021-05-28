@@ -99,8 +99,7 @@ const Header = () => {
 
   const getWishList = async () => {
     const {data: wl} = await axios.get('/api/wishlist')
-    console.log(wl.wishlist)
-    setWishList(wl.wishlist.length)
+      setWishList(wl.wishlist.length)
   }
 
   const handleColor = useCallback((cate) => (currentState.category === cate ? 'primary' : 'secondary'), [currentState])

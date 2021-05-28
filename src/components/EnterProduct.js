@@ -202,9 +202,7 @@ const EnterProduct = () =>
             return
         }
         
-        console.log(productTitle, productDescription, price, stock, category)
         const formData = new FormData()
-        console.log(file.files)
         for( let i =0; i<file.files.length; i++)
         {
 
@@ -223,8 +221,6 @@ const EnterProduct = () =>
         }) 
         .catch((err) => console.log(err))
         
-        console.log(formData)
-        console.log(response.data._id)
         const responseImg = await axios.post(`/productMutipleImg/${response.data._id}` , formData)
        
         .catch((err) => console.log(err))
