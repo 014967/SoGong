@@ -927,10 +927,17 @@ router.get('/purchases', function(req, res){
 });
 
 router.get('/purchases/:id', function(req, res){
-    Purchase.find({user_id : req.params.id}).then(function(purchase){
+    Purchase.find({_id : req.params.id}).then(function(purchase){
         res.send(purchase);
     });
 });
+
+router.get('/purchases/User/:id', function(req, res){
+    Purchase.find({user_id : req.params.id}).then(function(purchases){
+        res.send(purchases);
+    });
+});
+
 router.post('/purchases', function(req, res, next){
     Purchase.create(req.body).then(function(purchase){
      res.send(purchase);
@@ -954,8 +961,16 @@ router.post('/purchases', function(req, res, next){
 // 구매내역의 status 변경
 router.post('/purchaseStatus/:id', function(req, res, next){
     Purchase.findByIdAndUpdate({_id:req.params.id}, {status:req.body.status}).then(function(purchase){
-     res.send(purchase.status);
-    }).catch(next);
+        Purchase.findOne({_id:req.params.id}).then(function(purchase){
+            res.send(purchase.status)
+        })
+    })
  });
+/*  [ JSON FORMAT of request to '/purchaseStatus/:id' ]
+ {  
+    "status" : "결제 완료"
+ }
+*/
+
 
 module.exports = router;
