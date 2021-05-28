@@ -81,13 +81,13 @@ module.exports = Product;
 [JSON FORMAT]
 
 {
-"productNo":"1",
+"productNo":"0",
 "category":"category01",
 "name":"product name",
 "detail":"product detail",
-"img":"link of image",
 "stock":"50",
 "price":"35000",
+"deliveryFee":"2500"
 "token":"0"
 }
 
