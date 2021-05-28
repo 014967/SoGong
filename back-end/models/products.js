@@ -67,6 +67,10 @@ detailImg:{
 detailImgPath:{
     type:Array,
     default:[]
+},
+deliveryFee:{
+    type:Number,
+    default:0
 }
 });
 
