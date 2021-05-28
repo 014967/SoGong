@@ -9,6 +9,7 @@ const PaySuccess = () => {
     const handleSuccess = async () => {
         const pg_token = location.search.split('=')[1]
         const tid = window.localStorage.getItem('tid')
+        console.log(pg_token, tid)
         const { data: res } = await axios.post('/pay/success', {
             pg_token, tid
         })
