@@ -205,7 +205,11 @@ const AlterProduct = () =>
             stock : stock,
         }
         ).catch((err)=> console.log('error'))
+<<<<<<< HEAD
         console.log(location.state.data._id, response.data_id)
+=======
+
+>>>>>>> 46793c8e82d126219facba8c9fa2e97e5fa3701e
         const responseImg = await axios.post(`/productMutipleImg/${response.data._id}`, formData)
         .then(
             history.replace(
