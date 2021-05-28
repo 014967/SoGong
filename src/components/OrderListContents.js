@@ -5,11 +5,37 @@ import ContentsWrapper from './elements/ContentsWrapper'
 import Button from './elements/Button';
 import CheckBox from './elements/CheckBox'
 import HeaderButton from './elements/HeaderButton';
+import Modal from '@material-ui/core/Modal';
+import { makeStyles } from '@material-ui/core/styles';
 
 const Container = styled.div`
   
   width: 100%;
   margin-top: 96px;
+`
+
+const ModalContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
+const InfoContainer = styled.div`
+  display: flex;
+  margin-bottom: 8px;
+  & > *:first-child {
+    width: 110px;
+    color: ${({ theme }) => theme.color.secondary};
+    font-family: ${({ theme }) => theme.font.bold};
+    margin-right: 16px;
+  }
+`
+
+const DetailProductContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  & > * + * {
+    margin-top: 8px;
+  }
 `
 
 const Header = styled.div`
@@ -26,6 +52,13 @@ const Header = styled.div`
 const RowContent = styled.div`
   width: ${(props) => props.width};
   text-align: center;
+`
+
+const Name = styled(RowContent)`
+  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+  }
 `
 
 const TableHeader = styled.div`
@@ -73,6 +106,30 @@ const PageButton = styled.button`
   }
 `
 
+const getModalStyle = () => {
+  const top = 50
+  const left = 50
+
+  return {
+    top: `${top}%`,
+    left: `${left}%`,
+    transform: `translate(-${top}%, -${left}%)`,
+  };
+}
+const useStyles = makeStyles((theme) => ({
+  paper: {
+    position: 'absolute',
+    width: '1000px',
+    padding: '64px 64px',
+    boxShadow: '0px 10px 40px #00000029',
+    borderRadius: '32px',
+    background: 'white',
+    '&:focus': {
+      outline: 'none'
+    }
+  },
+}));
+
 const dummy = [
   {
     date: '2021-05-28', //형식은 자유
@@ -87,6 +144,7 @@ const dummy = [
       },
     ],
     status: '배송 완료', //결제 완료, 배송 중, 배송 완료, 구매 확정
+    address: '서울시 노원구 중계로 8길 106, 111동 106호',
     price: 103000, //총결제금액. 주문내역 post 시 미리 계산된 상태로 프론트에서 줄거임
   },{
     date: '2021-05-28', //형식은 자유
@@ -101,6 +159,7 @@ const dummy = [
       },
     ],
     status: '배송 중', //결제 완료, 배송 중, 배송 완료, 구매 확정
+    address: '서울시 노원구 중계로 8길 106, 111동 106호',
     price: 103000, //총결제금액. 주문내역 post 시 미리 계산된 상태로 프론트에서 줄거임
   },{
     date: '2021-05-28', //형식은 자유
@@ -115,6 +174,7 @@ const dummy = [
       },
     ],
     status: '배송 중', //결제 완료, 배송 중, 배송 완료, 구매 확정
+    address: '서울시 노원구 중계로 8길 106, 111동 106호',
     price: 103000, //총결제금액. 주문내역 post 시 미리 계산된 상태로 프론트에서 줄거임
   },{
     date: '2021-05-28', //형식은 자유
@@ -129,6 +189,7 @@ const dummy = [
       },
     ],
     status: '배송 완료', //결제 완료, 배송 중, 배송 완료, 구매 확정
+    address: '서울시 노원구 중계로 8길 106, 111동 106호',
     price: 103000, //총결제금액. 주문내역 post 시 미리 계산된 상태로 프론트에서 줄거임
   },{
     date: '2021-05-28', //형식은 자유
@@ -143,6 +204,7 @@ const dummy = [
       },
     ],
     status: '배송 중', //결제 완료, 배송 중, 배송 완료, 구매 확정
+    address: '서울시 노원구 중계로 8길 106, 111동 106호',
     price: 103000, //총결제금액. 주문내역 post 시 미리 계산된 상태로 프론트에서 줄거임
   },{
     date: '2021-05-28', //형식은 자유
@@ -157,6 +219,7 @@ const dummy = [
       },
     ],
     status: '배송 완료', //결제 완료, 배송 중, 배송 완료, 구매 확정
+    address: '서울시 노원구 중계로 8길 106, 111동 106호',
     price: 103000, //총결제금액. 주문내역 post 시 미리 계산된 상태로 프론트에서 줄거임
   },
 ]
@@ -176,10 +239,24 @@ const OrderListContents = () => {
   const [page, setPage] = useState(1) //이중배열 말고 걍 slice로 ㄱㄱ
   const [pageNum, setPageNum] = useState(1)
   const [list, setList] = useState([])
+  const [open, setOpen] = useState([])
+
+  const classes = useStyles();
+  const [modalStyle] = React.useState(getModalStyle);
 
   const getList = () => {
     setList(dummy)
     setPageNum(Math.ceil(dummy.length / ROW_PER_PAGE))
+    setOpen(Array(list.length).fill(false))
+  }
+
+  const handleOpen = (index, op) => {
+    if (op)
+      setOpen(prev => [...prev.map((v, i) => 
+        i === index ? true : false
+      )])
+    else
+      setOpen(prev => [...prev.map(v => false)])
   }
 
   const handleButtonColor = (r) => r === range ? 'primary' : 'secondary'
@@ -221,9 +298,36 @@ const OrderListContents = () => {
             </TableHeader>
             {
               list.length !== 0 && list.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((data, i) => (
-                <Row>
+                <Row key={i}>
                   <RowContent width="150px">{data.date}</RowContent>
-                  <RowContent width="350px">{data.product[0].name} {data.product.length > 1 && `외 ${data.product.length - 1}건`}</RowContent>
+                  <Name width="350px" onClick={() => handleOpen(i + ROW_PER_PAGE * (page - 1), true)}>
+                    {data.product[0].name} {data.product.length > 1 && `외 ${data.product.length - 1}건`}
+                  </Name>
+                  <Modal open={open[i + ROW_PER_PAGE * (page - 1)]} onClose={() => handleOpen(0, false)}>
+                    <ModalContainer style={modalStyle} className={classes.paper}>
+                      <Title>주문 상세 정보</Title>
+                      <InfoContainer>
+                        <div>주문 날짜</div>
+                        <div>{data.date}</div>
+                      </InfoContainer>
+                      <InfoContainer>
+                        <div>배송지</div>
+                        <div>{data.address}</div>
+                      </InfoContainer>
+                      <InfoContainer>
+                        <div>주문 상품</div>
+                        <DetailProductContainer>
+                          {data.product.map((v, j) => (
+                            <div key={j}>{v.name} {v.quantity}개 (₩{(v.price * v.quantity).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")})</div>
+                          ))}
+                        </DetailProductContainer>
+                      </InfoContainer>
+                      <InfoContainer>
+                        <div>결제 금액</div>
+                        <b>₩{data.price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</b>
+                      </InfoContainer>
+                    </ModalContainer>
+                  </Modal>
                   <RowContent width="150px">{data.status}</RowContent>
                   <RowContent width="200px">{data.price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</RowContent>
                   <Button background="primary" onClick={() => handleButton(i + ROW_PER_PAGE * (page - 1))}>{buttonMap[data.status]}</Button>

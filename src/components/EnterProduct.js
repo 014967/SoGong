@@ -225,17 +225,10 @@ const EnterProduct = () =>
        
         .catch((err) => console.log(err))
         .then(
-          
-            //setEnter({enter : false}),
-            //selected =="product",
-            history.replace(
-                {
-                    pathname : `/manager`,
-                    state : {selected : location.state.selected},
-                }
-            ),
-            
-            
+            history.replace({
+                pathname : `/manager`,
+                state : {selected : location.state.selected},
+            })
         )
        
     }

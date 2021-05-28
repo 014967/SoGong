@@ -321,58 +321,103 @@ ${deliveryname} = 우리집1 //예시
 */
 router.patch('/delivery/:deliveryname', auth, (req, res) => {
 
-User.findOne({ _id: req.body._id },
-        (err, userInfo) => {
-
-    User.findOneAndUpdate(
-        { _id: req.user._id, "delivery.deliveryname": req.params.deliveryname },
-        {
-            $set:
-            {
-                "delivery.$.deliveryname": req.body.deliveryname,
-                "delivery.$.name": req.body.name,
-	            "delivery.$.address": req.body.address,
-	            "delivery.$.detailaddress": req.body.detailaddress,
-	            "delivery.$.zonecode": req.body.zonecode,
-	            "delivery.$.phonenumber": req.body.phonenumber
-            }
-            
-	    },
-        { new: true },
-        (err, userInfo) => {
-            let delivery = userInfo.delivery;
-            let array = delivery.map(item => {
-                return item.deliveryname
-            })
-
-            User.find({ deliveryname: { $in: array } })
-                .exec((err, userInfo) => {
-                    return res.status(200).json({
-                        delivery
+    User.findOne({ _id: req.user._id },
+            (err, userInfo) => {
+    
+                // 가져온 정보에서 default가 true인지 확인 
+    
+                let duplicate = false;
+                    if (false !== req.body.default) {
+                        duplicate = true;
+                    }
+    
+                    //default가 true일 때
+                    if (duplicate){
+                        User.findOneAndUpdate(
+                            { _id: req.user._id },
+                                {
+                                "$pull":
+                                    { "delivery": { "deliveryname": req.params.deliveryname } }
+                                },
+                                { new: true }
+                            ).then(function(user){
+                        User.findOneAndUpdate(
+                            { _id: req.user._id },
+                                {
+                                    $push: {
+                                        delivery: {
+                                            $each:[{
+                                            deliveryname: req.body.deliveryname,
+                                            name: req.body.name,
+                                            address: req.body.address,
+                                            detailaddress: req.body.detailaddress,
+                                            zonecode: req.body.zonecode,
+                                            phonenumber: req.body.phonenumber
+                                            }], $position: 0
+                                        }
+                                    }
+                                },
+                            { new: true },
+                            (err, userInfo) => {
+                            if (err) return res.status(400).json({ success: false, err })
+                            res.status(200).send(userInfo.delivery)
+                            
+                        }
+                        )
                     })
-                })
-        }
-    )})
-})
-
-/*
-
-배송지 수정
-
-patch로  http://localhost:8080/api/delivery/:deliveryname하면 해당 deliveryname이 있는 정보를 바꿀 수 있음
-:deliveryname = 우리집1  //예시
-
-{
-"_id":"60a8bcb15faf4952ec13fe45",
-"deliveryname":"우리집1",
-"name":"홍길동",
-"address":"서울특별시 ~구 ~동 ~로 100",
-"detailaddress":"~동 ~호",
-"zonecode":"12345",
-"phonenumber":"010-8282-8282"
-} //바꾸는 정보(예시)
-
-*/
+                    }
+                             //defualt가 false일 때 
+                        else {
+                            User.findOneAndUpdate(
+                                { _id: req.user._id, "delivery.deliveryname": req.params.deliveryname },
+                                    {
+                                    $set:
+                                        {
+                                            "delivery.$.deliveryname": req.body.deliveryname,
+                                            "delivery.$.name": req.body.name,
+                                            "delivery.$.address": req.body.address,
+                                            "delivery.$.detailaddress": req.body.detailaddress,
+                                            "delivery.$.zonecode": req.body.zonecode,
+                                            "delivery.$.phonenumber": req.body.phonenumber
+                                        }
+                    
+                                    },
+                                    { new: true },
+                                    (err, userInfo) => {
+                                        let delivery = userInfo.delivery;
+                                        let array = delivery.map(item => {
+                                        return item.deliveryname
+                                        })
+        
+                                        User.find({ deliveryname: { $in: array } })
+                                            .exec((err, userInfo) => {
+                                        return res.status(200).json({
+                                            delivery
+                                        })
+                                    })}
+                                )
+                            }
+    })
+    })
+    
+    /*
+    
+    배송지 수정
+    
+    patch로  http://localhost:8080/api/delivery/:deliveryname하면 해당 deliveryname이 있는 정보를 바꿀 수 있음
+    :deliveryname = 우리집1  //예시
+    
+    {
+    "default":true,
+    "deliveryname":"우리집1",
+    "name":"홍길동",
+    "address":"서울특별시 ~구 ~동 ~로 100",
+    "detailaddress":"~동 ~호",
+    "zonecode":"12345",
+    "phonenumber":"010-8282-8282"
+    } //바꾸는 정보(예시)
+    
+    */
 
 router.get("/delivery", auth, (req, res) => {
     User.findById({_id:req.user._id}).select('delivery').then(function(users){
