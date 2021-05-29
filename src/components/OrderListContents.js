@@ -131,8 +131,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const isEqual = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate()
-
 const ROW_PER_PAGE = 5
 
 const buttonMap = {
