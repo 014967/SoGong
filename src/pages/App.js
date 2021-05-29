@@ -1,6 +1,5 @@
 import React, {createContext, useMemo, useState} from 'react';
-import styled from 'styled-components'
-import { HashRouter as Router, Route, Switch } from "react-router-dom";
+import { HashRouter as Router, Route } from "react-router-dom";
 import GlobalStyle from '../styles/GlobalStyle'
 import ClientHomePage from './ClientHomePage'
 import ManagerHomePage from './ManagerHomePage'
@@ -8,7 +7,6 @@ import SignUp from './SignUp'
 import Data from './Data'
 import Header from '../components/Header'
 import Footer from '../components/Footer'
-
 import EnterProduct from '../components/EnterProduct';
 import Product from './Product';
 import AlterProduct from '../components/AlterProduct';
@@ -50,6 +48,13 @@ export const WishListContext = createContext({
     setWishListFlag: () => {}
 })
 
+export const PayContext = createContext({
+    product: [],
+    setProduct: () => {},
+    totalPrice: 0,
+    setTotalPrice: () => {},
+})
+
 const App = () => {
     const [ID, setID] = useState('')
     const [PW, setPW] = useState('')
@@ -78,6 +83,12 @@ const App = () => {
     const wishListContextValue = useMemo(() => ({
         wishListFlag, setWishListFlag
     }), [wishListFlag, setWishListFlag])
+
+    const [product, setProduct] = useState([])
+    const [totalPrice, setTotalPrice] = useState(0)
+    const payContextValue = useMemo(() => ({
+        product, setProduct, totalPrice, setTotalPrice
+    }), [product, setProduct, totalPrice, setTotalPrice])
 
     return (
         <LoginContext.Provider value={loginContextValue}>

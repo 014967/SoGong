@@ -4,7 +4,7 @@ import Button from './elements/Button';
 import axios from 'axios'
 import { useHistory , useLocation } from 'react-router';
 import Title from './elements/Title'
-
+import ContentsWrapper from './elements/ContentsWrapper'
 
 const Container = styled.div`
     display: flex;
@@ -51,7 +51,7 @@ const Textarea = styled.textarea`
     }
     font-size: 20px;
     font-family: ${({ theme }) => theme.font.light};
-    height: 640px;
+    height: 540px;
     width: 894px;
     max-width: 894px;
     padding: 8px;
@@ -67,6 +67,7 @@ const LabelButton = styled.label`
     width: 164px;
     height: 48px;
     color: white;
+    margin-left: 15px;
     background: ${(props) => props.theme.color[props.background] || props.theme.color.secondary};
     border: none;
     border-radius: 32px;
@@ -77,14 +78,43 @@ const LabelButton = styled.label`
     outline: none;
     }
 `
-const FileName = styled.div`
-    display: flex;
-    align-items: center;
-    font-size: 16px;
-    height: 48px;
-    padding-left: 8px;
+
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 112px;
+  padding: 0 16px 0 60px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+  
+`
+const Date = styled.div`
+  width: 619px;
+  text-align: center;
 `
 
+const Available = styled.div`
+  width: 201px;
+  text-align: center;
+`
+
+const DateRange = styled.div`
+  width: 185px;
+  text-align: center;
+`
+const TableHeader = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  padding: 0 16px 0 60px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+`
+const TableHeaderContent = styled.div`
+  width: ${(props) => props.width};
+  font-size: 20px;
+  text-align: center;
+`
 
 const InquiryContents = () =>
 {
@@ -94,8 +124,6 @@ const InquiryContents = () =>
         <>
        
           <div>
-         
-              
                <Title>문의하기</Title>
         
         <Container>
@@ -114,8 +142,20 @@ const InquiryContents = () =>
            
         </Container>
            </div>
-     
-       
+           <ContentsWrapper>
+           <TableHeader>
+          <TableHeaderContent width="80px">등록일시</TableHeaderContent>
+            <TableHeaderContent width="197px">종류</TableHeaderContent>
+            <TableHeaderContent width="485px">문의내용</TableHeaderContent>
+            <TableHeaderContent width="270px">답변</TableHeaderContent>
+          </TableHeader>
+          <Row>
+              <Date width="80px">a</Date>
+              <Available width="197px">b</Available>
+              <DateRange width="485px">c</DateRange>
+              <DateRange width="270px">c</DateRange>
+          </Row>
+       </ContentsWrapper>
         </>
     ) 
 }
