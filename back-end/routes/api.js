@@ -934,8 +934,7 @@ router.post('/addcustomQuestion', auth, function(req, res, next){
 id:"user의 _id",
 title:"문의 제목",
 contents:"문의 내용",
-orderlist:[주문내역들],
-review:[해당 주문 내역 상품평들]
+orderlist:주문내역들,
 } //예시
 
 */
@@ -961,7 +960,6 @@ router.patch('/admin/Answer/:_id', auth, (req, res) => {
             $set:
                 {
                     "answer": req.body.answer,
-                    "status": true,
                 }    
                 },
                 { new: true },
@@ -1108,7 +1106,6 @@ router.post('/purchases', function(req, res, next){
 router.post('/purchaseStatus/:id', function(req, res, next){
     Purchase.findByIdAndUpdate({_id:req.params.id}, {status:req.body.status}).then(function(purchase){
         if (req.body.isWishList === 'true') {
-            console.log('zz')
             User.findByIdAndUpdate({_id:purchase.user_id}, {$set:{wishlist: []}})
                 .then(function(purchase){
                     Purchase.findOne({_id:req.params.id}).then(function(purchase){
@@ -1116,7 +1113,6 @@ router.post('/purchaseStatus/:id', function(req, res, next){
                     })
             })
         } else {
-            console.log('z')
             Purchase.findOne({_id:req.params.id})
                 .then(function(purchase){
                     res.send(purchase.status)

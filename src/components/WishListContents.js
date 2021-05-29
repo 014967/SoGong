@@ -253,8 +253,7 @@ const WishListContents = () => {
                   totalPrice: wishList.reduce((pre, cur, i) => (
                       pre + cur.product.price * quantity[i]
                     ), 0),
-                  deliveryFee: 3000 //TODO: 밑에꺼로 교체
-                  // deliveryFee: wishList.reduce((pre, cur) => pre > cur.product.deliveryFee ? pre : cur.product.deliveryFee, wishList[0].product.deliveryFee)
+                  deliveryFee: wishList.reduce((pre, cur) => pre > cur.product.deliveryFee ? pre : cur.product.deliveryFee, wishList[0].product.deliveryFee)
                 }} />
               }
             </Modal>
