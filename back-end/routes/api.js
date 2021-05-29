@@ -940,8 +940,8 @@ review:[해당 주문 내역 상품평들]
 
 */
 
-router.get('/user/customerquestion/:user_id', auth, function(req, res){
-    Customerservice.find({id:req.params.user_id}).then(function(customerservice){
+router.get('/user/customerquestion/:orderlist', auth, function(req, res){
+    Customerservice.find({orderlist:req.params.orderlist}).then(function(customerservice){
         res.send(customerservice);
     });
 });
@@ -1097,16 +1097,21 @@ router.post('/purchases', function(req, res, next){
 // 구매내역의 status 변경
 router.post('/purchaseStatus/:id', function(req, res, next){
     Purchase.findByIdAndUpdate({_id:req.params.id}, {status:req.body.status}).then(function(purchase){
-        if(isWishList)User.findByIdAndUpdate({_id:purchase.user_id}, {$set:{wishlist: []}}).then(function(purchase){
-            Purchase.findOne({_id:req.params.id}).then(function(purchase){
-                res.send(purchase.status)
-        })
-    })
-
-
-          else Purchase.findOne({_id:req.params.id}).then(function(purchase){
-            res.send(purchase.status)
-        })
+        if (req.body.isWishList === 'true') {
+            console.log('zz')
+            User.findByIdAndUpdate({_id:purchase.user_id}, {$set:{wishlist: []}})
+                .then(function(purchase){
+                    Purchase.findOne({_id:req.params.id}).then(function(purchase){
+                        res.send(purchase.status)
+                    })
+            })
+        } else {
+            console.log('z')
+            Purchase.findOne({_id:req.params.id})
+                .then(function(purchase){
+                    res.send(purchase.status)
+                })
+        }  
     })
  });
 /*  [ JSON FORMAT of request to '/purchaseStatus/:id' ]

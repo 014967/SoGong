@@ -22,7 +22,7 @@ const CustomerserviceSchema = mongoose.Schema({
         default: ""
     },
     orderlist: {
-        type: Array,
+        type: String,
     },
     date: {
         type: Date,

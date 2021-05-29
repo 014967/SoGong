@@ -5,6 +5,7 @@ import axios from 'axios'
 import { useHistory , useLocation } from 'react-router';
 import Title from './elements/Title'
 import ContentsWrapper from './elements/ContentsWrapper'
+import { useParams } from 'react-router-dom'
 
 const Container = styled.div`
     display: flex;
@@ -118,8 +119,13 @@ const TableHeaderContent = styled.div`
 
 const InquiryContents = () => {
 
+  const params = useParams()
+
+  const getQuestion = async () => {
+    const { data: res } = await axios.get('/api/user/customerquestion/')
+  }
+
   useEffect(() => {
-    
   }, [])
 
     return(

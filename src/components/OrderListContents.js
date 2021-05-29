@@ -172,7 +172,7 @@ const OrderListContents = () => {
     } else if (list[index].status === '구매 확정') {
       // 상품평 쓰기
     } else {
-      history.push('/inquiry' + list[index]._id)
+      history.push('/user/inquiry/' + list[index]._id)
     }
     handleRange(range)
   }
