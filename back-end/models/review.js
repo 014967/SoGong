@@ -30,6 +30,9 @@ const ReviewSchema = mongoose.Schema({
         type: Date,
         default: Date.now()
     },
+    purchase_id: {
+        type: String
+    }
 })
 
 const Review = mongoose.model('review', ReviewSchema);

@@ -263,85 +263,85 @@ const ManagerOrderListContents = () => {
     setPageNum(Math.ceil(rangeList.length / ROW_PER_PAGE))
     setOpen(Array(rangeList.length).fill(false))
 
-    if (rangeList.length === 0) {
-      setTotal(0)
-      setProductRanking(Array(3).fill({ name: '', quantity: '' }))
-      setCategoryRanking(Array(3).fill({ category: '', quantity: '' }))
-      return
-    }
+    // if (rangeList.length === 0) {
+    //   setTotal(0)
+    //   setProductRanking(Array(3).fill({ name: '', quantity: '' }))
+    //   setCategoryRanking(Array(3).fill({ category: '', quantity: '' }))
+    //   return
+    // }
 
     // 통계
-    const products = []
-    rangeList.forEach(data => {
-      data.product.forEach(p => {
-        products[products.length] = p
-      })
-    })
+    // const products = []
+    // rangeList.forEach(data => {
+    //   data.product.forEach(p => {
+    //     products[products.length] = p
+    //   })
+    // })
     
-    const st = new Array(0)
-    console.log(st)
-    products.forEach(product => {
-      if (st.length === 0) {
-        st.push(product)
-      } else {
-        const index = st.findIndex(p => p._id === product._id)
-        if (index === -1) {
-          st.push(product)
-        } else {
-          st[index] = {
-            ...st[index],
-            quantity: st[index].quantity + product.quantity,
-            price: st[index].price + product.price
-          }
-        }
-      }
-    })
+    // const st = new Array(0)
+    // console.log(st)
+    // products.forEach(product => {
+    //   if (st.length === 0) {
+    //     st.push(product)
+    //   } else {
+    //     const index = st.findIndex(p => p._id === product._id)
+    //     if (index === -1) {
+    //       st.push(product)
+    //     } else {
+    //       st[index] = {
+    //         ...st[index],
+    //         quantity: st[index].quantity + product.quantity,
+    //         price: st[index].price + product.price
+    //       }
+    //     }
+    //   }
+    // })
 
-    // 카테고리 추가
-    const statistics = await Promise.all(st.map(async product => {
-      const { data: res } = await axios.get('/api/products/' + product._id)
+    // // 카테고리 추가
+    // const statistics = await Promise.all(st.map(async product => {
+    //   const { data: res } = await axios.get('/api/products/' + product._id)
       
-      return {
-        ...product,
-        category: res[0].category
-      }
-    }))
+    //   return {
+    //     ...product,
+    //     category: res[0].category
+    //   }
+    // }))
 
-    setTotal(statistics.reduce((pre, cur) => pre + cur.price, statistics[0].price))
+    // setTotal(statistics.reduce((pre, cur) => pre + cur.price, statistics[0].price))
 
-    statistics.sort((a, b) => b.quantity - a.quantity)
-    setProductRanking(statistics.slice(0, 3))
+    // statistics.sort((a, b) => b.quantity - a.quantity)
+    // setProductRanking(statistics.slice(0, 3))
 
-    let category = ['Man', 'Woman', 'Child']
-    category = category.map(c => ({
-      category: c,
-      quantity: 0,
-      price: 0
-    }))
+    // let category = ['Man', 'Woman', 'Child']
+    // category = category.map(c => ({
+    //   category: c,
+    //   quantity: 0,
+    //   price: 0
+    // }))
 
-    statistics.forEach(product => {
-      if (product.category === 'Man') {
-        category[0] = {
-          ...category[0],
-          quantity: category[0].quantity + product.quantity,
-          price: category[0].price + product.price
-        }
-      } else if (product.category === 'Woman') {
-        category[1] = {
-          ...category[1],
-          quantity: category[1].quantity + product.quantity,
-          price: category[1].price + product.price
-        }
-      } else {
-        category[2] = {
-          ...category[2],
-          quantity: category[2].quantity + product.quantity,
-          price: category[2].price + product.price
-        }
-      }
-    })
-    category.sort((a, b) => b.quantity - a.quantity)
-    setCategoryRanking(category)
+    // statistics.forEach(product => {
+    //   if (product.category === 'Man') {
+    //     category[0] = {
+    //       ...category[0],
+    //       quantity: category[0].quantity + product.quantity,
+    //       price: category[0].price + product.price
+    //     }
+    //   } else if (product.category === 'Woman') {
+    //     category[1] = {
+    //       ...category[1],
+    //       quantity: category[1].quantity + product.quantity,
+    //       price: category[1].price + product.price
+    //     }
+    //   } else {
+    //     category[2] = {
+    //       ...category[2],
+    //       quantity: category[2].quantity + product.quantity,
+    //       price: category[2].price + product.price
+    //     }
+    //   }
+    // })
+    // category.sort((a, b) => b.quantity - a.quantity)
+    // setCategoryRanking(category)
 
     setIsLoading(false)
   }
@@ -454,7 +454,7 @@ const ManagerOrderListContents = () => {
               }
             </ListContainer>
             
-            {total !== 0 &&
+            {/* {total !== 0 &&
               <StatisticsContainer>
                 <StatisticsTitle>총 판매금액</StatisticsTitle>
                 <StatInfoContainer>
@@ -497,7 +497,7 @@ const ManagerOrderListContents = () => {
                   </div>
                 </StatInfoContainer>
               </StatisticsContainer>
-            }
+            } */}
           </Container>
           <Pagination>
             {Array(pageNum).fill(0).map((p, i) => (
