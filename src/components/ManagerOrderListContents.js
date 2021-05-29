@@ -263,6 +263,19 @@ const ManagerOrderListContents = () => {
     setPageNum(Math.ceil(rangeList.length / ROW_PER_PAGE))
     setOpen(Array(rangeList.length).fill(false))
 
+    if (rangeList.length === 0) {
+      setTotal(0)
+      return
+    }
+
+    const products = []
+    rangeList.forEach(data => {
+      data.product.forEach(p => {
+        products[products.length] = p
+      })
+    })
+    setTotal(products.reduce((pre, cur) => pre + cur.price * cur.quantity, 0))
+
     // if (rangeList.length === 0) {
     //   setTotal(0)
     //   setProductRanking(Array(3).fill({ name: '', quantity: '' }))
@@ -412,7 +425,7 @@ const ManagerOrderListContents = () => {
                 <TableHeaderContent width="150px">주문 날짜</TableHeaderContent>
                 <TableHeaderContent width="350px">상품명</TableHeaderContent>
                 <TableHeaderContent width="150px">상품 상태</TableHeaderContent>
-                <TableHeaderContent width="200px">가격</TableHeaderContent>
+                <TableHeaderContent width="200px">결제 금액(배송비 포함)</TableHeaderContent>
               </TableHeader>
               {
                 list.length !== 0 && list.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((data, i) => (
@@ -453,7 +466,14 @@ const ManagerOrderListContents = () => {
                 ))
               }
             </ListContainer>
-            
+            <StatisticsContainer>
+              <StatisticsTitle>총 판매금액(배송비 제외)</StatisticsTitle>
+                <StatInfoContainer>
+                  <div>
+                    {total.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}원
+                  </div>
+                </StatInfoContainer>
+            </StatisticsContainer>
             {/* {total !== 0 &&
               <StatisticsContainer>
                 <StatisticsTitle>총 판매금액</StatisticsTitle>

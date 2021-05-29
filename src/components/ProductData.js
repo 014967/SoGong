@@ -249,15 +249,18 @@ const ProductData = () => {
                   }],
                   address,
                   totalPrice: price * orderStock,
-                  deliveryFee: 3000, //TODO: 아래꺼로 교체
-                  // deliveryFee TODO: 이거로 교체
+                  deliveryFee
                 }} />
               </Modal>
             </ButtonContainer>
           </InfoContainer>
         </TopContainer>
         <Price>상품 설명</Price>
-        <Description>{description}</Description>
+        <Description>
+          <div>{description.split('\n').map((line, i) => (
+            <div key={i}>{line}</div>
+          ))}</div>
+        </Description>
       </>
   )
 }
