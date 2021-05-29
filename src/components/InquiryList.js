@@ -188,7 +188,7 @@ const InquiryList = ({ questions, setQuestions }) => {
         </div>
       </InfoContainer>
       <TableHeader>
-        <TableHeaderContent width="200px">등록 일시</TableHeaderContent>
+        <TableHeaderContent width="200px">등록일</TableHeaderContent>
         <TableHeaderContent width="600px">제목</TableHeaderContent>
         <TableHeaderContent width="200px">답변</TableHeaderContent>
       </TableHeader>

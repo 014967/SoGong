@@ -1066,6 +1066,7 @@ router.get('/purchases/:id', function(req, res){
     });
 });
 
+
 router.get('/purchases/User/:id', function(req, res){
     Purchase.find({user_id : req.params.id, status:{$not: /^결제 중.*/}}).then(function(purchases){
         res.send(purchases);

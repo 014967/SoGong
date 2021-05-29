@@ -8,7 +8,9 @@ import ContentsWrapper from './elements/ContentsWrapper'
 import ManagerMenuButton from './elements/ManagerMenuButton'
 import EventNotice from './EventNotice'
 import Product from './Product'
-import { useHistory , useLocation} from 'react-router';
+import { useLocation} from 'react-router';
+import ManagerOrderListContents from './ManagerOrderListContents'
+import ManagerInquiry from './ManagerInquiry'
 
 const Container = styled.div`
   display: flex;
@@ -29,7 +31,9 @@ const Menu = styled.nav`
 
 const title = {
   event: '공지/이벤트 관리',
-  product: '상품 관리'
+  product: '상품 관리',
+  order: '주문 내역 관리',
+  inquiry: '고객 문의 관리'
 }
 
 const ManagerContents = ({ history }) => {
@@ -53,14 +57,11 @@ const ManagerContents = ({ history }) => {
     }
   }
   const location = useLocation();
-  console.log(location);
   
   useEffect(() => {
     location.state ? setSelected(location.state.selected) : console.log(location.state)
   }, [])
   
-
-
     return (
         <ContentsWrapper wide>
           <Title>{title[selected]}</Title>
@@ -81,6 +82,20 @@ const ManagerContents = ({ history }) => {
                 상품 관리
               </ManagerMenuButton>
               <ManagerMenuButton
+                value="order"
+                onClick={handleItemClick}
+                selected={selected === 'order'}
+              >
+                주문 내역 관리
+              </ManagerMenuButton>
+              <ManagerMenuButton
+                value="inquiry"
+                onClick={handleItemClick}
+                selected={selected === 'inquiry'}
+              >
+                고객 문의 관리
+              </ManagerMenuButton>
+              <ManagerMenuButton
                 value="logout"
                 onClick={handleLogOut}>
                 로그아웃
@@ -96,6 +111,16 @@ const ManagerContents = ({ history }) => {
               selected === 'product' && (
                 
                 <Product selected={selected} history ={history}/>
+              )
+            }
+            {
+              selected === 'order' && (
+                <ManagerOrderListContents />
+              )
+            }
+            {
+              selected === 'inquiry' && (
+                <ManagerInquiry />
               )
             }
           </Container>

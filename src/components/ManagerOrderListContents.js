@@ -13,14 +13,15 @@ import { defaults } from 'js-cookie';
 
 const Container = styled.div`
   width: 100%;
-  margin-top: 96px;
+  margin-top: 32px;
   display: flex;
+  flex-direction: column;
 `
 
 const ListContainer = styled.div`
 `
 const StatisticsContainer = styled.div`
-  padding: 64px 0 0 64px;
+
 `
 const StatisticsTitle = styled(Title)`
   font-size: 32px;
@@ -110,7 +111,7 @@ const TableHeaderContent = styled.div`
 
 const Pagination = styled.div`
   display: flex;
-  width: 100%;
+  width: 1072px;
   justify-content: center;
   margin: 64px 0;
   & > * + * {
@@ -258,7 +259,7 @@ const ManagerOrderListContents = () => {
       const temp = data.date.split('T')[0].split('-')
       const dataDate = new Date(temp[0], temp[1] - 1, temp[2])
       return startDate <= dataDate && endDate >= dataDate
-    })
+    }).reverse()
     setList(rangeList)
     setPageNum(Math.ceil(rangeList.length / ROW_PER_PAGE))
     setOpen(Array(rangeList.length).fill(false))
@@ -388,12 +389,19 @@ const ManagerOrderListContents = () => {
   )
 
     return (
-        <ContentsWrapper wide>
-          <Title>주문 내역</Title>
+        <>
           {isLoading ? <div style={{marginBottom: '32px'}}>
             Loading...
           </div> : <>
           <Container>
+            <StatisticsContainer>
+              <StatisticsTitle>총 판매금액(배송비 제외)</StatisticsTitle>
+                <StatInfoContainer>
+                  <div>
+                    {total.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}원
+                  </div>
+                </StatInfoContainer>
+            </StatisticsContainer>
             <ListContainer>
               <Header>
                 <FilterButtonContainer>
@@ -466,14 +474,6 @@ const ManagerOrderListContents = () => {
                 ))
               }
             </ListContainer>
-            <StatisticsContainer>
-              <StatisticsTitle>총 판매금액(배송비 제외)</StatisticsTitle>
-                <StatInfoContainer>
-                  <div>
-                    {total.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}원
-                  </div>
-                </StatInfoContainer>
-            </StatisticsContainer>
             {/* {total !== 0 &&
               <StatisticsContainer>
                 <StatisticsTitle>총 판매금액</StatisticsTitle>
@@ -518,16 +518,16 @@ const ManagerOrderListContents = () => {
                 </StatInfoContainer>
               </StatisticsContainer>
             } */}
+            <Pagination>
+              {Array(pageNum).fill(0).map((p, i) => (
+                <PageButton key={i} 
+                color={i + 1 === page && 'primary'}
+                onClick={() => setPage(i + 1)}>{i + 1}</PageButton>
+              ))}
+            </Pagination>
           </Container>
-          <Pagination>
-            {Array(pageNum).fill(0).map((p, i) => (
-              <PageButton key={i} 
-              color={i + 1 === page && 'primary'}
-              onClick={() => setPage(i + 1)}>{i + 1}</PageButton>
-            ))}
-          </Pagination>
         </>}
-        </ContentsWrapper>
+        </>
     );
 }
 
