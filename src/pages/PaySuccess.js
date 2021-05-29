@@ -21,7 +21,7 @@ const PaySuccess = () => {
         alert('결제가 완료되었습니다.')
         window.localStorage.setItem('_id', '')
         window.localStorage.setItem('history', '')
-        window.localStorage.
+        window.localStorage.setItem('wishlist', '')
         history.push('/user/orderlist')
     }
 

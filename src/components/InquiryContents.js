@@ -116,10 +116,12 @@ const TableHeaderContent = styled.div`
   text-align: center;
 `
 
-const InquiryContents = () =>
-{
+const InquiryContents = () => {
 
- 
+  useEffect(() => {
+    
+  }, [])
+
     return(
         <>
        

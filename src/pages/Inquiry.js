@@ -12,8 +12,7 @@ const Wrapper = styled.div`
 const Inquiry = () => {
     return (
         <Wrapper>
-         <InquiryContents />
-         
+            <InquiryContents />
         </Wrapper>
     );
 };

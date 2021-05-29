@@ -24,9 +24,6 @@ const CustomerserviceSchema = mongoose.Schema({
     orderlist: {
         type: Array,
     },
-    review: {
-        type: Array,
-    },
     date: {
         type: Date,
         default: Date.now()

@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import Title from './elements/Title'
 import ContentsWrapper from './elements/ContentsWrapper'
 import Button from './elements/Button';
-import CheckBox from './elements/CheckBox'
+import { useHistory } from 'react-router'
 import HeaderButton from './elements/HeaderButton';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
@@ -149,6 +149,7 @@ const OrderListContents = () => {
 
   const classes = useStyles();
   const [modalStyle] = React.useState(getModalStyle);
+  const history = useHistory()
 
   const handleOpen = (index, op) => {
     if (op) {
@@ -171,7 +172,7 @@ const OrderListContents = () => {
     } else if (list[index].status === '구매 확정') {
       // 상품평 쓰기
     } else {
-      // 문의하기
+      history.push('/inquiry' + list[index]._id)
     }
     handleRange(range)
   }

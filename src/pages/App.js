@@ -115,7 +115,7 @@ const App = () => {
                 <Route exact path ='/manager/orderlist' component={ManagerOrderList}/>
                 <Route exact path='/pay/success' component={PaySuccess} />
                 <Route exact path='/pay/cancel' component={PayCancel} />
-                <Route exact path ='/user/inquiry' component ={Inquiry}/>
+                <Route exact path ='/user/inquiry/:id' component ={Inquiry}/>
                 
                 <Footer />
             </Router>
