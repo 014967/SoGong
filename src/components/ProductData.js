@@ -23,6 +23,19 @@ const TopContainer = styled.div`
   padding-bottom: 64px;
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
 `
+const MiddleContainer = styled.div`
+
+`
+const BottomContainer = styled.div`
+display : flex;
+`
+
+const ReviewCircle = styled.div`
+`
+const ReviewComment = styled.div`
+`
+const ReviewDate = styled.div``
+
 
 const InfoContainer = styled.div`
   display: flex;
@@ -256,8 +269,19 @@ const ProductData = () => {
             </ButtonContainer>
           </InfoContainer>
         </TopContainer>
+        <MiddleContainer>
         <Price>상품 설명</Price>
         <Description>{description}</Description>
+        </MiddleContainer>
+        <ButtonContainer>
+          <ReviewCircle></ReviewCircle>
+          <ReviewCircle></ReviewCircle>
+          <ReviewComment></ReviewComment>
+          <ReviewDate></ReviewDate>
+          
+
+        </ButtonContainer>
+
       </>
   )
 }

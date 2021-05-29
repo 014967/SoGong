@@ -18,6 +18,7 @@ import ManagerOrderList from './ManagerOrderList';
 import PaySuccess from './PaySuccess'
 import PayCancel from './PayCancel'
 import Inquiry from './Inquiry';
+import UserReview from '../components/UserReview';
 
 export const LoginContext = createContext({
     ID: '',
@@ -116,6 +117,7 @@ const App = () => {
                 <Route exact path='/pay/success' component={PaySuccess} />
                 <Route exact path='/pay/cancel' component={PayCancel} />
                 <Route exact path ='/user/inquiry/:id' component ={Inquiry}/>
+                <Route exact path = "/user/review/:id" component={UserReview}/>
                 
                 <Footer />
             </Router>

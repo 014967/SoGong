@@ -5,6 +5,11 @@ const ReviewSchema = mongoose.Schema({
         type: String,
         required : [true]
     },
+    purchaseId : 
+    {
+        type : String, 
+        required : [true]
+    },
     userId: {
         type: String,
         required : [true]
