@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Pay = ({ data }) => {
+const Pay = ({ isWishList, data }) => {
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
   const location = useLocation()
@@ -85,6 +85,7 @@ const Pay = ({ data }) => {
     })
     window.localStorage.setItem('_id', res._id)
     window.localStorage.setItem('history', location.pathname)
+    window.localStorage.setItem('wishlist', isWishList)
     window.open(qr.qr, '_self')
   }
 

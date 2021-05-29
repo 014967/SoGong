@@ -13,12 +13,15 @@ const PaySuccess = () => {
 
     const handleSuccess = async () => {
         const _id = window.localStorage.getItem('_id')
+        const isWishList = window.localStorage.getItem('wishlist')
         const { data: res } = await axios.post('/api/purchaseStatus/' + _id, {
-            status: '결제 완료'
+            status: '결제 완료',
+            isWishList
         })
         alert('결제가 완료되었습니다.')
         window.localStorage.setItem('_id', '')
         window.localStorage.setItem('history', '')
+        window.localStorage.
         history.push('/user/orderlist')
     }
 

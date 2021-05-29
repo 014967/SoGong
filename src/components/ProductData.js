@@ -239,7 +239,7 @@ const ProductData = () => {
                 바로 구매하기
               </Button>
               <Modal open={openPurchase} onClose={() => {setOpenPurchase(false)}}>
-                <Pay data={{
+                <Pay isWishList={false} data={{
                   img,
                   product: [{
                     _id: id,

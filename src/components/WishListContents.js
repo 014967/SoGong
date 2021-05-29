@@ -241,7 +241,7 @@ const WishListContents = () => {
             <Modal open={open} onClose={handleClose}>
               {
                 wishList.length !== 0 &&
-                <Pay data={{
+                <Pay isWishList={true} data={{
                   img: wishList[0].product.img,
                   product: wishList.map((p, i) => ({
                     _id: p.id,
