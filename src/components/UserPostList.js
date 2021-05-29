@@ -105,7 +105,7 @@ const UserPostList = ({ setOpenP }) => {
 
   const handleSelect = async (post) => {
     console.log(post)
-    const { data: res } = await axios.patch(`/api/delivery/:${post.deliveryname}`, {...post, default: true}
+    const { data: res } = await axios.patch(`/api/delivery/${post.deliveryname}`, {...post, default: true}
     // {
     //   default: true,
     //   deliveryname: post.deliveryname,

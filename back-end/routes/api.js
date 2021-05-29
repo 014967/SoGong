@@ -4,6 +4,8 @@ const Event = require('../models/events');
 const Product = require('../models/products');
 const Purchase = require('../models/purchases');
 const { auth } = require('../middleware/auth');
+const { Customerservice } = require('../models/customerservice');
+const { Review } = require('../models/review');
 const router = express.Router();
 const path = require("path");
 
@@ -321,7 +323,6 @@ ${deliveryname} = 우리집1 //예시
 
 */
 router.patch('/delivery/:deliveryname', auth, (req, res) => {
-
     User.findOne({ _id: req.user._id },
             (err, userInfo) => {
     
@@ -919,10 +920,145 @@ productIds: 비활성화할 상품id의 배열
 
 
 
+router.post('/addcustomQuestion', auth, function(req, res, next){
+    Customerservice.create(req.body).then(function(customerservice){
+     res.send(customerservice);
+    }).catch(next);
+ });
+
+/*
+
+유저 고객 문의 등록
+
+{
+id:"user의 _id",
+title:"문의 제목",
+contents:"문의 내용",
+orderlist:[주문내역들],
+review:[해당 주문 내역 상품평들]
+} //예시
+
+*/
+
+router.get('/user/customerquestion/:user_id', auth, function(req, res){
+    Customerservice.find({id:req.params.user_id}).then(function(customerservice){
+        res.send(customerservice);
+    });
+});
+
+/*
+
+유저 자신의 고객 문의 목록 조회
+
+*/
+
+
+router.patch('/admin/Answer/:_id', auth, (req, res) => {
+
+    Customerservice.findOneAndUpdate(
+        {_id: req.params._id },
+            {
+            $set:
+                {
+                    "answer": req.body.answer,
+                    "status": true,
+                }    
+                },
+                { new: true },
+            ).then(function(customerservice){
+                Customerservice.findOne({_id: req.params._id}).then(function(customerservice){
+                    res.send(customerservice);
+                })
+            })
+})
+
+/*
+
+관리자의 고객 문의 답변 등록
+
+{
+    answer:"~"
+} //예시
+
+*/
+
+router.get('/admin/customerquestion', auth, function(req, res){
+    Customerservice.find({}).then(function(customerservice){
+        res.send(customerservice);
+    });
+});
+
+/*
+
+관리자 고객 문의 목록들 조회
+
+*/
+
+router.post('/addreview', auth, function(req, res, next){
+    Review.create(req.body).then(function(review){
+     res.send(review);
+    }).catch(next);
+ });
+
+/*
+
+유저 고객 문의 등록
+
+{
+    productId: "product의 _id"
+    userId: "user의 _id"
+    recommend: "추천"
+    deliveryrating: "매우빠름"
+    score: 5
+    comment: "넘모좋아"
+} //예시
+
+*/
+
+router.get('/product/review/:product_id', auth, function(req, res){
+    Review.find({productId:req.params.product_id}).then(function(review){
+        res.send(review);
+    });
+});
+
+/*
+
+해당 product의 reviw들 보기
+
+*/
+
+router.get('/admin/product/review/:product_id/:user_id', auth, function(req, res){
+    Review.find({productId:req.params.product_id,userId:req.params.user_id}).then(function(review){
+        res.send(review);
+    });
+});
+
+/*
+
+관리자가 상품명 버튼을 누르면 사용자가 남긴 상품평을 확인할 수 있음
+
+*/
+
+router.get('/product/review/avgscore/:product_id', auth, function(req, res){
+
+    Review.aggregate([
+        {$match:{productId:req.params.product_id}},
+        {$group:{_id:req.params.product_id,avg:{$avg:"$score"}}}
+        ]).then(function(data){
+        res.send(data);
+    });
+});
+/*
+
+product의 평점을 구함
+
+*/
+
+
 // 구매 목록을 get 또는 post
 router.get('/purchases', function(req, res){
     Purchase.find({}).then(function(purchases){
-        res.send(purchases);
+        res.send(purchases.filter(purchase => purchase.status !== '결제 중'));
     });
 });
 

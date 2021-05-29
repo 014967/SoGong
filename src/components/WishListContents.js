@@ -192,11 +192,13 @@ const WishListContents = () => {
 
   useEffect(() => {
     checkLogin()
+
   }, [])
 
   useEffect(() => {
     setCheckedAll(checked.every(v => v) && wishList.length !== 0)
     setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
+    console.log(wishList)
   }, [checked])
 
 
@@ -239,16 +241,20 @@ const WishListContents = () => {
             <Modal open={open} onClose={handleClose}>
               {
                 wishList.length !== 0 &&
-                <Pay data={{
+                <Pay isWishList={true} data={{
                   img: wishList[0].product.img,
-                  name: wishList[0].product.name,
-                  num: quantity[0],
-                  other: wishList.length - 1,
+                  product: wishList.map((p, i) => ({
+                    _id: p.id,
+                    name: p.product.name,
+                    quantity: quantity[i],
+                    price: p.product.price
+                  })),
                   address,
-                  price: wishList.reduce((pre, cur, i) => (
+                  totalPrice: wishList.reduce((pre, cur, i) => (
                       pre + cur.product.price * quantity[i]
                     ), 0),
-                  charge: 3000 //TODO: 최대 배송비 추가
+                  deliveryFee: 3000 //TODO: 밑에꺼로 교체
+                  // deliveryFee: wishList.reduce((pre, cur) => pre > cur.product.deliveryFee ? pre : cur.product.deliveryFee, wishList[0].product.deliveryFee)
                 }} />
               }
             </Modal>

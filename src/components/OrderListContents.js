@@ -7,6 +7,7 @@ import CheckBox from './elements/CheckBox'
 import HeaderButton from './elements/HeaderButton';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
+import axios from 'axios'
 
 const Container = styled.div`
   
@@ -130,100 +131,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const dummy = [
-  {
-    date: '2021-05-28', //형식은 자유
-    product: [{
-        name: '티셔츠1',
-        quantity: 2, //수량
-        price: 30000
-      }, {
-        name: '티셔츠2',
-        quantity: 1,
-        price: 40000
-      },
-    ],
-    status: '배송 완료', //결제 완료, 배송 중, 배송 완료, 구매 확정
-    address: '서울시 노원구 중계로 8길 106, 111동 106호',
-    price: 103000, //총결제금액. 주문내역 post 시 미리 계산된 상태로 프론트에서 줄거임
-  },{
-    date: '2021-05-28', //형식은 자유
-    product: [{
-        name: '티셔츠1',
-        quantity: 2, //수량
-        price: 30000
-      }, {
-        name: '티셔츠2',
-        quantity: 1,
-        price: 40000
-      },
-    ],
-    status: '배송 중', //결제 완료, 배송 중, 배송 완료, 구매 확정
-    address: '서울시 노원구 중계로 8길 106, 111동 106호',
-    price: 103000, //총결제금액. 주문내역 post 시 미리 계산된 상태로 프론트에서 줄거임
-  },{
-    date: '2021-05-28', //형식은 자유
-    product: [{
-        name: '티셔츠1',
-        quantity: 2, //수량
-        price: 30000
-      }, {
-        name: '티셔츠2',
-        quantity: 1,
-        price: 40000
-      },
-    ],
-    status: '배송 중', //결제 완료, 배송 중, 배송 완료, 구매 확정
-    address: '서울시 노원구 중계로 8길 106, 111동 106호',
-    price: 103000, //총결제금액. 주문내역 post 시 미리 계산된 상태로 프론트에서 줄거임
-  },{
-    date: '2021-05-28', //형식은 자유
-    product: [{
-        name: '티셔츠1',
-        quantity: 2, //수량
-        price: 30000
-      }, {
-        name: '티셔츠2',
-        quantity: 1,
-        price: 40000
-      },
-    ],
-    status: '배송 완료', //결제 완료, 배송 중, 배송 완료, 구매 확정
-    address: '서울시 노원구 중계로 8길 106, 111동 106호',
-    price: 103000, //총결제금액. 주문내역 post 시 미리 계산된 상태로 프론트에서 줄거임
-  },{
-    date: '2021-05-28', //형식은 자유
-    product: [{
-        name: '티셔츠1',
-        quantity: 2, //수량
-        price: 30000
-      }, {
-        name: '티셔츠2',
-        quantity: 1,
-        price: 40000
-      },
-    ],
-    status: '배송 중', //결제 완료, 배송 중, 배송 완료, 구매 확정
-    address: '서울시 노원구 중계로 8길 106, 111동 106호',
-    price: 103000, //총결제금액. 주문내역 post 시 미리 계산된 상태로 프론트에서 줄거임
-  },{
-    date: '2021-05-28', //형식은 자유
-    product: [{
-        name: '티셔츠1',
-        quantity: 2, //수량
-        price: 30000
-      }, {
-        name: '티셔츠2',
-        quantity: 1,
-        price: 40000
-      },
-    ],
-    status: '배송 완료', //결제 완료, 배송 중, 배송 완료, 구매 확정
-    address: '서울시 노원구 중계로 8길 106, 111동 106호',
-    price: 103000, //총결제금액. 주문내역 post 시 미리 계산된 상태로 프론트에서 줄거임
-  },
-]
-
 const ROW_PER_PAGE = 5
 
 const buttonMap = {
@@ -233,9 +140,8 @@ const buttonMap = {
   '구매 확정': '상품평'
 }
 
-
 const OrderListContents = () => {
-  const [range, setRange] = useState('w') //d, w, m, y
+  const [range, setRange] = useState(0) // 0(all), 1, 7, 30, 365
   const [page, setPage] = useState(1) //이중배열 말고 걍 slice로 ㄱㄱ
   const [pageNum, setPageNum] = useState(1)
   const [list, setList] = useState([])
@@ -244,40 +150,78 @@ const OrderListContents = () => {
   const classes = useStyles();
   const [modalStyle] = React.useState(getModalStyle);
 
-  const getList = () => {
-    setList(dummy)
-    setPageNum(Math.ceil(dummy.length / ROW_PER_PAGE))
-    setOpen(Array(list.length).fill(false))
-  }
-
   const handleOpen = (index, op) => {
-    if (op)
+    if (op) {
       setOpen(prev => [...prev.map((v, i) => 
         i === index ? true : false
       )])
-    else
+    }
+    else {
       setOpen(prev => [...prev.map(v => false)])
+    }
   }
 
   const handleButtonColor = (r) => r === range ? 'primary' : 'secondary'
 
-  const handleButton = index => {
-    // if (list[index].status === '배송 완료') {
-    //   setList(prev => [...prev.map((v, i) => 
-    //     i === index ? {
-    //       ...v,
-    //       status: '구매 확정'
-    //     } : v
-    //   )])
-    // }
+  const handleButton = async (index) => {
+    if (list[index].status === '배송 완료') {
+      const { data: res } = await axios.post('/api/purchaseStatus/' + list[index]._id, {
+        status: '구매 확정'
+      })
+    } else if (list[index].status === '구매 확정') {
+      // 상품평 쓰기
+    } else {
+      // 문의하기
+    }
+    handleRange(range)
   }
 
-  const handleRange = r => {
-    setRange(r)
+  const handleRange = async (r) => {
+
+    if (r === 0) { // 같은거 한번 더 눌렀을 경우 (모두 출력)
+      setRange(0)
+      const { data: user } = await axios.get('/api/auth')
+      const { data: res } = await axios.get('/api/purchases/User/' + user._id)
+
+      setList(res)
+      setPageNum(Math.ceil(res.length / ROW_PER_PAGE))
+      setOpen(Array(res.length).fill(false))
+    } else {
+      setRange(r)
+
+      const endDate = new Date()
+      endDate.setDate(endDate.getDate() + 1)
+      endDate.setHours(0, 0, 0, 0)
+      const startDate = new Date()
+      startDate.setDate(startDate.getDate() + 1 - r)
+      startDate.setHours(0, 0, 0, 0)
+      
+      const { data: user } = await axios.get('/api/auth')
+      const { data: res } = await axios.get('/api/purchases/User/' + user._id)
+      let rangeList = [...res]
+
+      rangeList = rangeList.filter(data => {
+        const temp = data.date.split('T')[0].split('-')
+        const dataDate = new Date(temp[0], temp[1] - 1, temp[2])
+        return startDate <= dataDate && endDate > dataDate
+      })
+
+      setList(rangeList)
+      setPageNum(Math.ceil(rangeList.length / ROW_PER_PAGE))
+      setOpen(Array(rangeList.length).fill(false))
+    }
+  }
+
+  const handleRangeButton = (r) => {
+    if (range === r) { //같은 버튼 한번 또 누르면 모두 표시
+      handleRange(0)
+    } else {
+      handleRange(r)
+    }
   }
 
   useEffect(() => {
-    getList()
+    handleRange(7)
   }, [])
 
     return (
@@ -285,11 +229,11 @@ const OrderListContents = () => {
           <Title>주문 내역</Title>
           <Container>
             <Header>
-              <HeaderButton background={handleButtonColor('d')} onClick={() => handleRange('d')}>오늘</HeaderButton>
-              <HeaderButton background={handleButtonColor('w')} onClick={() => handleRange('w')}>1주일</HeaderButton>
-              <HeaderButton background={handleButtonColor('m')} onClick={() => handleRange('m')}>1개월</HeaderButton>
-              <HeaderButton background={handleButtonColor('y')} onClick={() => handleRange('y')}>1년</HeaderButton>
-              </Header>
+              <HeaderButton background={handleButtonColor(1)} onClick={() => handleRangeButton(1)}>오늘</HeaderButton>
+              <HeaderButton background={handleButtonColor(7)} onClick={() => handleRangeButton(7)}>7일</HeaderButton>
+              <HeaderButton background={handleButtonColor(30)} onClick={() => handleRangeButton(30)}>30일</HeaderButton>
+              <HeaderButton background={handleButtonColor(365)} onClick={() => handleRangeButton(365)}>1년</HeaderButton>
+            </Header>
             <TableHeader>
               <TableHeaderContent width="150px">주문 날짜</TableHeaderContent>
               <TableHeaderContent width="350px">상품명</TableHeaderContent>
@@ -299,7 +243,7 @@ const OrderListContents = () => {
             {
               list.length !== 0 && list.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((data, i) => (
                 <Row key={i}>
-                  <RowContent width="150px">{data.date}</RowContent>
+                  <RowContent width="150px">{data.date.split('T')[0]}</RowContent>
                   <Name width="350px" onClick={() => handleOpen(i + ROW_PER_PAGE * (page - 1), true)}>
                     {data.product[0].name} {data.product.length > 1 && `외 ${data.product.length - 1}건`}
                   </Name>
@@ -308,7 +252,7 @@ const OrderListContents = () => {
                       <Title>주문 상세 정보</Title>
                       <InfoContainer>
                         <div>주문 날짜</div>
-                        <div>{data.date}</div>
+                        <div>{data.date.split('T')[0]}</div>
                       </InfoContainer>
                       <InfoContainer>
                         <div>배송지</div>
@@ -324,12 +268,12 @@ const OrderListContents = () => {
                       </InfoContainer>
                       <InfoContainer>
                         <div>결제 금액</div>
-                        <b>₩{data.price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</b>
+                        <b>₩{data.totalPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</b>
                       </InfoContainer>
                     </ModalContainer>
                   </Modal>
                   <RowContent width="150px">{data.status}</RowContent>
-                  <RowContent width="200px">{data.price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</RowContent>
+                  <RowContent width="200px">{data.totalPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</RowContent>
                   <Button background="primary" onClick={() => handleButton(i + ROW_PER_PAGE * (page - 1))}>{buttonMap[data.status]}</Button>
                 </Row>
               ))

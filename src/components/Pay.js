@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useLocation } from 'react-router'
 import styled from 'styled-components';
+import axios from 'axios'
 import Button from './elements/Button'
 import { makeStyles } from '@material-ui/core/styles';
 import Title from './elements/Title'
@@ -62,16 +64,37 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Pay = ({ data }) => {
+const Pay = ({ isWishList, data }) => {
   const classes = useStyles();
-  const [modalStyle] = React.useState(getModalStyle);
+  const [modalStyle] = useState(getModalStyle);
+  const location = useLocation()
+
+  const handlePay = async () => {
+    const other = data.product.length > 1 ? `외 ${data.product.length - 1}건` : ''
+    const { data: user } = await axios.get('/api/auth')
+    const { data: res } = await axios.post('/api/purchases', {
+      user_id: user._id,
+      product: data.product,
+      totalPrice: data.totalPrice + data.deliveryFee,
+      address: data.address,
+    })
+    const { data: qr } = await axios.post('/pay/ready', {
+      _id: user._id,
+      name: `${data.product[0].name} ${data.product[0].quantity}개 ${other}`,
+      totalPrice: data.totalPrice + data.deliveryFee
+    })
+    window.localStorage.setItem('_id', res._id)
+    window.localStorage.setItem('history', location.pathname)
+    window.localStorage.setItem('wishlist', isWishList)
+    window.open(qr.qr, '_self')
+  }
 
   return (
       <Container style={modalStyle} className={classes.paper}>
         <Title>PURCHASE</Title>
         <ProductContainer>
           <Image src={data.img} />
-          <div>{data.name} {data.num}개 {data.other > 0 && ` 외 ${data.other}건`}</div>
+          <div>{data.product[0].name} {data.product[0].quantity}개 {data.product.length > 1 && ` 외 ${data.product.length - 1}건`}</div>
         </ProductContainer>
         <InfoContainer>
           <div>배송지</div>
@@ -79,17 +102,17 @@ const Pay = ({ data }) => {
         </InfoContainer>
         <InfoContainer>
           <div>상품 금액</div>
-          <div>{data.price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} 원</div>
+          <div>{data.totalPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} 원</div>
         </InfoContainer>
         <InfoContainer>
           <div>배송비</div>
-          <div>{data.charge.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} 원 (상품이 여러 개일 시 그 중 최대 배송비로 책정됩니다.)</div>
+          <div>{data.deliveryFee.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} 원 (상품이 여러 개일 시 그 중 최대 배송비로 책정됩니다.)</div>
         </InfoContainer>
         <InfoContainer>
           <div>총 결제 금액</div>
-          <b>{(data.price + data.charge).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} 원</b>
+          <b>{(data.totalPrice + data.deliveryFee).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")} 원</b>
         </InfoContainer>
-        <Button background="primary">결제</Button>
+        <Button background="primary" onClick={handlePay}>결제</Button>
       </Container>
   )
 }

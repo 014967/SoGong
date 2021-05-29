@@ -99,6 +99,7 @@ const ProductData = () => {
   const [orderStock, setOrderStock] = useState(null);
   const [detailImg, setDetailImg] = useState([])
   const [address, setAddress] = useState('등록된 배송지가 없습니다.');
+  const [deliveryFee, setDeliveryFee] = useState(3000)
   const [open, setOpen] = useState(false);
   const [openPurchase, setOpenPurchase] = useState(false)
 
@@ -116,6 +117,7 @@ const ProductData = () => {
       setPrice(product[0].price)
       setDescription(product[0].detail)
       setDetailImg(product[0].detailImg)
+      setDeliveryFee(product[0].deliveryFee)
     }
   }
 
@@ -237,14 +239,18 @@ const ProductData = () => {
                 바로 구매하기
               </Button>
               <Modal open={openPurchase} onClose={() => {setOpenPurchase(false)}}>
-                <Pay data={{
+                <Pay isWishList={false} data={{
                   img,
-                  name,
-                  num: orderStock,
-                  other: 0, //장바구니에서만 사용
+                  product: [{
+                    _id: id,
+                    name,
+                    quantity: orderStock,
+                    price
+                  }],
                   address,
-                  price: price * orderStock,
-                  charge: 3000 //TODO: 배송비 추가
+                  totalPrice: price * orderStock,
+                  deliveryFee: 3000, //TODO: 아래꺼로 교체
+                  // deliveryFee TODO: 이거로 교체
                 }} />
               </Modal>
             </ButtonContainer>

@@ -56,7 +56,6 @@ const path = require('path');
 const Event = require('./models/events');
 const Product = require('./models/products');
 const AWS = require('aws-sdk');
-
 var multerS3 = require("multer-s3");
 const dotenv = require('dotenv') 
 dotenv.config()
@@ -66,8 +65,6 @@ const region = process.env.AWS_BUCKET_REGION
 const accessKeyId = process.env.AWS_ACCESS_KEY
 const secretAccessKey = process.env.AWS_SECRET_KEY
 console.log(process.env)
-
-
 
 const S3 = require('aws-sdk/clients/s3')
 
@@ -217,3 +214,54 @@ app.post('/productImgDel', (req, res) => {
 }
 삭제할 상품의 imgPath 의 배열.
 */
+
+
+//Kakao Pay API Usage
+
+//Using https and express.
+const https = require('https')
+
+//Put your Admin Key here.
+const admin_key = process.env.KAKAO_ADMIN_KEY
+
+//Using qs for parameters.
+const qs = require('qs')
+
+//Setting headers.
+const payOptions = {
+  hostname: 'kapi.kakao.com',
+  path: '/v1/payment/ready',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+    'Authorization': `KakaoAK ${admin_key}`
+  }
+}
+
+const url = 'http://localhost:3000/#' //EC2 올리면 바꾸기
+
+
+app.post('/pay/ready', (req, res) => {
+  const pay = https.request(payOptions, res2 => {
+    res2.on('data', d => {
+      res.send({ qr: JSON.parse(d).next_redirect_pc_url, tid: JSON.parse(d).tid })
+    })
+  })
+  pay.on('error', error => {
+    console.error(error)
+  })
+  
+  pay.write(qs.stringify({
+    cid: 'TC0ONETIME',
+    partner_order_id: 'k_sinsa',
+    partner_user_id: req.body._id,
+    item_name: req.body.name,
+    quantity: 1,
+    total_amount: req.body.totalPrice,
+    tax_free_amount: req.body.totalPrice,
+    approval_url: `${url}/pay/success`,
+    cancel_url: `${url}/pay/cancel`,
+    fail_url: `${url}/pay/cancel`
+  }))
+  pay.end()
+});
