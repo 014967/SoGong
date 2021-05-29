@@ -17,6 +17,7 @@ import ProductList from './ProductList'
 import WishList from './WishList';
 import OrderList from './OrderList';
 import {useHistory, useLocation} from 'react-router'
+import UserReview from '../components/UserReview';
 
 export const LoginContext = createContext({
     ID: '',
@@ -97,6 +98,7 @@ const App = () => {
                         <Route path ='/user/PostList' component ={UserPostList}/>
                         <Route exact path ='/user/wishlist' component ={WishList}/>
                         <Route exact path ='/user/orderlist' component ={OrderList}/>
+                        <Route exact path ='/review' component={UserReview}/>
                         <Footer />
                     </Router>
                 </WishListContext.Provider>
