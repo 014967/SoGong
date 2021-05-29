@@ -1097,13 +1097,12 @@ router.post('/purchases', function(req, res, next){
 // 구매내역의 status 변경
 router.post('/purchaseStatus/:id', function(req, res, next){
     Purchase.findByIdAndUpdate({_id:req.params.id}, {status:req.body.status}).then(function(purchase){
-        if(isWishList)User.findByIdAndUpdate({_id:purchase.user_id}, {$set:{wishlist: []}}).then(function(purchase){
+        if(req.body.isWishList == "true"){User.findByIdAndUpdate({_id:purchase.user_id}, {$set:{wishlist: []}}).then(function(purchase){
             Purchase.findOne({_id:req.params.id}).then(function(purchase){
                 res.send(purchase.status)
         })
     })
-
-
+        }
           else Purchase.findOne({_id:req.params.id}).then(function(purchase){
             res.send(purchase.status)
         })
@@ -1115,5 +1114,22 @@ router.post('/purchaseStatus/:id', function(req, res, next){
     "isWishList" : "false"
  }
 */
+
+router.post('/purchaseStatus/:id', function(req, res, next){
+    Purchase.findByIdAndUpdate({_id:req.params.id}, {status:req.body.status}).then(function(purchase){
+    Purchase.findOne({_id:req.params.id}).then(function(purchase){
+            res.send(purchase.status)
+        })
+    })
+ });
+
+ router.post('/deldeldel', function(req, res, next){
+    Product.find({}).then(function(products){
+        foreach((product)=>{
+
+        })
+    })
+ });
+
 
 module.exports = router;
