@@ -25,7 +25,8 @@ product:{
     _id : {type:String},
     name: {type:String},
     quantity: {type:Number},
-    price: {type:Number}
+    price: {type:Number},
+    category: {type:String}
 },
 status: {
     type:String,
