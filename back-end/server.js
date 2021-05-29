@@ -221,17 +221,6 @@ app.post('/productImgDel', (req, res) => {
 //Using https and express.
 const https = require('https')
 
-//Pages for Simple messages. 
-app.get('/pay/success', (req, res) => {
-	res.send('Payment Success!')
-})
-app.get('/pay/cancel', (req, res) => {
-  res.send('Payment Canceled... -_-;;')
-})
-app.get('/pay/fail', (req, res) => {
-  res.send('Payment Failed... T_T')
-})
-
 //Put your Admin Key here.
 const admin_key = process.env.KAKAO_ADMIN_KEY
 
@@ -264,12 +253,12 @@ app.post('/pay/ready', (req, res) => {
   
   pay.write(qs.stringify({
     cid: 'TC0ONETIME',
-    partner_order_id: '00000001',
-    partner_user_id: 'test_user',
-    item_name: 'SeoulTech SE',
+    partner_order_id: 'k_sinsa',
+    partner_user_id: req.body._id,
+    item_name: req.body.name,
     quantity: 1,
-    total_amount: 10000,
-    tax_free_amount: 10000,
+    total_amount: req.body.totalPrice,
+    tax_free_amount: req.body.totalPrice,
     approval_url: `${url}/pay/success`,
     cancel_url: `${url}/pay/cancel`,
     fail_url: `${url}/pay/cancel`

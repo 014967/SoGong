@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, forwardRef } from 'react';
 import styled from 'styled-components'
 import Title from './elements/Title'
 import ContentsWrapper from './elements/ContentsWrapper'
@@ -8,6 +8,8 @@ import HeaderButton from './elements/HeaderButton';
 import Modal from '@material-ui/core/Modal';
 import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios'
+import DatePicker from "react-datepicker";
+import { defaults } from 'js-cookie';
 
 const Container = styled.div`
   
@@ -107,6 +109,37 @@ const PageButton = styled.button`
   }
 `
 
+const FilterButtonContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  width: 300px;
+  height: 48px;
+  background: ${({ theme }) => theme.color.secondary};
+  border-radius: 32px;
+`
+
+const FilterButtonText = styled.button`
+  width: 129px;
+  height: 48px;
+  cursor: pointer;
+  color: white;
+  background: none;
+  border: none;
+  font-size: 20px;
+  font-family: ${({ theme }) => theme.font.light};
+  &:focus {
+    outline: none;
+  }
+`
+
+const FilterButtonHyphen = styled.div`
+  color: white;
+  font-size: 20px;
+  font-family: ${({ theme }) => theme.font.light};
+`
+
 const getModalStyle = () => {
   const top = 50
   const left = 50
@@ -136,14 +169,23 @@ const isEqual = (a, b) => a.getFullYear() === b.getFullYear() && a.getMonth() ==
 const ROW_PER_PAGE = 5
 
 const buttonMap = {
-  '결제 완료': '문의하기',
-  '배송 중': '문의하기',
-  '배송 완료': '구매 확정',
+  '결제 완료': '배송하기',
+  '배송 중': '배송 완료',
+  '배송 완료': '상품평',
   '구매 확정': '상품평'
 }
 
-const OrderListContents = () => {
+const defaultStartDate = new Date()
+defaultStartDate.setDate(defaultStartDate.getDate() - 7)
+defaultStartDate.setHours(0, 0, 0, 0)
+const defaultEndDate = new Date()
+defaultEndDate.setDate(defaultEndDate.getDate())
+defaultEndDate.setHours(0, 0, 0, 0)
+
+const ManagerOrderListContents = () => {
   const [range, setRange] = useState(0) // 0(all), 1, 7, 30, 365
+  const [startDate, setStartDate] = useState(defaultStartDate)
+  const [endDate, setEndDate] = useState(defaultEndDate)
   const [page, setPage] = useState(1) //이중배열 말고 걍 slice로 ㄱㄱ
   const [pageNum, setPageNum] = useState(1)
   const [list, setList] = useState([])
@@ -163,55 +205,36 @@ const OrderListContents = () => {
     }
   }
 
-  const handleButtonColor = (r) => r === range ? 'primary' : 'secondary'
-
   const handleButton = async (index) => {
-    if (list[index].status === '배송 완료') {
+    if (list[index].status === '결제 완료') {
       const { data: res } = await axios.post('/api/purchaseStatus/' + list[index]._id, {
-        status: '구매 확정'
+        status: '배송 중'
       })
-    } else if (list[index].status === '구매 확정') {
-      // 상품평 쓰기
+    } else if (list[index].status === '배송 중') {
+      const { data: res } = await axios.post('/api/purchaseStatus/' + list[index]._id, {
+        status: '배송 완료'
+      })
     } else {
-      // 문의하기
+      // 상품평 보기
     }
     handleRange(range)
   }
 
-  const handleRange = async (r) => {
+  const handleRange = async () => {
+    
+    const { data: user } = await axios.get('/api/auth')
+    const { data: res } = await axios.get('/api/purchases/')
+    let rangeList = [...res]
 
-    if (r === 0) { // 같은거 한번 더 눌렀을 경우 (모두 출력)
-      setRange(0)
-      const { data: user } = await axios.get('/api/auth')
-      const { data: res } = await axios.get('/api/purchases/User/' + user._id)
+    rangeList = rangeList.filter(data => {
+      const temp = data.date.split('T')[0].split('-')
+      const dataDate = new Date(temp[0], temp[1] - 1, temp[2])
+      return startDate <= dataDate && endDate >= dataDate
+    })
 
-      setList(res)
-      setPageNum(Math.ceil(res.length / ROW_PER_PAGE))
-      setOpen(Array(res.length).fill(false))
-    } else {
-      setRange(r)
-
-      const endDate = new Date()
-      endDate.setDate(endDate.getDate() + 1)
-      endDate.setHours(0, 0, 0, 0)
-      const startDate = new Date()
-      startDate.setDate(startDate.getDate() + 1 - r)
-      startDate.setHours(0, 0, 0, 0)
-      
-      const { data: user } = await axios.get('/api/auth')
-      const { data: res } = await axios.get('/api/purchases/User/' + user._id)
-      let rangeList = [...res]
-
-      rangeList = rangeList.filter(data => {
-        const temp = data.date.split('T')[0].split('-')
-        const dataDate = new Date(temp[0], temp[1] - 1, temp[2])
-        return startDate <= dataDate && endDate > dataDate
-      })
-
-      setList(rangeList)
-      setPageNum(Math.ceil(rangeList.length / ROW_PER_PAGE))
-      setOpen(Array(rangeList.length).fill(false))
-    }
+    setList(rangeList)
+    setPageNum(Math.ceil(rangeList.length / ROW_PER_PAGE))
+    setOpen(Array(rangeList.length).fill(false))
   }
 
   const handleRangeButton = (r) => {
@@ -223,18 +246,61 @@ const OrderListContents = () => {
   }
 
   useEffect(() => {
-    handleRange(7)
+    handleRange()
   }, [])
 
+  useEffect(() => {
+    if (startDate && endDate) {
+      handleRange()
+    }
+  }, [startDate, endDate])
+
+  const StartFilterButton = forwardRef( //datepicker custom input
+    ({ value, onClick }, ref) => (
+      <FilterButtonText
+        onClick={onClick} ref={ref}>
+        {value || '시작일'}
+      </FilterButtonText>
+    ),
+  )
+  const EndFilterButton = forwardRef( //datepicker custom input
+    ({ value, onClick }, ref) => (
+      <FilterButtonText
+        onClick={onClick} ref={ref}>
+        {value || '종료일'}
+      </FilterButtonText>
+    ),
+  )
+
     return (
-        <ContentsWrapper>
+        <ContentsWrapper wide>
           <Title>주문 내역</Title>
           <Container>
             <Header>
-              <HeaderButton background={handleButtonColor(1)} onClick={() => handleRangeButton(1)}>오늘</HeaderButton>
-              <HeaderButton background={handleButtonColor(7)} onClick={() => handleRangeButton(7)}>7일</HeaderButton>
-              <HeaderButton background={handleButtonColor(30)} onClick={() => handleRangeButton(30)}>30일</HeaderButton>
-              <HeaderButton background={handleButtonColor(365)} onClick={() => handleRangeButton(365)}>1년</HeaderButton>
+              <FilterButtonContainer>
+                <DatePicker
+                  dateFormat="yyyy/MM/dd"
+                  selected={startDate}
+                  onChange={date => setStartDate(date)}
+                  selectsStart
+                  startDate={startDate}
+                  endDate={endDate}
+                  isclearable
+                  customInput={<StartFilterButton />}
+                />
+                <FilterButtonHyphen>~</FilterButtonHyphen>
+                <DatePicker
+                  dateFormat="yyyy/MM/dd"
+                  selected={endDate}
+                  onChange={date => setEndDate(date)}
+                  selectsEnd
+                  startDate={startDate}
+                  endDate={endDate}
+                  minDate={startDate}
+                  isclearable
+                  customInput={<EndFilterButton />}
+                />
+              </FilterButtonContainer>
             </Header>
             <TableHeader>
               <TableHeaderContent width="150px">주문 날짜</TableHeaderContent>
@@ -292,4 +358,4 @@ const OrderListContents = () => {
     );
 }
 
-export default OrderListContents
+export default ManagerOrderListContents

@@ -4,6 +4,8 @@ const Event = require('../models/events');
 const Product = require('../models/products');
 const Purchase = require('../models/purchases');
 const { auth } = require('../middleware/auth');
+const { Customerservice } = require('../models/customerservice');
+const { Review } = require('../models/review');
 const router = express.Router();
 const path = require("path");
 
@@ -1036,18 +1038,42 @@ router.get('/admin/product/review/:product_id/:user_id', auth, function(req, res
 관리자가 상품명 버튼을 누르면 사용자가 남긴 상품평을 확인할 수 있음
 
 */
+
+router.get('/product/review/avgscore/:product_id', auth, function(req, res){
+
+    Review.aggregate([
+        {$match:{productId:req.params.product_id}},
+        {$group:{_id:req.params.product_id,avg:{$avg:"$score"}}}
+        ]).then(function(data){
+        res.send(data);
+    });
+});
+/*
+
+product의 평점을 구함
+
+*/
+
+
 // 구매 목록을 get 또는 post
 router.get('/purchases', function(req, res){
     Purchase.find({}).then(function(purchases){
-        res.send(purchases);
+        res.send(purchases.filter(purchase => purchase.status !== '결제 중'));
     });
 });
 
 router.get('/purchases/:id', function(req, res){
-    Purchase.find({user_id : req.params.id}).then(function(purchase){
+    Purchase.find({_id : req.params.id}).then(function(purchase){
         res.send(purchase);
     });
 });
+
+router.get('/purchases/User/:id', function(req, res){
+    Purchase.find({user_id : req.params.id}).then(function(purchases){
+        res.send(purchases.filter(purchase => purchase.status !== '결제 중'));
+    });
+});
+
 router.post('/purchases', function(req, res, next){
     Purchase.create(req.body).then(function(purchase){
      res.send(purchase);
@@ -1071,8 +1097,15 @@ router.post('/purchases', function(req, res, next){
 // 구매내역의 status 변경
 router.post('/purchaseStatus/:id', function(req, res, next){
     Purchase.findByIdAndUpdate({_id:req.params.id}, {status:req.body.status}).then(function(purchase){
-     res.send(purchase.status);
-    }).catch(next);
+        Purchase.findOne({_id:req.params.id}).then(function(purchase){
+            res.send(purchase.status)
+        })
+    })
  });
+/*  [ JSON FORMAT of request to '/purchaseStatus/:id' ]
+ {  
+    "status" : "결제 완료"
+ }
+*/
 
 module.exports = router;

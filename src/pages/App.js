@@ -14,6 +14,7 @@ import UserPostList from '../components/UserPostList';
 import ProductList from './ProductList'
 import WishList from './WishList';
 import OrderList from './OrderList';
+import ManagerOrderList from './ManagerOrderList';
 import PaySuccess from './PaySuccess'
 import PayCancel from './PayCancel'
 
@@ -109,7 +110,8 @@ const App = () => {
                 <Route path ="/manager/product/:id" component={Product} />
                 <Route path ='/user/PostList' component ={UserPostList}/>
                 <Route exact path ='/user/wishlist' component ={WishList}/>
-                <Route exact path ='/user/orderlist' component ={OrderList}/>
+                <Route exact path ='/user/orderlist' component={OrderList}/>
+                <Route exact path ='/manager/orderlist' component={ManagerOrderList}/>
                 <Route exact path='/pay/success' component={PaySuccess} />
                 <Route exact path='/pay/cancel' component={PayCancel} />
                 

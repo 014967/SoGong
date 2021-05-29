@@ -70,14 +70,20 @@ const Pay = ({ data }) => {
   const location = useLocation()
 
   const handlePay = async () => {
+    const other = data.product.length > 1 ? `외 ${data.product.length - 1}건` : ''
     const { data: user } = await axios.get('/api/auth')
     const { data: res } = await axios.post('/api/purchases', {
       user_id: user._id,
+      product: data.product,
+      totalPrice: data.totalPrice + data.deliveryFee,
+      address: data.address,
     })
     const { data: qr } = await axios.post('/pay/ready', {
-
+      _id: user._id,
+      name: `${data.product[0].name} ${data.product[0].quantity}개 ${other}`,
+      totalPrice: data.totalPrice + data.deliveryFee
     })
-    
+    window.localStorage.setItem('_id', res._id)
     window.localStorage.setItem('history', location.pathname)
     window.open(qr.qr, '_self')
   }

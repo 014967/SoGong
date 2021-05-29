@@ -198,6 +198,7 @@ const WishListContents = () => {
   useEffect(() => {
     setCheckedAll(checked.every(v => v) && wishList.length !== 0)
     setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
+    console.log(wishList)
   }, [checked])
 
 
@@ -252,7 +253,8 @@ const WishListContents = () => {
                   totalPrice: wishList.reduce((pre, cur, i) => (
                       pre + cur.product.price * quantity[i]
                     ), 0),
-                  deliveryFee: 3000 //TODO: 최대 배송비 추가
+                  deliveryFee: 3000 //TODO: 밑에꺼로 교체
+                  // deliveryFee: wishList.reduce((pre, cur) => pre > cur.product.deliveryFee ? pre : cur.product.deliveryFee, wishList[0].product.deliveryFee)
                 }} />
               }
             </Modal>

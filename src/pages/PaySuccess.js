@@ -1,20 +1,24 @@
 import React, { useEffect } from 'react'
+import styled from 'styled-components'
 import { useHistory, useLocation } from 'react-router'
 import axios from 'axios'
+
+const Dummy = styled.div`
+    height: 3000px;
+`
 
 const PaySuccess = () => {
     const history = useHistory()
     const location = useLocation()
 
     const handleSuccess = async () => {
-        const pg_token = location.search.split('=')[1]
-        const tid = window.localStorage.getItem('tid')
-        console.log(pg_token, tid)
-        const { data: res } = await axios.post('/pay/success', {
-            pg_token, tid
+        const _id = window.localStorage.getItem('_id')
+        const { data: res } = await axios.post('/api/purchaseStatus/' + _id, {
+            status: '결제 완료'
         })
-        console.log(res)
         alert('결제가 완료되었습니다.')
+        window.localStorage.setItem('_id', '')
+        window.localStorage.setItem('history', '')
         history.push('/user/orderlist')
     }
 
@@ -24,7 +28,7 @@ const PaySuccess = () => {
 
     return (
         <>
-        <div>t</div>
+            <Dummy></Dummy>
         </>
     );
 };

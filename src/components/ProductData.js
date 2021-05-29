@@ -99,6 +99,7 @@ const ProductData = () => {
   const [orderStock, setOrderStock] = useState(null);
   const [detailImg, setDetailImg] = useState([])
   const [address, setAddress] = useState('등록된 배송지가 없습니다.');
+  const [deliveryFee, setDeliveryFee] = useState(3000)
   const [open, setOpen] = useState(false);
   const [openPurchase, setOpenPurchase] = useState(false)
 
@@ -116,6 +117,7 @@ const ProductData = () => {
       setPrice(product[0].price)
       setDescription(product[0].detail)
       setDetailImg(product[0].detailImg)
+      setDeliveryFee(product[0].deliveryFee)
     }
   }
 
@@ -247,7 +249,8 @@ const ProductData = () => {
                   }],
                   address,
                   totalPrice: price * orderStock,
-                  deliveryFee: 3000 //TODO: 배송비 추가
+                  deliveryFee: 3000, //TODO: 아래꺼로 교체
+                  // deliveryFee TODO: 이거로 교체
                 }} />
               </Modal>
             </ButtonContainer>

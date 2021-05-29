@@ -110,6 +110,16 @@ const Header = () => {
 
   const handleColor = useCallback((cate) => (currentState.category === cate ? 'primary' : 'secondary'), [currentState])
 
+  useEffect(async () => {
+    if (location.pathname.includes('manager')) {
+      const { data: response } = await axios.get('/api/auth')
+        if (!response.isAdmin) {
+            alert('관리자만 접근 가능합니다.')
+            history.push('/')
+        }
+    }
+  }, [location])
+
   useEffect(() => {
     if (success) {
       getWishList()
