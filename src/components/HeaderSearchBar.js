@@ -65,7 +65,7 @@ const HeaderSearchBar = ({ location, history }) => {
   
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (!location.pathname.includes('list'))
+    if (!location.pathname.includes('/list'))
       history.push('/list')
     setSubmitFlag(true)
     console.log(category, search, startPrice, endPrice)

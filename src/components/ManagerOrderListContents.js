@@ -12,16 +12,21 @@ import DatePicker from "react-datepicker";
 import { defaults } from 'js-cookie';
 
 const Container = styled.div`
-  
   width: 100%;
   margin-top: 96px;
+  display: flex;
 `
 
-const ModalContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+const ListContainer = styled.div`
 `
+const StatisticsContainer = styled.div`
+  padding: 64px 0 0 64px;
+`
+const StatisticsTitle = styled(Title)`
+  font-size: 32px;
+`
+
+
 const InfoContainer = styled.div`
   display: flex;
   margin-bottom: 8px;
@@ -33,6 +38,21 @@ const InfoContainer = styled.div`
   }
 `
 
+const StatInfoContainer = styled(InfoContainer)`
+  font-size: 24px;
+  & > *:first-child {
+    width: auto;
+  }
+  margin-bottom: 32px;
+`
+
+const ModalContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
+
+
 const DetailProductContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -43,7 +63,7 @@ const DetailProductContainer = styled.div`
 
 const Header = styled.div`
   display: flex;
-  width: 100%;
+  width: 1072px;
   height: 64px;
   padding: 0 16px;
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
@@ -67,7 +87,7 @@ const Name = styled(RowContent)`
 const TableHeader = styled.div`
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 1072px;
   height: 64px;
   padding: 0 16px;
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
@@ -76,7 +96,7 @@ const TableHeader = styled.div`
 const Row = styled.div`
   display: flex;
   align-items: center;
-  width: 100%;
+  width: 1072px;
   height: 112px;
   padding: 0 16px;
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
@@ -190,6 +210,10 @@ const ManagerOrderListContents = () => {
   const [pageNum, setPageNum] = useState(1)
   const [list, setList] = useState([])
   const [open, setOpen] = useState([])
+  const [total, setTotal] = useState(0)
+  const [productRanking, setProductRanking] = useState([])
+  const [categoryRanking, setCategoryRanking] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
 
   const classes = useStyles();
   const [modalStyle] = React.useState(getModalStyle);
@@ -222,28 +246,106 @@ const ManagerOrderListContents = () => {
 
   const handleRange = async () => {
     
-    const { data: user } = await axios.get('/api/auth')
     const { data: res } = await axios.get('/api/purchases/')
+    if (res.length === 0) {
+      return
+    } 
+
     let rangeList = [...res]
 
+    // 필터링, 페이징
     rangeList = rangeList.filter(data => {
       const temp = data.date.split('T')[0].split('-')
       const dataDate = new Date(temp[0], temp[1] - 1, temp[2])
       return startDate <= dataDate && endDate >= dataDate
     })
-
     setList(rangeList)
     setPageNum(Math.ceil(rangeList.length / ROW_PER_PAGE))
     setOpen(Array(rangeList.length).fill(false))
+
+    if (rangeList.length === 0) {
+      setTotal(0)
+      setProductRanking(Array(3).fill({ name: '', quantity: '' }))
+      setCategoryRanking(Array(3).fill({ category: '', quantity: '' }))
+      return
+    }
+
+    // 통계
+    const products = []
+    rangeList.forEach(data => {
+      data.product.forEach(p => {
+        products[products.length] = p
+      })
+    })
+    
+    const st = new Array(0)
+    console.log(st)
+    products.forEach(product => {
+      if (st.length === 0) {
+        st.push(product)
+      } else {
+        const index = st.findIndex(p => p._id === product._id)
+        if (index === -1) {
+          st.push(product)
+        } else {
+          st[index] = {
+            ...st[index],
+            quantity: st[index].quantity + product.quantity,
+            price: st[index].price + product.price
+          }
+        }
+      }
+    })
+
+    // 카테고리 추가
+    const statistics = await Promise.all(st.map(async product => {
+      const { data: res } = await axios.get('/api/products/' + product._id)
+      
+      return {
+        ...product,
+        category: res[0].category
+      }
+    }))
+
+    setTotal(statistics.reduce((pre, cur) => pre + cur.price, statistics[0].price))
+
+    statistics.sort((a, b) => b.quantity - a.quantity)
+    setProductRanking(statistics.slice(0, 3))
+
+    let category = ['Man', 'Woman', 'Child']
+    category = category.map(c => ({
+      category: c,
+      quantity: 0,
+      price: 0
+    }))
+
+    statistics.forEach(product => {
+      if (product.category === 'Man') {
+        category[0] = {
+          ...category[0],
+          quantity: category[0].quantity + product.quantity,
+          price: category[0].price + product.price
+        }
+      } else if (product.category === 'Woman') {
+        category[1] = {
+          ...category[1],
+          quantity: category[1].quantity + product.quantity,
+          price: category[1].price + product.price
+        }
+      } else {
+        category[2] = {
+          ...category[2],
+          quantity: category[2].quantity + product.quantity,
+          price: category[2].price + product.price
+        }
+      }
+    })
+    category.sort((a, b) => b.quantity - a.quantity)
+    setCategoryRanking(category)
+
+    setIsLoading(false)
   }
 
-  const handleRangeButton = (r) => {
-    if (range === r) { //같은 버튼 한번 또 누르면 모두 표시
-      handleRange(0)
-    } else {
-      handleRange(r)
-    }
-  }
 
   useEffect(() => {
     handleRange()
@@ -275,76 +377,126 @@ const ManagerOrderListContents = () => {
     return (
         <ContentsWrapper wide>
           <Title>주문 내역</Title>
+          {isLoading ? <div style={{marginBottom: '32px'}}>
+            Loading...
+          </div> : <>
           <Container>
-            <Header>
-              <FilterButtonContainer>
-                <DatePicker
-                  dateFormat="yyyy/MM/dd"
-                  selected={startDate}
-                  onChange={date => setStartDate(date)}
-                  selectsStart
-                  startDate={startDate}
-                  endDate={endDate}
-                  isclearable
-                  customInput={<StartFilterButton />}
-                />
-                <FilterButtonHyphen>~</FilterButtonHyphen>
-                <DatePicker
-                  dateFormat="yyyy/MM/dd"
-                  selected={endDate}
-                  onChange={date => setEndDate(date)}
-                  selectsEnd
-                  startDate={startDate}
-                  endDate={endDate}
-                  minDate={startDate}
-                  isclearable
-                  customInput={<EndFilterButton />}
-                />
-              </FilterButtonContainer>
-            </Header>
-            <TableHeader>
-              <TableHeaderContent width="150px">주문 날짜</TableHeaderContent>
-              <TableHeaderContent width="350px">상품명</TableHeaderContent>
-              <TableHeaderContent width="150px">상품 상태</TableHeaderContent>
-              <TableHeaderContent width="200px">가격</TableHeaderContent>
-            </TableHeader>
-            {
-              list.length !== 0 && list.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((data, i) => (
-                <Row key={i}>
-                  <RowContent width="150px">{data.date.split('T')[0]}</RowContent>
-                  <Name width="350px" onClick={() => handleOpen(i + ROW_PER_PAGE * (page - 1), true)}>
-                    {data.product[0].name} {data.product.length > 1 && `외 ${data.product.length - 1}건`}
-                  </Name>
-                  <Modal open={open[i + ROW_PER_PAGE * (page - 1)]} onClose={() => handleOpen(0, false)}>
-                    <ModalContainer style={modalStyle} className={classes.paper}>
-                      <Title>주문 상세 정보</Title>
-                      <InfoContainer>
-                        <div>주문 날짜</div>
-                        <div>{data.date.split('T')[0]}</div>
-                      </InfoContainer>
-                      <InfoContainer>
-                        <div>배송지</div>
-                        <div>{data.address}</div>
-                      </InfoContainer>
-                      <InfoContainer>
-                        <div>주문 상품</div>
-                        <DetailProductContainer>
-                          {data.product.map((v, j) => (
-                            <div key={j}>{v.name} {v.quantity}개 (₩{(v.price * v.quantity).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")})</div>
-                          ))}
-                        </DetailProductContainer>
-                      </InfoContainer>
-                      <InfoContainer>
-                        <div>결제 금액</div>
-                        <b>₩{data.totalPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</b>
-                      </InfoContainer>
-                    </ModalContainer>
-                  </Modal>
-                  <RowContent width="150px">{data.status}</RowContent>
-                  <RowContent width="200px">{data.totalPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</RowContent>
-                  <Button background="primary" onClick={() => handleButton(i + ROW_PER_PAGE * (page - 1))}>{buttonMap[data.status]}</Button>
-                </Row>
-              ))
+            <ListContainer>
+              <Header>
+                <FilterButtonContainer>
+                  <DatePicker
+                    dateFormat="yyyy/MM/dd"
+                    selected={startDate}
+                    onChange={date => setStartDate(date)}
+                    selectsStart
+                    startDate={startDate}
+                    endDate={endDate}
+                    isclearable
+                    customInput={<StartFilterButton />}
+                  />
+                  <FilterButtonHyphen>~</FilterButtonHyphen>
+                  <DatePicker
+                    dateFormat="yyyy/MM/dd"
+                    selected={endDate}
+                    onChange={date => setEndDate(date)}
+                    selectsEnd
+                    startDate={startDate}
+                    endDate={endDate}
+                    minDate={startDate}
+                    isclearable
+                    customInput={<EndFilterButton />}
+                  />
+                </FilterButtonContainer>
+              </Header>
+              <TableHeader>
+                <TableHeaderContent width="150px">주문 날짜</TableHeaderContent>
+                <TableHeaderContent width="350px">상품명</TableHeaderContent>
+                <TableHeaderContent width="150px">상품 상태</TableHeaderContent>
+                <TableHeaderContent width="200px">가격</TableHeaderContent>
+              </TableHeader>
+              {
+                list.length !== 0 && list.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((data, i) => (
+                  <Row key={i}>
+                    <RowContent width="150px">{data.date.split('T')[0]}</RowContent>
+                    <Name width="350px" onClick={() => handleOpen(i + ROW_PER_PAGE * (page - 1), true)}>
+                      {data.product[0].name} {data.product.length > 1 && `외 ${data.product.length - 1}건`}
+                    </Name>
+                    <Modal open={open[i + ROW_PER_PAGE * (page - 1)]} onClose={() => handleOpen(0, false)}>
+                      <ModalContainer style={modalStyle} className={classes.paper}>
+                        <Title>주문 상세 정보</Title>
+                        <InfoContainer>
+                          <div>주문 날짜</div>
+                          <div>{data.date.split('T')[0]}</div>
+                        </InfoContainer>
+                        <InfoContainer>
+                          <div>배송지</div>
+                          <div>{data.address}</div>
+                        </InfoContainer>
+                        <InfoContainer>
+                          <div>주문 상품</div>
+                          <DetailProductContainer>
+                            {data.product.map((v, j) => (
+                              <div key={j}>{v.name} {v.quantity}개 (₩{(v.price * v.quantity).toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")})</div>
+                            ))}
+                          </DetailProductContainer>
+                        </InfoContainer>
+                        <InfoContainer>
+                          <div>결제 금액</div>
+                          <b>₩{data.totalPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</b>
+                        </InfoContainer>
+                      </ModalContainer>
+                    </Modal>
+                    <RowContent width="150px">{data.status}</RowContent>
+                    <RowContent width="200px">{data.totalPrice.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</RowContent>
+                    <Button background="primary" onClick={() => handleButton(i + ROW_PER_PAGE * (page - 1))}>{buttonMap[data.status]}</Button>
+                  </Row>
+                ))
+              }
+            </ListContainer>
+            
+            {total !== 0 &&
+              <StatisticsContainer>
+                <StatisticsTitle>총 판매금액</StatisticsTitle>
+                <StatInfoContainer>
+                  <div>
+                    {total.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}원
+                  </div>
+                </StatInfoContainer>
+
+                <StatisticsTitle>상품 판매량 순위 Top 3</StatisticsTitle>
+                <StatInfoContainer>
+                  <div>1위</div>
+                  <div>{productRanking[0].name} ({productRanking[0].quantity}개)
+                  </div>
+                </StatInfoContainer>
+                <StatInfoContainer>
+                  <div>2위</div>
+                  <div>{productRanking[1].name} ({productRanking[1].quantity}개)
+                  </div>
+                </StatInfoContainer>
+                <StatInfoContainer>
+                  <div>3위</div>
+                  <div>{productRanking[2].name} ({productRanking[2].quantity}개)
+                  </div>
+                </StatInfoContainer>
+
+                <StatisticsTitle>카테고리 판매량 순위 Top 3</StatisticsTitle>
+                <StatInfoContainer>
+                  <div>1위</div>
+                  <div>{productRanking[0].category} ({productRanking[0].quantity}개)
+                  </div>
+                </StatInfoContainer>
+                <StatInfoContainer>
+                  <div>2위</div>
+                  <div>{productRanking[1].category} ({productRanking[1].quantity}개)
+                  </div>
+                </StatInfoContainer>
+                <StatInfoContainer>
+                  <div>3위</div>
+                  <div>{productRanking[2].category} ({productRanking[2].quantity}개)
+                  </div>
+                </StatInfoContainer>
+              </StatisticsContainer>
             }
           </Container>
           <Pagination>
@@ -354,6 +506,7 @@ const ManagerOrderListContents = () => {
               onClick={() => setPage(i + 1)}>{i + 1}</PageButton>
             ))}
           </Pagination>
+        </>}
         </ContentsWrapper>
     );
 }
