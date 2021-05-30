@@ -173,7 +173,7 @@ const UserReview = () =>
             setProductTitle(product[0].product[0].name)
             setUserId(product[0].user_id)
             setPurChaseId(id)
-            setPurChaseName(product[0].product[0].username)
+            setPurChaseName(product[0].username)
         }
         
     }
