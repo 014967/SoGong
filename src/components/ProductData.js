@@ -16,6 +16,7 @@ import UserPostList from './UserPostList'
 import { WishListContext } from '../pages/App'
 import { LoginContext } from '../pages/App'
 import Pay from './Pay'
+import moment from 'moment'
 
 const TopContainer = styled.div`
   display: flex;
@@ -34,7 +35,12 @@ const ReviewCircle = styled.div`
 `
 const ReviewComment = styled.div`
 `
-const ReviewDate = styled.div``
+const ReviewUserDate = styled.div`
+`
+
+const ReviewRow = styled.div`
+display : flex;`
+
 
 
 const InfoContainer = styled.div`
@@ -45,7 +51,6 @@ const InfoContainer = styled.div`
 
 const ButtonContainer = styled.div`
   margin-top: 16px;
-  display: flex;
   justify-content: space-between;
   & > * + * {
     margin-left: 16px;
@@ -116,6 +121,17 @@ const ProductData = () => {
   const [open, setOpen] = useState(false);
   const [openPurchase, setOpenPurchase] = useState(false)
 
+  //reviewData
+  const [reviewDate, setReviewDate] = useState();
+  const [reviewComment, setReviewComment] = useState();
+  const [reviewScore , setReviewScore] = useState();
+  const [reviewDelivery, setReviewDelivery] = useState();
+  const [reviewRecommend, setReviewRecommend] = useState();
+  const [reviewUserId , setReviewUserId] = useState();
+  const [customeDate , setCustomDate] = useState();
+  const [reviewList , setReviewList ] = useState();
+
+
   const { success } = useContext(LoginContext)
   const { setWishListFlag } = useContext(WishListContext)
   const classes = useStyles();
@@ -133,6 +149,21 @@ const ProductData = () => {
       setDeliveryFee(product[0].deliveryFee)
     }
   }
+
+
+  const getReviewData = async () =>
+  {
+    const { data : reviewData } = await axios.get(`/api/product/review/${id}`)
+    console.log(reviewData);
+    /*setReviewComment(reviewData[0].comment);
+    setReviewDate(reviewData[0].date);
+    setReviewDelivery(reviewData[0].deliveryrating);
+    setReviewScore(reviewData[0].score);
+    setReviewRecommend(reviewData[0].recommend);
+    setReviewUserId(reviewData[0].userId);*/
+    setReviewList(reviewData)
+  }
+
 
   const getAddress = async () => {
     const { data: ad } = await axios.get('/api/delivery')
@@ -170,7 +201,10 @@ const ProductData = () => {
   useEffect(() => {
     getProductData()
     getAddress()
+    getReviewData()
   }, [])
+
+  
 
   useEffect(() => {
     if (!open) {
@@ -274,11 +308,28 @@ const ProductData = () => {
         <Description>{description}</Description>
         </MiddleContainer>
         <ButtonContainer>
-          <ReviewCircle></ReviewCircle>
-          <ReviewCircle></ReviewCircle>
-          <ReviewComment></ReviewComment>
-          <ReviewDate></ReviewDate>
+          {
+            reviewList ?  reviewList.map((data,index) =>
+            (
+             <ReviewRow key={index} >
+                <ReviewCircle>{data.recommend}</ReviewCircle>
+                <ReviewCircle>{data.deliveryrating}</ReviewCircle>
+                <ReviewComment>{data.comment}</ReviewComment>
+                <ReviewUserDate>
+                  {data.username}
+                  <div></div>
+                  {data.date.split('T')[0]}
+                </ReviewUserDate>
+
+
+
+             </ReviewRow> 
+
+
+            )) : 'Loading ...'
+          }
           
+
 
         </ButtonContainer>
 

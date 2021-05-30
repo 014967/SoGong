@@ -37,8 +37,12 @@ totalPrice: {
 },//총금액
 address: {
     type:String
+},
+username : {
+  type : String
 }
 });
+
 
 const Purchase = mongoose.model('purchase', PurchaseSchema);
 

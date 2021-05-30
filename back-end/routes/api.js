@@ -458,8 +458,15 @@ router.get('/users', function(req, res){
 
 router.get('/users/:id', function(req, res){
     User.find({id:req.params.id}).then(function(users){
-        if(users.length == 0){res.send(false);}
-        else res.send(true)
+        if(users.length == 0)
+        {
+            res.send(false);
+        }
+        else 
+        {
+            console.log(users)
+            res.send(users)
+        }
     });
 });
 
@@ -1038,6 +1045,17 @@ router.get('/admin/product/review/:product_id/:user_id', auth, function(req, res
 관리자가 상품명 버튼을 누르면 사용자가 남긴 상품평을 확인할 수 있음
 
 */
+
+router.get('/admin/product/review/:purchase_id', auth, function(req, res){
+    Review.find({purchase_id:req.params.purchase_id}).then(function(reviews){
+        res.send(reviews);
+    });
+});
+
+/*
+특정 구매내역에 해당하는 상품평들을 get
+*/
+
 
 router.get('/product/review/avgscore/:product_id', auth, function(req, res){
 

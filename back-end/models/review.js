@@ -5,11 +5,6 @@ const ReviewSchema = mongoose.Schema({
         type: String,
         required : [true]
     },
-    purchaseId : 
-    {
-        type : String, 
-        required : [true]
-    },
     userId: {
         type: String,
         required : [true]
@@ -35,6 +30,14 @@ const ReviewSchema = mongoose.Schema({
         type: Date,
         default: Date.now()
     },
+    purchaseId : 
+    {
+        type : String, 
+    },
+    username  :
+    {
+        type : String
+    }
 })
 
 const Review = mongoose.model('review', ReviewSchema);

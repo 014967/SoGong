@@ -101,6 +101,7 @@ const UserReview = () =>
     const [productTitle, setProductTitle] = useState('');
     const [userId, setUserId] = useState('');
     const [purchaseId, setPurChaseId] = useState('');
+    const [purchaseName, setPurChaseName ] = useState('');
 
     const handleStarClick = index => {
         let clickStates = [...clicked];
@@ -139,6 +140,11 @@ const UserReview = () =>
     const handleSubmit = async() =>
     {
         console.log(score)
+        if(!productId || !userId || !recommend || !deliveryRating || !score || !comment)
+        {
+            alert("리뷰를 전부 작성해주세요")
+        }
+
         const { data : reviews } = await axios.post('api/addreview',
         {
             productId : productId,
@@ -148,11 +154,14 @@ const UserReview = () =>
             score : score,
             comment : comment,
             purchaseId : purchaseId,
+            username : purchaseName,
         })
       
     
         history.goBack();
     }
+
+    
 
     const getProductData = async () =>
     {
@@ -164,6 +173,7 @@ const UserReview = () =>
             setProductTitle(product[0].product[0].name)
             setUserId(product[0].user_id)
             setPurChaseId(id)
+            setPurChaseName(product[0].product[0].username)
         }
         
     }
