@@ -13,14 +13,15 @@ import { defaults } from 'js-cookie';
 
 const Container = styled.div`
   width: 100%;
-  margin-top: 96px;
+  margin-top: 32px;
   display: flex;
+  flex-direction: column;
 `
 
 const ListContainer = styled.div`
 `
 const StatisticsContainer = styled.div`
-  padding: 64px 0 0 64px;
+
 `
 const StatisticsTitle = styled(Title)`
   font-size: 32px;
@@ -110,7 +111,7 @@ const TableHeaderContent = styled.div`
 
 const Pagination = styled.div`
   display: flex;
-  width: 100%;
+  width: 1072px;
   justify-content: center;
   margin: 64px 0;
   & > * + * {
@@ -258,10 +259,23 @@ const ManagerOrderListContents = () => {
       const temp = data.date.split('T')[0].split('-')
       const dataDate = new Date(temp[0], temp[1] - 1, temp[2])
       return startDate <= dataDate && endDate >= dataDate
-    })
+    }).reverse()
     setList(rangeList)
     setPageNum(Math.ceil(rangeList.length / ROW_PER_PAGE))
     setOpen(Array(rangeList.length).fill(false))
+
+    if (rangeList.length === 0) {
+      setTotal(0)
+      return
+    }
+
+    const products = []
+    rangeList.forEach(data => {
+      data.product.forEach(p => {
+        products[products.length] = p
+      })
+    })
+    setTotal(products.reduce((pre, cur) => pre + cur.price * cur.quantity, 0))
 
     // if (rangeList.length === 0) {
     //   setTotal(0)
@@ -375,12 +389,19 @@ const ManagerOrderListContents = () => {
   )
 
     return (
-        <ContentsWrapper wide>
-          <Title>주문 내역</Title>
+        <>
           {isLoading ? <div style={{marginBottom: '32px'}}>
             Loading...
           </div> : <>
           <Container>
+            <StatisticsContainer>
+              <StatisticsTitle>총 판매금액(배송비 제외)</StatisticsTitle>
+                <StatInfoContainer>
+                  <div>
+                    {total.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}원
+                  </div>
+                </StatInfoContainer>
+            </StatisticsContainer>
             <ListContainer>
               <Header>
                 <FilterButtonContainer>
@@ -412,7 +433,7 @@ const ManagerOrderListContents = () => {
                 <TableHeaderContent width="150px">주문 날짜</TableHeaderContent>
                 <TableHeaderContent width="350px">상품명</TableHeaderContent>
                 <TableHeaderContent width="150px">상품 상태</TableHeaderContent>
-                <TableHeaderContent width="200px">가격</TableHeaderContent>
+                <TableHeaderContent width="200px">결제 금액(배송비 포함)</TableHeaderContent>
               </TableHeader>
               {
                 list.length !== 0 && list.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((data, i) => (
@@ -453,7 +474,6 @@ const ManagerOrderListContents = () => {
                 ))
               }
             </ListContainer>
-            
             {/* {total !== 0 &&
               <StatisticsContainer>
                 <StatisticsTitle>총 판매금액</StatisticsTitle>
@@ -498,16 +518,16 @@ const ManagerOrderListContents = () => {
                 </StatInfoContainer>
               </StatisticsContainer>
             } */}
+            <Pagination>
+              {Array(pageNum).fill(0).map((p, i) => (
+                <PageButton key={i} 
+                color={i + 1 === page && 'primary'}
+                onClick={() => setPage(i + 1)}>{i + 1}</PageButton>
+              ))}
+            </Pagination>
           </Container>
-          <Pagination>
-            {Array(pageNum).fill(0).map((p, i) => (
-              <PageButton key={i} 
-              color={i + 1 === page && 'primary'}
-              onClick={() => setPage(i + 1)}>{i + 1}</PageButton>
-            ))}
-          </Pagination>
         </>}
-        </ContentsWrapper>
+        </>
     );
 }
 

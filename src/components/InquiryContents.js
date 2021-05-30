@@ -117,53 +117,65 @@ const TableHeaderContent = styled.div`
   text-align: center;
 `
 
+const ButtonContainer = styled.div`
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  margin: 64px 0;
+  & > * + * {
+    margin-left: 16px;
+  }
+`
+
 const InquiryContents = () => {
 
+  const history = useHistory()
   const params = useParams()
 
-  const getQuestion = async () => {
-    const { data: res } = await axios.get('/api/user/customerquestion/')
+  const [title, setTitle] = useState('')
+  const [contents, setContents] = useState('')
+
+
+  const handleSubmit = async () => {
+    if (title.length === 0 || contents.length === 0) {
+      alert('필수사항을 입력하지 않으셨습니다.')
+      return
+    }
+    const { data: user } = await axios.get('/api/auth')
+    const { data: res } = await axios.post('/api/addcustomQuestion', {
+      id: user._id,
+      title,
+      contents,
+      orderlist: params.id
+    })
+    alert('등록되었습니다.')
+    history.goBack()
   }
 
-  useEffect(() => {
-  }, [])
+  const handleCancel = () => {
+    history.goBack()
+  }
 
-    return(
+
+    return (
         <>
-       
-          <div>
-               <Title>문의하기</Title>
+          <Title>문의하기</Title>
         
         <Container>
             <InputContainer>
             <Title2>제목</Title2>
-            <Input placeholder="제목 입력" onChange></Input>
+            <Input placeholder="제목 입력" value={title} onChange={(e) => setTitle(e.target.value)} />
             </InputContainer>
             <InputContainer>
                     <Title2>내용</Title2>
-                    <Textarea placeholder="내용 입력" onChange></Textarea>
+                    <Textarea placeholder="내용 입력" value={contents} onChange={(e) => setContents(e.target.value)} />
             </InputContainer>
-            <InputContainer>
-                    <LabelButton>등록</LabelButton>
-                    <LabelButton>취소</LabelButton>
-            </InputContainer>
+            <ButtonContainer>
+                    <LabelButton background='primary' onClick={handleSubmit}>등록</LabelButton>
+                    <LabelButton onClick={handleCancel}>취소</LabelButton>
+            </ButtonContainer>
            
         </Container>
-           </div>
-           <ContentsWrapper>
-           <TableHeader>
-          <TableHeaderContent width="80px">등록일시</TableHeaderContent>
-            <TableHeaderContent width="197px">종류</TableHeaderContent>
-            <TableHeaderContent width="485px">문의내용</TableHeaderContent>
-            <TableHeaderContent width="270px">답변</TableHeaderContent>
-          </TableHeader>
-          <Row>
-              <Date width="80px">a</Date>
-              <Available width="197px">b</Available>
-              <DateRange width="485px">c</DateRange>
-              <DateRange width="270px">c</DateRange>
-          </Row>
-       </ContentsWrapper>
         </>
     ) 
 }

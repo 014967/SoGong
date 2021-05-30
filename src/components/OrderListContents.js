@@ -185,7 +185,7 @@ const OrderListContents = () => {
       const { data: user } = await axios.get('/api/auth')
       const { data: res } = await axios.get('/api/purchases/User/' + user._id)
 
-      setList(res)
+      setList(res.reverse())
       setPageNum(Math.ceil(res.length / ROW_PER_PAGE))
       setOpen(Array(res.length).fill(false))
     } else {
@@ -206,7 +206,7 @@ const OrderListContents = () => {
         const temp = data.date.split('T')[0].split('-')
         const dataDate = new Date(temp[0], temp[1] - 1, temp[2])
         return startDate <= dataDate && endDate > dataDate
-      })
+      }).reverse()
 
       setList(rangeList)
       setPageNum(Math.ceil(rangeList.length / ROW_PER_PAGE))

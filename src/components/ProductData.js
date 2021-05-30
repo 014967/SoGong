@@ -296,8 +296,7 @@ const ProductData = () => {
                   }],
                   address,
                   totalPrice: price * orderStock,
-                  deliveryFee: 3000, //TODO: 아래꺼로 교체
-                  // deliveryFee TODO: 이거로 교체
+                  deliveryFee
                 }} />
               </Modal>
             </ButtonContainer>

@@ -109,12 +109,7 @@ const Header = () => {
   }
 
   const handleOrder = async () => {
-    const { data: response } = await axios.get('/api/auth')
-    if (response.isAdmin) {
-        history.push('/manager/orderlist')
-    } else {
-      history.push('/user/orderlist')
-    }
+    history.push('/user/orderlist')
   }
 
   const handleColor = useCallback((cate) => (currentState.category === cate ? 'primary' : 'secondary'), [currentState])

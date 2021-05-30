@@ -13,16 +13,13 @@ const CustomerserviceSchema = mongoose.Schema({
         type: String,
         required : [true]
     },
-    status: {
-        type: Boolean,
-        default: false
-    },
     answer: {
         type: String,
         default: ""
     },
     orderlist: {
         type: String,
+        required : [true]
     },
     date: {
         type: Date,
