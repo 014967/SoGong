@@ -277,7 +277,8 @@ const ManagerOrderListContents = () => {
     } else {
       // 상품평 보기
       console.log(list[index]);
-      const { data : review } = await axios.get(`/api/admin/product/review/${list[index].product[0]._id}/${list[index].user_id}`);
+      console.log(list[index]._id);
+      const { data : review } = await axios.get(`/api/admin/product/review/${list[index]._id}`);
       console.log(review);
       setPurChaseReview(review);
       setReviewModalOpen(true)
@@ -451,6 +452,7 @@ const ManagerOrderListContents = () => {
                   <Title>해당 주문 상품평 보기</Title>
                   <div>
                   {
+                  console.log(purchaseReview),
                   purchaseReview.length !== 0 ? 
                   purchaseReview.map((data,index) =>
                   (

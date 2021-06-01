@@ -1055,7 +1055,8 @@ router.get('/admin/product/review/:product_id/:user_id', auth, function(req, res
 */
 
 router.get('/admin/product/review/:purchase_id', auth, function(req, res){
-    Review.find({purchase_id:req.params.purchase_id}).then(function(reviews){
+    console.log(req.params),
+    Review.find({purchaseId:req.params.purchase_id}).then(function(reviews){
         res.send(reviews);
     });
 });
