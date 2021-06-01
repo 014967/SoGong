@@ -100,7 +100,12 @@ font-family: ${({ theme }) => theme.font.medium}`
 const HeaderUserDate = styled.div`
 display: flex;
 `
+const NoReview = styled.div`
+margin-top : 20px;
+align-items : center;
+justify-content: center;
 
+`
 
 
 
@@ -482,7 +487,8 @@ const ProductData = () => {
             
            //<ReviewListCards data ={reviewList[page - 1]}/>
           
-           reviewList.length !== 0 && reviewList.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((data, i) => (
+           
+           reviewList.length !== 0 ? reviewList.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((data, i) => (
             <Row key={i}>
 
               <ReviewCircle>
@@ -503,7 +509,7 @@ const ProductData = () => {
               </ReviewUserDate>
 
             </Row>
-           ))
+           )) : <NoReview ><div>리뷰없음</div></NoReview>
           }
           
           
