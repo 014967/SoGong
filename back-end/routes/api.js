@@ -1005,6 +1005,16 @@ router.post('/addreview', auth, function(req, res, next){
     }).catch(next);
  });
 
+router.post('/addreviewBypurchase', function(req, res){
+    const arr = []
+    req.body.reviews.forEach((r, i) => {
+        Review.create(r).then(function(review, err){
+            arr[i] = review
+            if(i === req.body.reviews.length-1) {console.log("sucs"); res.send(arr)}
+        })
+    })
+})
+
 /*
 
 유저 고객 문의 등록
@@ -1093,15 +1103,15 @@ router.get('/purchases/User/:id', function(req, res){
 
 
 router.post('/purchasesById', function(req, res){
-    const arr = []
-    req.body.purchase_ids.forEach((id, i) => {
-        Purchase.find({_id: id}).then(function(purchase){
-            console.log(id, purchase === null)
-            arr[i] = purchase
-            if(i === Object.keys(req.body.purchase_ids).length-1) {console.log("sucs"); res.send(arr)}
-        })
+    Purchase.find({_id:{$in: req.body.purchase_ids}}).then(function(purchases){
+        res.send(purchases); 
     })
-})
+});
+/*  [ JSON FORMAT of request to '/purchaseById' ]
+ {
+    "purchase_ids" : "["1414214124", "1412214124"]"
+ }
+*/
 
 router.post('/purchases', function(req, res, next){
     Purchase.create(req.body).then(function(purchase){

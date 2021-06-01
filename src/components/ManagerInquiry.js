@@ -266,8 +266,8 @@ const ManagerInquiry = () => {
       purchase_ids: rangeList.map(q => q.orderlist)
     })
 
-    console.log(orders)
-    setOrderList(orders.map(o => `${o[0].product[0].name} ${o[0].product.length > 1 ? '외 ' + (o[0].product.length - 1).toString() + '건' : ''}`))
+    const temp2 = rangeList.map(q => q.orderlist).map(o => orders.find(order => order._id === o))
+    setOrderList(temp2.map(o => `${o.product[0].name} ${o.product.length > 1 ? '외 ' + (o.product.length - 1).toString() + '건' : ''}`))
     
     setIsLoading(false)
   }
