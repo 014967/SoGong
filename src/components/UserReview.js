@@ -4,6 +4,7 @@ import styled  from 'styled-components';
 import Button from './elements/Button';
 import axios from 'axios';
 import {useParams , useHistory} from 'react-router-dom';
+import { CollectionsBookmarkRounded, Receipt } from '@material-ui/icons';
 
 
 const Textarea = styled.textarea`
@@ -13,8 +14,8 @@ const Textarea = styled.textarea`
     }
     font-size: 20px;
     font-family: ${({ theme }) => theme.font.light};
-    height: 640px;
-    width: 894px;
+    height: 100px;
+    width: 200px;
     max-width: 894px;
     padding: 8px;
     resize: none;
@@ -43,7 +44,30 @@ const BigTitle = styled.div`
 const InputArea = styled.div`
 display : flex`
 
+const TitleContainer = styled.div`
+display : flex;
+`
+const ReviewContainer = styled.div`
+display : flex;
+`
 
+const ProductContainer = styled.div``
+const RecommandContainer = styled.div``
+const DeliveryContainer = styled.div``
+const ScoreContainer = styled.div``
+const CommentContainer = styled.div``
+
+//recommend
+const Recommand = styled.div`
+display : flex`
+
+//delivery
+const Delivery = styled.div``
+
+
+const RowContainer = styled.div`
+
+`
 
 const Container = styled.div`
 display: flex;
@@ -83,6 +107,8 @@ width : 100px;
 height : 100px;
 `
 
+const ListDiv = styled.div`
+margin-top : 100px;`
 
 const ARRAY = [0, 1, 2, 3, 4];
 const UserReview = () =>
@@ -91,11 +117,12 @@ const UserReview = () =>
     const history = useHistory();
     const params = useParams();
     const id = params.id;
-    const [recommend, setRecommend] = useState() //추천 적극추천, 추천 ,비추천 
-    const [deliveryRating, setDeliveryRating] = useState() // 배송 평가 매우빠름, 빠름 ,보통
-    const [score , setScore] = useState() //점수 1~5점
-    const [comment ,setComment]= useState() // 리뷰 이거 글자수 제한있어야함
-    const [clicked, setClicked] = useState([false, false, false, false, false]);
+    const [productData , setProductData]= useState([])
+    const [recommend, setRecommend] = useState([]) //추천 적극추천, 추천 ,비추천 
+    const [deliveryRating, setDeliveryRating] = useState([]) // 배송 평가 매우빠름, 빠름 ,보통
+    const [score , setScore] = useState([]) //점수 1~5점
+    const [comment ,setComment]= useState([]) // 리뷰 이거 글자수 제한있어야함
+    
     const [productId , setProductId] = useState('');
     const [productImg, setProductImg] = useState('');
     const [productTitle, setProductTitle] = useState('');
@@ -103,33 +130,35 @@ const UserReview = () =>
     const [purchaseId, setPurChaseId] = useState('');
     const [purchaseName, setPurChaseName ] = useState('');
 
-    const handleStarClick = index => {
-        let clickStates = [...clicked];
-        for (let i = 0; i < 5; i++) {
-          clickStates[i] = i <= index ? true : false;
-        }
-        setClicked(clickStates);
-      };
     
-      useEffect(() => {
-        
-        setScore(clicked.filter(Boolean).length)
-      }, [clicked]); //컨디마 컨디업
 
-    const handleDelivery = e =>
+    const handleDelivery = (i,e) =>
     {
-        setDeliveryRating(e.target.value);
+        setDeliveryRating(prev => [...prev.map((v, index) => 
+            i === index ? e.target.value : v
+        )])
     }
 
-    const handleRecommend = e =>
+    const handleRecommend = (i,e) =>
     {
-        setRecommend(e.target.value);
+        setRecommend(prev => [...prev.map((v, index) => 
+            i === index ? e.target.value : v
+        )])
     }
 
-    const handleComment = e =>
+    const handleComment = (i,e) =>
     {
-        setComment(e.target.value);
+        setComment(prev => [...prev.map((v, index) => 
+            i === index ? e.target.value : v
+        )])
 
+    }
+
+    const handleScore = (i,e) =>
+    {
+        setScore(prev => [...prev.map((v, index) => 
+            i === index ? e.target.value : v
+        )])
     }
 
     const handleBackbutton = e =>
@@ -169,6 +198,12 @@ const UserReview = () =>
         {
             const {data : product} = await axios.get(`/api/purchases/${id}`)
             console.log(product)
+            setProductData(product[0].product)
+            setRecommend(Array(product[0].product.length).fill(false))
+            setComment(Array(product[0].product.length).fill(false))
+            setDeliveryRating(Array(product[0].product.length).fill(false))
+            
+            
             setProductId(product[0].product[0]._id)
             setProductTitle(product[0].product[0].name)
             setUserId(product[0].user_id)
@@ -198,96 +233,93 @@ const UserReview = () =>
 
     return(
         <Container className ="최상위 컨테이너">
-            <div className="배송 컨테이너">
-                <div className="서비스 리뷰 텍스트">
-                    <BigTitle>
-                        K-SINSA 배송 서비스 리뷰
-                    </BigTitle>
-                </div>
-                <div className="배송 만족도">
-                    <Title>만족도</Title>
-                    <InputArea>
-                        <input type="radio" value="보통" checked={deliveryRating ==="보통"} onChange={handleDelivery}/>
-                        보통
-                    </InputArea>
-                    
-                    <InputArea>
-                        <input type="radio" value="빠름"  checked={deliveryRating ==="빠름"} onChange={handleDelivery}/>
-                        빠름
-                    </InputArea>
-                    <InputArea>
-                        <input type="radio" value="매우빠름" checked={deliveryRating ==="매우빠름"}  onChange={handleDelivery}/>
-                        매우빠름
-                    </InputArea>
-                </div>
-
-            </div>
-            <div className = "상품 품질 리뷰 컨테이너">
-                <div className="상품 품질 리뷰 텍스트">
-                    <BigTitle>
-                        상품 품질 리뷰
-                    </BigTitle>
-                </div>
-                <div className = "상품 이미지 및 별 평점(1~5)">
-                    <div className="이미지 ">
-                        <Image src={productImg}/>
-                    </div>
-                    <div className="상품 이름 및 평점">
-                        <Title className="상품 이름 가져와야함">
-                            {
-                                productTitle
-                            }
-                        </Title>
-                        <Stars>
-                            {ARRAY.map((el, idx) => {
-                                return (
-                                <FaStar 
-                                key={idx}
-                                size="50"
-                                onClick={() => handleStarClick(el)}
-                                className={clicked[el] && 'yellowStar'}
-                                 />
-                                );
-                            })}
-                        </Stars>
-                    </div>
-                </div>
-                <div className ="리뷰"> 
-                    <div className="리뷰 텍스트">
-                    <Title>리뷰</Title>
-                    </div>
-                    <div className="리뷰 평가" >
-                        <div>
-                            옷에 대한 만족도를 알려주세요
-                            <InputArea>
-                                <input type="radio" value="추천" checked={recommend ==="추천"} onChange={handleRecommend}/>
-                                추천
-                            </InputArea>
-                            
-                            <InputArea>
-                                <input type="radio" value="적극 추천" checked={recommend ==="적극 추천"} onChange={handleRecommend}/> 
-                                적극 추천
-                            </InputArea>
-                            <InputArea>
-                                <input type="radio" value="비추천" checked={recommend ==="비추천"} onChange={handleRecommend}/>
-                                비추천
-                            </InputArea>
-                        </div>
-                    </div>
-
-
-
-                </div>
-                <div className = "상세리뷰">
-                    <Textarea placeholder="상세 설명 입력" onChange={handleComment}></Textarea>
-                </div>
+            <Title>K-SINSA 
+                주문 리뷰</Title>
+        
+       
+        <TitleContainer>
+            <Title>상품명</Title>
+            <Title>추천</Title>
+            <Title>배송평가</Title>
+            <Title>점수</Title>
+            <Title>후기</Title>
+        </TitleContainer>
+        
+        <ListDiv>
+        
+          {  
+            productData ? productData.map((data, i) =>
+            (
                 
-            </div>
+                <RowContainer key={i}>
+                    <ReviewContainer>
+                        <ProductContainer>
+                            <Title>{data.name}</Title>
+                        </ProductContainer>
+                        <RecommandContainer>
+                            <Recommand>
+                                <input type="radio" value="추천" checked={recommend[i] ==="추천"} onChange={(e) =>handleRecommend(i,e)}/>
+                                            추천
+                            </Recommand>
+                            <Recommand>
+                            <input type="radio" value="적극 추천" checked={recommend[i] ==="적극 추천"} onChange={(e)=>handleRecommend(i,e)}/> 
+                                            적극 추천
 
+                            </Recommand>
+                            <Recommand>
+                            <input type="radio" value="비추천" checked={recommend[i] ==="비추천"} onChange={(e)=>handleRecommend(i,e)}/>
+                                            비추천
+                            </Recommand>
+
+                        </RecommandContainer>
+                        <DeliveryContainer>
+                            <Delivery>
+                                <input type="radio" value="보통" checked={deliveryRating[i] ==="보통"} onChange={(e)=>handleDelivery(i,e)}/>
+                                    보통
+                            </Delivery>
+                            <Delivery>
+                                <input type="radio" value="빠름"  checked={deliveryRating[i] ==="빠름"} onChange={(e)=>handleDelivery(i,e)}/>
+                                    빠름
+                            </Delivery>
+                            <Delivery>
+                                <input type="radio" value="매우빠름" checked={deliveryRating[i] ==="매우빠름"}  onChange={(e)=>handleDelivery(i,e)}/>
+                                    매우빠름
+                            </Delivery>
+                                
+
+                        </DeliveryContainer>
+                        <ScoreContainer>
+                            <select
+                            value={score[i]}
+                            onChange ={(e)=>handleScore(i,e)}>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+
+                            </select>
+                        </ScoreContainer>
+                        <CommentContainer>
+
+                        <Textarea placeholder="상세 설명 입력" onChange={(e)=>handleComment(i,e)}></Textarea>
+                        </CommentContainer>
+
+                    </ReviewContainer>
+                </RowContainer>
+            ))
+
+         : "로딩중" }
+         
+         
+         </ListDiv>
+    
+    
             <div className="취소하기 등록하기 버튼">
                 <Button onClick={handleBackbutton}>취소하기</Button>
                 <Button onClick={handleSubmit}>등록하기</Button>
             </div>
+           
         </Container>
     )
 
