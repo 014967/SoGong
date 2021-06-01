@@ -138,8 +138,12 @@ const AlterProduct = () =>
     const handleDetailImg = () =>
     {
 
-        console.log(location.state.data.detailImg.length);
+        //console.log(location.state.data.detailImg.length);
         const result =[];
+        if(typeof location.state !== "undefined")
+        {
+
+        
         for(let i=0; i<location.state.data.detailImg.length ; i++)
         {
             result.push(
@@ -150,6 +154,7 @@ const AlterProduct = () =>
                 </FileName>
             )
         }
+        }
     
         return result;
     }
@@ -157,7 +162,7 @@ const AlterProduct = () =>
 
     useEffect(()=>
     {
-        if(location.state !== "undefined")
+        if(typeof location.state !== "undefined")
         {
             console.log("hello")
             setProductTitle(location.state.data.name)
@@ -168,7 +173,13 @@ const AlterProduct = () =>
             setImgFileName(location.state.data.img)
             setDeliveryFee(location.state.data.deliveryFee)
         }
+        
     }, [])
+
+    useEffect(()=>
+    {
+            console.log(location);
+    },[location])
 
     const alterSubmit = async (e) => {
         e.preventDefault()
@@ -269,6 +280,9 @@ const AlterProduct = () =>
 
     useEffect(()=>
     {
+        if(typeof location.state !== "undefined"){
+
+        
         if(location.state.data.detailImg === Array(0))
         {
 
@@ -280,6 +294,12 @@ const AlterProduct = () =>
             setFlag(false)
             
         }
+    }
+    else
+    {
+        alert("정확한 경로로 수정해주세요")
+        history.goBack()
+    }
 
     },[location.state])
  

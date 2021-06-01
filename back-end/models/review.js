@@ -40,6 +40,14 @@ const ReviewSchema = mongoose.Schema({
             return new Date(Date.UTC(year, month, today, hours, minutes, seconds, milliseconds));
         }
     },
+    purchaseId : 
+    {
+        type : String, 
+    },
+    username  :
+    {
+        type : String
+    }
 })
 
 const Review = mongoose.model('review', ReviewSchema);

@@ -23,6 +23,108 @@ const TopContainer = styled.div`
   padding-bottom: 64px;
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
 `
+const MiddleContainer = styled.div`
+width: 100%;
+padding-bottom: 64px;
+border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+`
+const BottomContainer = styled.div`
+
+`
+
+//review
+const ReviewCircle = styled.div`
+margin-right : 10px;
+max-width : 150px;
+width : 150px;
+
+`
+const ReviewComment = styled.div`
+margin-right : 10px;
+max-width : 500px;
+width : 500px;
+`
+const ReviewUserDate = styled.div`
+display: flex;
+`
+const ReviewUser = styled.div`
+margin-right : 10px;
+max-width : 100px;
+width : 100px;
+`
+const ReviewDate = styled.div`
+max-width : 200px;
+width : 200px;
+`
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  width: 1072px;
+  height: 112px;
+  padding: 0 16px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+`
+const ReviewHeader = styled.div`
+display :flex;
+  align-items: center;
+  width: 1072px;
+  height: 112px;
+  padding: 0 16px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+`
+const HeaderRecommend = styled.div`
+margin-right : 10px;
+max-width : 150px;
+width : 150px;
+font-family: ${({ theme }) => theme.font.medium}
+`
+const HeaderDelivery = styled.div`
+margin-right : 10px;
+max-width : 150px;
+width : 150px;
+font-family: ${({ theme }) => theme.font.medium}`
+const HeaderComment = styled.div`
+margin-right : 10px;
+max-width : 500px;
+width : 500px;
+font-family: ${({ theme }) => theme.font.medium}`
+const HeaderUser = styled.div`
+margin-right : 10px;
+max-width : 100px;
+width : 100px;
+font-family: ${({ theme }) => theme.font.medium}`
+const HeaderDate = styled.div`
+max-width : 200px;
+width : 200px;
+font-family: ${({ theme }) => theme.font.medium}`
+const HeaderUserDate = styled.div`
+display: flex;
+`
+const NoReview = styled.div`
+margin-top : 20px;
+align-items : center;
+justify-content: center;
+
+`
+
+
+
+//
+
+
+
+const PageContainer = styled.div`
+  display : flex;
+  align-items : center;
+  justify-content: center;
+  margin-top : 100px;
+`
+
+
+
+
+
+
 
 const InfoContainer = styled.div`
   display: flex;
@@ -32,7 +134,6 @@ const InfoContainer = styled.div`
 
 const ButtonContainer = styled.div`
   margin-top: 16px;
-  display: flex;
   justify-content: space-between;
   & > * + * {
     margin-left: 16px;
@@ -51,9 +152,17 @@ const Price = styled.div`
   margin-bottom: 200px;
   color: ${({ theme }) => theme.color.secondary};
 `
+const Review = styled.div`
+font-size: 24px;
+font-family: ${({ theme }) => theme.font.regular};
+margin-top: 16px;
+margin-bottom: 10px;
+color: ${({ theme }) => theme.color.secondary};
+`
 
 const Description = styled.div`
   padding-left: 64px;
+  padding-right: 64px;
   margin-bottom: 128px;
 `
 
@@ -61,6 +170,21 @@ const Address = styled.div`
   font-size: 14px;
   width: 300px;
 `
+
+const PageButton = styled.button`
+  color: ${(props) => props.theme.color[props.color] || props.theme.color.secondary};
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  &:focus {
+    outline: none;
+  }
+  & + & {
+    margin-left: 16px;
+  }
+`
+
 
 const getModalStyle = () => {
   const top = 50
@@ -86,10 +210,21 @@ const categoryMap = {
   Child: 'KIDS',
 }
 
+
+const ROW_PER_PAGE = 5 
+const defaultStartDate = new Date()
+defaultStartDate.setDate(defaultStartDate.getDate() - 7)
+defaultStartDate.setHours(0, 0, 0, 0)
+const defaultEndDate = new Date()
+defaultEndDate.setDate(defaultEndDate.getDate())
+defaultEndDate.setHours(0, 0, 0, 0)
+
+
 const ProductData = () => {  
 
   const params = useParams()
   const id = params.id
+  console.log(params)
 
   const [category, setCategory] = useState('');
   const [img, setImg] = useState('');
@@ -102,6 +237,15 @@ const ProductData = () => {
   const [deliveryFee, setDeliveryFee] = useState(3000)
   const [open, setOpen] = useState(false);
   const [openPurchase, setOpenPurchase] = useState(false)
+
+  //reviewData
+  const [page, setPage] = useState(1);
+  const [pageNum , setPageNum] = useState(1);
+  const [reviewList , setReviewList ] = useState([]);
+  const [startDate, setStartDate] = useState(defaultStartDate)
+  const [endDate, setEndDate] = useState(defaultEndDate)
+  const [reviewOpen, setReviewOpen] = useState([])
+
 
   const { success } = useContext(LoginContext)
   const { setWishListFlag } = useContext(WishListContext)
@@ -120,6 +264,57 @@ const ProductData = () => {
       setDeliveryFee(product[0].deliveryFee)
     }
   }
+
+
+
+  const handleRange = async () =>
+  {
+    const {data :res} =await axios.get(`/api/product/review/${id}`)
+    console.log(res)
+    if(res.length === 0 )
+    {
+      return
+    }
+
+    let rangeList = [...res]
+
+    rangeList = rangeList.filter(data => {
+      const temp = data.date.split('T')[0].split('-')
+      const dataDate = new Date(temp[0], temp[1] - 1, temp[2])
+      return startDate <= dataDate && endDate >= dataDate
+      
+    }).reverse()
+    console.log(rangeList)
+    setReviewList(rangeList)
+    setPageNum(Math.ceil(rangeList.length / ROW_PER_PAGE))
+    setReviewOpen(Array(rangeList.length).fill(false))
+
+   
+
+  }
+
+
+  const filterName = (username) =>
+  {
+    
+    if(typeof username !== "undefined")
+    {
+      console.log(username);
+    
+      var reviewname = username;
+
+      reviewname = reviewname.replace(/(?<=.{1})./gi, "*");
+
+      return reviewname;
+
+
+    }
+      
+    
+  }
+
+
+
 
   const getAddress = async () => {
     const { data: ad } = await axios.get('/api/delivery')
@@ -155,9 +350,14 @@ const ProductData = () => {
   }
 
   useEffect(() => {
+    
     getProductData()
     getAddress()
+    //getReviewData()
+    handleRange()
   }, [])
+
+  
 
   useEffect(() => {
     if (!open) {
@@ -190,6 +390,17 @@ const ProductData = () => {
       alert('로딩 중입니다. 잠시만 기다려주세요.')
     }
   }
+
+
+ 
+
+  
+
+   
+   
+
+
+
 
     return (
       <>
@@ -255,12 +466,68 @@ const ProductData = () => {
             </ButtonContainer>
           </InfoContainer>
         </TopContainer>
+        <MiddleContainer>
         <Price>상품 설명</Price>
-        <Description>
-          <div>{description.split('\n').map((line, i) => (
-            <div key={i}>{line}</div>
-          ))}</div>
-        </Description>
+        <Description>{description}</Description>
+        </MiddleContainer>
+        <BottomContainer>
+          <Review>상품 리뷰</Review>
+          <ReviewHeader>
+            <HeaderRecommend>만족도</HeaderRecommend>
+            <HeaderDelivery>배송속도</HeaderDelivery>
+            <HeaderComment>내용</HeaderComment>
+            <HeaderUserDate>
+            <HeaderUser>작성자</HeaderUser>
+            <HeaderDate>구매날짜</HeaderDate>
+
+            </HeaderUserDate>
+            
+          </ReviewHeader>
+          {
+            
+           //<ReviewListCards data ={reviewList[page - 1]}/>
+          
+           
+           reviewList.length !== 0 ? reviewList.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((data, i) => (
+            <Row key={i}>
+
+              <ReviewCircle>
+              {data.recommend}
+              </ReviewCircle>
+              <ReviewCircle>{data.deliveryrating}</ReviewCircle>
+              <ReviewComment>{data.comment}</ReviewComment>
+              <ReviewUserDate>
+                  <ReviewUser>
+                  {
+                      filterName(data.username)
+                  }
+                  </ReviewUser>                
+                  <ReviewDate>
+                  {data.date.split('T')[0]}
+                  </ReviewDate>
+                        
+              </ReviewUserDate>
+
+            </Row>
+           )) : <NoReview ><div>리뷰없음</div></NoReview>
+          }
+          
+          
+         
+          
+
+
+        </BottomContainer>
+        <PageContainer>
+        {
+            Array(pageNum).fill(0).map((p,i)=>(
+              <PageButton key={i} 
+                  color={i + 1 === page && 'primary'}
+                  onClick={() => setPage(i + 1)}>{i + 1}</PageButton>
+            ))
+        }
+        </PageContainer>
+
       </>
   )
 }

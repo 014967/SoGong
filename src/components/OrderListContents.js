@@ -171,6 +171,7 @@ const OrderListContents = () => {
       })
     } else if (list[index].status === '구매 확정') {
       // 상품평 쓰기
+      history.push('/user/review/' + list[index]._id)  //구매 목록의 _id
     } else {
       history.push('/user/inquiry/' + list[index]._id)
     }
@@ -212,6 +213,8 @@ const OrderListContents = () => {
       setOpen(Array(rangeList.length).fill(false))
     }
   }
+
+
 
   const handleRangeButton = (r) => {
     if (range === r) { //같은 버튼 한번 또 누르면 모두 표시
