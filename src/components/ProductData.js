@@ -478,7 +478,7 @@ const ProductData = () => {
             <HeaderComment>내용</HeaderComment>
             <HeaderUserDate>
             <HeaderUser>작성자</HeaderUser>
-            <HeaderDate>구매날짜</HeaderDate>
+            <HeaderDate>작성날짜</HeaderDate>
 
             </HeaderUserDate>
             

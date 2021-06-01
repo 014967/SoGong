@@ -7,7 +7,7 @@ import {useParams , useHistory} from 'react-router-dom';
 import { CollectionsBookmarkRounded, Receipt } from '@material-ui/icons';
 
 
-const Textarea = styled.textarea`
+const Input = styled.input`
     border: 1px solid ${({ theme }) => theme.color.primary};
     &:focus {
         outline: none;
@@ -19,10 +19,6 @@ const Textarea = styled.textarea`
     max-width: 894px;
     padding: 8px;
     resize: none;
-`
-
-const SmallTextarea = styled.textarea`
-
 `
 
 
@@ -124,11 +120,9 @@ const UserReview = () =>
     const [comment ,setComment]= useState([]) // 리뷰 이거 글자수 제한있어야함
     
     const [productId , setProductId] = useState('');
-    const [productImg, setProductImg] = useState('');
-    const [productTitle, setProductTitle] = useState('');
     const [userId, setUserId] = useState('');
-    const [purchaseId, setPurChaseId] = useState('');
-    const [purchaseName, setPurChaseName ] = useState('');
+    const [purchaseId, setPurchaseId] = useState('');
+    const [username, setUsername] = useState('');
 
     
 
@@ -168,25 +162,30 @@ const UserReview = () =>
 
     const handleSubmit = async() =>
     {
-        console.log(score)
-        if(!productId || !userId || !recommend || !deliveryRating || !score || !comment)
-        {
-            alert("리뷰를 전부 작성해주세요")
+        if (recommend.some(v => !v) || deliveryRating.some(v => !v) || 
+            comment.some(v => v.length === 0)) {
+            alert("리뷰를 전부 작성해주세요.")
+            return
+        }
+        if (comment.some(v => v.length > 20)) {
+            alert('코멘트가 너무 깁니다.')
+            return
         }
 
-        const { data : reviews } = await axios.post('api/addreview',
-        {
-            productId : productId,
-            userId : userId,
-            recommend : recommend,
-            deliveryrating : deliveryRating,
-            score : score,
-            comment : comment,
-            purchaseId : purchaseId,
-            username : purchaseName,
+        console.log(username)
+        const { data : reviews } = await axios.post('/api/addreviewBypurchase', {
+            reviews: productId.map((p, i) => ({
+                productId: p,
+                userId,
+                recommend: recommend[i],
+                deliveryrating: deliveryRating[i],
+                score: score[i],
+                comment: comment[i],
+                purchaseId,
+                username
+            }))
         })
-      
-    
+        
         history.goBack();
     }
 
@@ -202,13 +201,11 @@ const UserReview = () =>
             setRecommend(Array(product[0].product.length).fill(false))
             setComment(Array(product[0].product.length).fill(false))
             setDeliveryRating(Array(product[0].product.length).fill(false))
-            
-            
-            setProductId(product[0].product[0]._id)
-            setProductTitle(product[0].product[0].name)
+            setScore(Array(product[0].product.length).fill(5))
+            setProductId(product[0].product.map(p => p._id))
             setUserId(product[0].user_id)
-            setPurChaseId(id)
-            setPurChaseName(product[0].username)
+            setPurchaseId(id)
+            setUsername(product[0].username)
         }
         
     }
@@ -217,19 +214,6 @@ const UserReview = () =>
         getProductData()
     },[])
 
-    useEffect(()=>
-    {
-        getProdudctImg()
-    },[productId])
-    const getProdudctImg = async () =>
-    {
-        if(productId.length !==0)
-        {
-            const {data : product} =await axios.get(`/api/products/${productId}`)
-         
-            setProductImg(product[0].img)
-        }
-    }
 
     return(
         <Container className ="최상위 컨테이너">
@@ -302,7 +286,7 @@ const UserReview = () =>
                         </ScoreContainer>
                         <CommentContainer>
 
-                        <Textarea placeholder="상세 설명 입력" onChange={(e)=>handleComment(i,e)}></Textarea>
+                        <Input placeholder="코멘트 입력(최대 20자)" type='text' onChange={(e)=>handleComment(i,e)}></Input>
                         </CommentContainer>
 
                     </ReviewContainer>

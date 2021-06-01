@@ -297,7 +297,7 @@ const AlterProduct = () =>
     }
     else
     {
-        alert("정확한 경로로 수정해주세요")
+        alert("잘못된 접근입니다.")
         history.goBack()
     }
 
