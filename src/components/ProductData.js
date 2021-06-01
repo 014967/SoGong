@@ -185,6 +185,8 @@ const PageButton = styled.button`
   }
 `
 
+const Score = styled.div``
+
 
 const getModalStyle = () => {
   const top = 50
@@ -245,7 +247,7 @@ const ProductData = () => {
   const [startDate, setStartDate] = useState(defaultStartDate)
   const [endDate, setEndDate] = useState(defaultEndDate)
   const [reviewOpen, setReviewOpen] = useState([])
-
+  const [avgScore , setAvgScore] = useState();
 
   const { success } = useContext(LoginContext)
   const { setWishListFlag } = useContext(WishListContext)
@@ -293,6 +295,27 @@ const ProductData = () => {
 
   }
 
+  const handleAvgScore = async()=>
+  {
+    const {data :res} = await axios.get(`/api/product/review/avgscore/${id}`)
+    console.log(res)
+    if(res.length !== 0)
+    {
+
+    
+    if( typeof res[0].avg !== "undefined")
+    {
+      setAvgScore(res[0].avg)
+    }
+    else
+    {
+      setAvgScore(0)
+    }
+  }
+   
+
+  }
+
 
   const filterName = (username) =>
   {
@@ -311,6 +334,18 @@ const ProductData = () => {
     }
       
     
+  }
+
+  const filterScore = (score) =>
+  {
+    if(typeof score !== "undefined")
+    {
+      console.log(score);
+      var reviewScore = score;
+      reviewScore = reviewScore.toFixed(2);
+    
+      return reviewScore;
+    }
   }
 
 
@@ -354,6 +389,7 @@ const ProductData = () => {
     getProductData()
     getAddress()
     //getReviewData()
+    handleAvgScore()
     handleRange()
   }, [])
 
@@ -409,7 +445,13 @@ const ProductData = () => {
           {(img && detailImg) ? <ProductImage img={img} detailImg={detailImg} />
           : '...loading'}
           <InfoContainer>
+            
             <Name>{name}</Name>
+            <Score>
+              {
+                filterScore(avgScore)
+              }
+            </Score>
             <Price>&#8361;{price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</Price>
             <Address>
               기본 배송지: {address}
