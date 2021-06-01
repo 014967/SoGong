@@ -1073,6 +1073,18 @@ router.get('/purchases/User/:id', function(req, res){
     });
 });
 
+
+router.post('/purchasesById', function(req, res){
+    const arr = []
+    req.body.purchase_ids.forEach((id, i) => {
+        Purchase.find({_id: id}).then(function(purchase){
+            console.log(id, purchase === null)
+            arr[i] = purchase
+            if(i === Object.keys(req.body.purchase_ids).length-1) {console.log("sucs"); res.send(arr)}
+        })
+    })
+})
+
 router.post('/purchases', function(req, res, next){
     Purchase.create(req.body).then(function(purchase){
      res.send(purchase);

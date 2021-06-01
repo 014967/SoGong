@@ -261,11 +261,13 @@ const ManagerInquiry = () => {
     setOpen(Array(rangeList.length).fill(false))
     setOpenAnswer(Array(rangeList.length).fill(false))
 
-    const orders = await Promise.all(rangeList.map(async q => {
-      return await axios.get('/api/purchases/' + q.orderlist)
-    }))
-    console.log(orders.map(o => o.data[0]))
-    setOrderList(orders.map(o => `${o.data[0].product[0].name} ${o.data[0].product.length > 1 ? '외 ' + (o.data[0].product.length - 1).toString() + '건' : ''}`))
+    console.log(rangeList.map(q => q.orderlist))
+    const { data: orders } = await axios.post('/api/purchasesById', {
+      purchase_ids: rangeList.map(q => q.orderlist)
+    })
+
+    console.log(orders)
+    setOrderList(orders.map(o => `${o[0].product[0].name} ${o[0].product.length > 1 ? '외 ' + (o[0].product.length - 1).toString() + '건' : ''}`))
     
     setIsLoading(false)
   }
@@ -349,7 +351,7 @@ const ManagerInquiry = () => {
                 questions.length !== 0 && questions.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((q, i) => (
                   <Row key={i}>
                     <RowContent width="150px">{q.date.split('T')[0]}</RowContent>
-                    <RowContent width="300px">{orderList[i]}</RowContent>
+                    <RowContent width="300px">{orderList[i + ROW_PER_PAGE * (page - 1)]}</RowContent>
                     <RowContent width="400px">{q.title}</RowContent>
                     <Button onClick={() => handleOpen(i, true)}>
                       {q.answer.length === 0 ? '답변하기' : '답변완료'}
