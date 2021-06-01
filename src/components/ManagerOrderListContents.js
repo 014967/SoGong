@@ -26,7 +26,35 @@ const StatisticsContainer = styled.div`
 const StatisticsTitle = styled(Title)`
   font-size: 32px;
 `
+//review
+const ReviewCircle = styled.div`
+margin-right : 10px;
+max-width : 300px;
+width : 300px;
 
+`
+const ReviewComment = styled.div`
+margin-right : 10px;
+max-width : 1000px;
+width : 1000px;
+`
+const ReviewUserDate = styled.div`
+display: flex;
+`
+const ReviewUser = styled.div`
+margin-right : 10px;
+max-width : 100px;
+width : 100px;
+`
+const ReviewDate = styled.div`
+max-width : 200px;
+width : 200px;
+`
+
+
+const ReviewRow = styled.div`
+display : flex;`
+//review
 
 const InfoContainer = styled.div`
   display: flex;
@@ -216,6 +244,9 @@ const ManagerOrderListContents = () => {
   const [categoryRanking, setCategoryRanking] = useState([])
   const [isLoading, setIsLoading] = useState(true)
 
+  const [reviewModalOpen, setReviewModalOpen] = useState(false);
+  const [purchaseReview, setPurChaseReview] = useState([]);
+
   const classes = useStyles();
   const [modalStyle] = React.useState(getModalStyle);
 
@@ -229,6 +260,10 @@ const ManagerOrderListContents = () => {
       setOpen(prev => [...prev.map(v => false)])
     }
   }
+  const handleReviewOpen = () =>
+  {
+    setReviewModalOpen(false)
+  }
 
   const handleButton = async (index) => {
     if (list[index].status === '결제 완료') {
@@ -241,10 +276,18 @@ const ManagerOrderListContents = () => {
       })
     } else {
       // 상품평 보기
+      console.log(list[index]);
+      const { data : review } = await axios.get(`/api/admin/product/review/${list[index].product[0]._id}/${list[index].user_id}`);
+      console.log(review);
+      setPurChaseReview(review);
+      setReviewModalOpen(true)
+      
     }
     handleRange(range)
   }
 
+ 
+  
   const handleRange = async () => {
     
     const { data: res } = await axios.get('/api/purchases/')
@@ -277,85 +320,7 @@ const ManagerOrderListContents = () => {
     })
     setTotal(products.reduce((pre, cur) => pre + cur.price * cur.quantity, 0))
 
-    // if (rangeList.length === 0) {
-    //   setTotal(0)
-    //   setProductRanking(Array(3).fill({ name: '', quantity: '' }))
-    //   setCategoryRanking(Array(3).fill({ category: '', quantity: '' }))
-    //   return
-    // }
-
-    // 통계
-    // const products = []
-    // rangeList.forEach(data => {
-    //   data.product.forEach(p => {
-    //     products[products.length] = p
-    //   })
-    // })
     
-    // const st = new Array(0)
-    // console.log(st)
-    // products.forEach(product => {
-    //   if (st.length === 0) {
-    //     st.push(product)
-    //   } else {
-    //     const index = st.findIndex(p => p._id === product._id)
-    //     if (index === -1) {
-    //       st.push(product)
-    //     } else {
-    //       st[index] = {
-    //         ...st[index],
-    //         quantity: st[index].quantity + product.quantity,
-    //         price: st[index].price + product.price
-    //       }
-    //     }
-    //   }
-    // })
-
-    // // 카테고리 추가
-    // const statistics = await Promise.all(st.map(async product => {
-    //   const { data: res } = await axios.get('/api/products/' + product._id)
-      
-    //   return {
-    //     ...product,
-    //     category: res[0].category
-    //   }
-    // }))
-
-    // setTotal(statistics.reduce((pre, cur) => pre + cur.price, statistics[0].price))
-
-    // statistics.sort((a, b) => b.quantity - a.quantity)
-    // setProductRanking(statistics.slice(0, 3))
-
-    // let category = ['Man', 'Woman', 'Child']
-    // category = category.map(c => ({
-    //   category: c,
-    //   quantity: 0,
-    //   price: 0
-    // }))
-
-    // statistics.forEach(product => {
-    //   if (product.category === 'Man') {
-    //     category[0] = {
-    //       ...category[0],
-    //       quantity: category[0].quantity + product.quantity,
-    //       price: category[0].price + product.price
-    //     }
-    //   } else if (product.category === 'Woman') {
-    //     category[1] = {
-    //       ...category[1],
-    //       quantity: category[1].quantity + product.quantity,
-    //       price: category[1].price + product.price
-    //     }
-    //   } else {
-    //     category[2] = {
-    //       ...category[2],
-    //       quantity: category[2].quantity + product.quantity,
-    //       price: category[2].price + product.price
-    //     }
-    //   }
-    // })
-    // category.sort((a, b) => b.quantity - a.quantity)
-    // setCategoryRanking(category)
 
     setIsLoading(false)
   }
@@ -473,51 +438,51 @@ const ManagerOrderListContents = () => {
                   </Row>
                 ))
               }
+              
             </ListContainer>
-            {/* {total !== 0 &&
-              <StatisticsContainer>
-                <StatisticsTitle>총 판매금액</StatisticsTitle>
-                <StatInfoContainer>
+           
+            {
+                
+               
+                
+                <Modal open={reviewModalOpen} onClose={() => handleReviewOpen()}>
+                <ModalContainer style={modalStyle} className={classes.paper}>
+
+                  <Title>해당 주문 상품평 보기</Title>
                   <div>
-                    {total.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}원
-                  </div>
-                </StatInfoContainer>
+                  {
+                  purchaseReview.length !== 0 ? 
+                  purchaseReview.map((data,index) =>
+                  (
+                    <ReviewRow key={index}>
+                      <ReviewCircle>{data.recommend}</ReviewCircle>
+                      <ReviewCircle>{data.deliveryrating}</ReviewCircle>
+                      <ReviewComment>{data.comment}</ReviewComment>
+                      <ReviewUserDate>
+                                  <ReviewUser>
+                                        {
+                                          data.username
+                                        }
+                                  </ReviewUser>                
+                                  <ReviewDate>
+                                        {data.date.split('T')[0]}
+                                  </ReviewDate>
+                                        
+                      </ReviewUserDate>
 
-                <StatisticsTitle>상품 판매량 순위 Top 3</StatisticsTitle>
-                <StatInfoContainer>
-                  <div>1위</div>
-                  <div>{productRanking[0].name} ({productRanking[0].quantity}개)
-                  </div>
-                </StatInfoContainer>
-                <StatInfoContainer>
-                  <div>2위</div>
-                  <div>{productRanking[1].name} ({productRanking[1].quantity}개)
-                  </div>
-                </StatInfoContainer>
-                <StatInfoContainer>
-                  <div>3위</div>
-                  <div>{productRanking[2].name} ({productRanking[2].quantity}개)
-                  </div>
-                </StatInfoContainer>
 
-                <StatisticsTitle>카테고리 판매량 순위 Top 3</StatisticsTitle>
-                <StatInfoContainer>
-                  <div>1위</div>
-                  <div>{productRanking[0].category} ({productRanking[0].quantity}개)
+
+                    </ReviewRow>
+                  )) : "리뷰없음"
+                  }
+                   
                   </div>
-                </StatInfoContainer>
-                <StatInfoContainer>
-                  <div>2위</div>
-                  <div>{productRanking[1].category} ({productRanking[1].quantity}개)
-                  </div>
-                </StatInfoContainer>
-                <StatInfoContainer>
-                  <div>3위</div>
-                  <div>{productRanking[2].category} ({productRanking[2].quantity}개)
-                  </div>
-                </StatInfoContainer>
-              </StatisticsContainer>
-            } */}
+                </ModalContainer>
+                
+                </Modal>
+                
+                
+              }
             <Pagination>
               {Array(pageNum).fill(0).map((p, i) => (
                 <PageButton key={i} 

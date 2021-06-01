@@ -25,22 +25,48 @@ const TopContainer = styled.div`
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
 `
 const MiddleContainer = styled.div`
-
+width: 100%;
+padding-bottom: 64px;
+border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
 `
 const BottomContainer = styled.div`
-display : flex;
+
 `
 
 const ReviewCircle = styled.div`
+margin-right : 10px;
+max-width : 150px;
+width : 150px;
+
 `
 const ReviewComment = styled.div`
+margin-right : 10px;
+max-width : 1000px;
+width : 1000px;
 `
 const ReviewUserDate = styled.div`
+display: flex;
 `
+const ReviewUser = styled.div`
+margin-right : 10px;
+max-width : 100px;
+width : 100px;
+`
+const ReviewDate = styled.div`
+max-width : 200px;
+width : 200px;
+`
+
 
 const ReviewRow = styled.div`
 display : flex;`
 
+const PageContainer = styled.div`
+  display : flex;
+  align-items : center;
+  justify-content: center;
+  margin-top : 100px;
+`
 
 
 const InfoContainer = styled.div`
@@ -69,6 +95,13 @@ const Price = styled.div`
   margin-bottom: 200px;
   color: ${({ theme }) => theme.color.secondary};
 `
+const Review = styled.div`
+font-size: 24px;
+font-family: ${({ theme }) => theme.font.regular};
+margin-top: 16px;
+margin-bottom: 50px;
+color: ${({ theme }) => theme.color.secondary};
+`
 
 const Description = styled.div`
   padding-left: 64px;
@@ -79,6 +112,21 @@ const Address = styled.div`
   font-size: 14px;
   width: 300px;
 `
+
+const PageButton = styled.button`
+  color: ${(props) => props.theme.color[props.color] || props.theme.color.secondary};
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px;
+  &:focus {
+    outline: none;
+  }
+  & + & {
+    margin-left: 16px;
+  }
+`
+
 
 const getModalStyle = () => {
   const top = 50
@@ -108,6 +156,7 @@ const ProductData = () => {
 
   const params = useParams()
   const id = params.id
+  console.log(params)
 
   const [category, setCategory] = useState('');
   const [img, setImg] = useState('');
@@ -122,13 +171,8 @@ const ProductData = () => {
   const [openPurchase, setOpenPurchase] = useState(false)
 
   //reviewData
-  const [reviewDate, setReviewDate] = useState();
-  const [reviewComment, setReviewComment] = useState();
-  const [reviewScore , setReviewScore] = useState();
-  const [reviewDelivery, setReviewDelivery] = useState();
-  const [reviewRecommend, setReviewRecommend] = useState();
-  const [reviewUserId , setReviewUserId] = useState();
-  const [customeDate , setCustomDate] = useState();
+  const [page, setPage] = useState();
+ 
   const [reviewList , setReviewList ] = useState();
 
 
@@ -153,17 +197,38 @@ const ProductData = () => {
 
   const getReviewData = async () =>
   {
-    const { data : reviewData } = await axios.get(`/api/product/review/${id}`)
-    console.log(reviewData);
-    /*setReviewComment(reviewData[0].comment);
-    setReviewDate(reviewData[0].date);
-    setReviewDelivery(reviewData[0].deliveryrating);
-    setReviewScore(reviewData[0].score);
-    setReviewRecommend(reviewData[0].recommend);
-    setReviewUserId(reviewData[0].userId);*/
-    setReviewList(reviewData)
+    if(id.length !== 0)
+    {
+      console.log(id)
+      const { data : reviewData } = await axios.get(`/api/product/review/${id}`)
+      console.log(reviewData);
+     
+      setReviewList(reviewData)
+    }
+    
   }
 
+
+  const PageCount = () =>
+  {
+    const result = [];
+    for(let i =0; i<=reviewList.length/3; i++)
+    {
+      result.push(
+        <PageButton key={i+1} onClick={
+          ()=>
+          {
+            setPage(i+1)
+
+          }
+
+        }>{i+1}
+
+        </PageButton>
+      )
+    }
+    return result;
+  }
 
   const getAddress = async () => {
     const { data: ad } = await axios.get('/api/delivery')
@@ -199,6 +264,7 @@ const ProductData = () => {
   }
 
   useEffect(() => {
+    
     getProductData()
     getAddress()
     getReviewData()
@@ -237,6 +303,34 @@ const ProductData = () => {
       alert('로딩 중입니다. 잠시만 기다려주세요.')
     }
   }
+
+
+  const filterName = (name) =>
+  {
+    
+    if(typeof name !== "undefined")
+    {
+      console.log(name);
+    
+      var reviewname = name;
+
+      reviewname = reviewname.replace(/(?<=.{1})./gi, "*");
+
+      return reviewname;
+
+
+    }
+      
+    
+  }
+
+  
+
+   
+   
+
+
+
 
     return (
       <>
@@ -306,8 +400,11 @@ const ProductData = () => {
         <Price>상품 설명</Price>
         <Description>{description}</Description>
         </MiddleContainer>
-        <ButtonContainer>
+        <BottomContainer>
+          <Review>상품 리뷰</Review>
+          
           {
+            console.log(reviewList),
             reviewList ?  reviewList.map((data,index) =>
             (
              <ReviewRow key={index} >
@@ -315,9 +412,15 @@ const ProductData = () => {
                 <ReviewCircle>{data.deliveryrating}</ReviewCircle>
                 <ReviewComment>{data.comment}</ReviewComment>
                 <ReviewUserDate>
-                  {data.username}
-                  <div></div>
+                  <ReviewUser>
+                  {
+                    filterName(data.username)
+                  }
+                  </ReviewUser>                
+                  <ReviewDate>
                   {data.date.split('T')[0]}
+                  </ReviewDate>
+                  
                 </ReviewUserDate>
 
 
@@ -328,9 +431,17 @@ const ProductData = () => {
             )) : 'Loading ...'
           }
           
+          
+         
+          
 
 
-        </ButtonContainer>
+        </BottomContainer>
+        <PageContainer>
+        {
+            reviewList ? PageCount() : null
+        }
+        </PageContainer>
 
       </>
   )
