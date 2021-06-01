@@ -16,7 +16,6 @@ import UserPostList from './UserPostList'
 import { WishListContext } from '../pages/App'
 import { LoginContext } from '../pages/App'
 import Pay from './Pay'
-import moment from 'moment'
 
 const TopContainer = styled.div`
   display: flex;
@@ -33,6 +32,7 @@ const BottomContainer = styled.div`
 
 `
 
+//review
 const ReviewCircle = styled.div`
 margin-right : 10px;
 max-width : 150px;
@@ -41,8 +41,8 @@ width : 150px;
 `
 const ReviewComment = styled.div`
 margin-right : 10px;
-max-width : 1000px;
-width : 1000px;
+max-width : 500px;
+width : 500px;
 `
 const ReviewUserDate = styled.div`
 display: flex;
@@ -56,10 +56,57 @@ const ReviewDate = styled.div`
 max-width : 200px;
 width : 200px;
 `
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  width: 1072px;
+  height: 112px;
+  padding: 0 16px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+`
+const ReviewHeader = styled.div`
+display :flex;
+  align-items: center;
+  width: 1072px;
+  height: 112px;
+  padding: 0 16px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+`
+const HeaderRecommend = styled.div`
+margin-right : 10px;
+max-width : 150px;
+width : 150px;
+font-family: ${({ theme }) => theme.font.medium}
+`
+const HeaderDelivery = styled.div`
+margin-right : 10px;
+max-width : 150px;
+width : 150px;
+font-family: ${({ theme }) => theme.font.medium}`
+const HeaderComment = styled.div`
+margin-right : 10px;
+max-width : 500px;
+width : 500px;
+font-family: ${({ theme }) => theme.font.medium}`
+const HeaderUser = styled.div`
+margin-right : 10px;
+max-width : 100px;
+width : 100px;
+font-family: ${({ theme }) => theme.font.medium}`
+const HeaderDate = styled.div`
+max-width : 200px;
+width : 200px;
+font-family: ${({ theme }) => theme.font.medium}`
+const HeaderUserDate = styled.div`
+display: flex;
+`
 
 
-const ReviewRow = styled.div`
-display : flex;`
+
+
+//
+
+
 
 const PageContainer = styled.div`
   display : flex;
@@ -67,6 +114,11 @@ const PageContainer = styled.div`
   justify-content: center;
   margin-top : 100px;
 `
+
+
+
+
+
 
 
 const InfoContainer = styled.div`
@@ -99,12 +151,13 @@ const Review = styled.div`
 font-size: 24px;
 font-family: ${({ theme }) => theme.font.regular};
 margin-top: 16px;
-margin-bottom: 50px;
+margin-bottom: 10px;
 color: ${({ theme }) => theme.color.secondary};
 `
 
 const Description = styled.div`
   padding-left: 64px;
+  padding-right: 64px;
   margin-bottom: 128px;
 `
 
@@ -152,6 +205,16 @@ const categoryMap = {
   Child: 'KIDS',
 }
 
+
+const ROW_PER_PAGE = 5 
+const defaultStartDate = new Date()
+defaultStartDate.setDate(defaultStartDate.getDate() - 7)
+defaultStartDate.setHours(0, 0, 0, 0)
+const defaultEndDate = new Date()
+defaultEndDate.setDate(defaultEndDate.getDate())
+defaultEndDate.setHours(0, 0, 0, 0)
+
+
 const ProductData = () => {  
 
   const params = useParams()
@@ -171,9 +234,12 @@ const ProductData = () => {
   const [openPurchase, setOpenPurchase] = useState(false)
 
   //reviewData
-  const [page, setPage] = useState();
- 
-  const [reviewList , setReviewList ] = useState();
+  const [page, setPage] = useState(1);
+  const [pageNum , setPageNum] = useState(1);
+  const [reviewList , setReviewList ] = useState([]);
+  const [startDate, setStartDate] = useState(defaultStartDate)
+  const [endDate, setEndDate] = useState(defaultEndDate)
+  const [reviewOpen, setReviewOpen] = useState([])
 
 
   const { success } = useContext(LoginContext)
@@ -195,40 +261,55 @@ const ProductData = () => {
   }
 
 
-  const getReviewData = async () =>
+
+  const handleRange = async () =>
   {
-    if(id.length !== 0)
+    const {data :res} =await axios.get(`/api/product/review/${id}`)
+    console.log(res)
+    if(res.length === 0 )
     {
-      console.log(id)
-      const { data : reviewData } = await axios.get(`/api/product/review/${id}`)
-      console.log(reviewData);
-     
-      setReviewList(reviewData)
+      return
     }
+
+    let rangeList = [...res]
+
+    rangeList = rangeList.filter(data => {
+      const temp = data.date.split('T')[0].split('-')
+      const dataDate = new Date(temp[0], temp[1] - 1, temp[2])
+      return startDate <= dataDate && endDate >= dataDate
+      
+    }).reverse()
+    console.log(rangeList)
+    setReviewList(rangeList)
+    setPageNum(Math.ceil(rangeList.length / ROW_PER_PAGE))
+    setReviewOpen(Array(rangeList.length).fill(false))
+
+   
+
+  }
+
+
+  const filterName = (username) =>
+  {
+    
+    if(typeof username !== "undefined")
+    {
+      console.log(username);
+    
+      var reviewname = username;
+
+      reviewname = reviewname.replace(/(?<=.{1})./gi, "*");
+
+      return reviewname;
+
+
+    }
+      
     
   }
 
 
-  const PageCount = () =>
-  {
-    const result = [];
-    for(let i =0; i<=reviewList.length/3; i++)
-    {
-      result.push(
-        <PageButton key={i+1} onClick={
-          ()=>
-          {
-            setPage(i+1)
 
-          }
-
-        }>{i+1}
-
-        </PageButton>
-      )
-    }
-    return result;
-  }
 
   const getAddress = async () => {
     const { data: ad } = await axios.get('/api/delivery')
@@ -267,7 +348,8 @@ const ProductData = () => {
     
     getProductData()
     getAddress()
-    getReviewData()
+    //getReviewData()
+    handleRange()
   }, [])
 
   
@@ -305,24 +387,7 @@ const ProductData = () => {
   }
 
 
-  const filterName = (name) =>
-  {
-    
-    if(typeof name !== "undefined")
-    {
-      console.log(name);
-    
-      var reviewname = name;
-
-      reviewname = reviewname.replace(/(?<=.{1})./gi, "*");
-
-      return reviewname;
-
-
-    }
-      
-    
-  }
+ 
 
   
 
@@ -402,33 +467,43 @@ const ProductData = () => {
         </MiddleContainer>
         <BottomContainer>
           <Review>상품 리뷰</Review>
-          
+          <ReviewHeader>
+            <HeaderRecommend>만족도</HeaderRecommend>
+            <HeaderDelivery>배송속도</HeaderDelivery>
+            <HeaderComment>내용</HeaderComment>
+            <HeaderUserDate>
+            <HeaderUser>작성자</HeaderUser>
+            <HeaderDate>구매날짜</HeaderDate>
+
+            </HeaderUserDate>
+            
+          </ReviewHeader>
           {
-            console.log(reviewList),
-            reviewList ?  reviewList.map((data,index) =>
-            (
-             <ReviewRow key={index} >
-                <ReviewCircle>{data.recommend}</ReviewCircle>
-                <ReviewCircle>{data.deliveryrating}</ReviewCircle>
-                <ReviewComment>{data.comment}</ReviewComment>
-                <ReviewUserDate>
+            
+           //<ReviewListCards data ={reviewList[page - 1]}/>
+          
+           reviewList.length !== 0 && reviewList.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((data, i) => (
+            <Row key={i}>
+
+              <ReviewCircle>
+              {data.recommend}
+              </ReviewCircle>
+              <ReviewCircle>{data.deliveryrating}</ReviewCircle>
+              <ReviewComment>{data.comment}</ReviewComment>
+              <ReviewUserDate>
                   <ReviewUser>
                   {
-                    filterName(data.username)
+                      filterName(data.username)
                   }
                   </ReviewUser>                
                   <ReviewDate>
                   {data.date.split('T')[0]}
                   </ReviewDate>
-                  
-                </ReviewUserDate>
+                        
+              </ReviewUserDate>
 
-
-
-             </ReviewRow> 
-
-
-            )) : 'Loading ...'
+            </Row>
+           ))
           }
           
           
@@ -439,7 +514,11 @@ const ProductData = () => {
         </BottomContainer>
         <PageContainer>
         {
-            reviewList ? PageCount() : null
+            Array(pageNum).fill(0).map((p,i)=>(
+              <PageButton key={i} 
+                  color={i + 1 === page && 'primary'}
+                  onClick={() => setPage(i + 1)}>{i + 1}</PageButton>
+            ))
         }
         </PageContainer>
 

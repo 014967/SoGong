@@ -1020,7 +1020,7 @@ router.post('/addreview', auth, function(req, res, next){
 
 */
 
-router.get('/product/review/:product_id', auth, function(req, res){
+router.get('/product/review/:product_id', function(req, res){
     Review.find({productId:req.params.product_id}).then(function(review){
         res.send(review);
     });
