@@ -79,7 +79,7 @@ const Pay = ({ isWishList, data }) => {
       address: data.address,
       username : user.name,
     })
-    const { data: qr } = await axios.post('/pay/ready', {
+    const { data: qr } = await axios.post('/pay', {
       _id: user._id,
       name: `${data.product[0].name} ${data.product[0].quantity}개 ${other}`,
       totalPrice: data.totalPrice + data.deliveryFee
