@@ -163,7 +163,7 @@ const EnterEventNotice = ({ setEnter }) => {
 
         const formData = new FormData()
         formData.append('img', imgFile)
-        const stringStartDate = format(startDate.setHours(startDate.getHours() + 9), "yyyy-MM-dd'T'HH:mm:ss")
+        const stringStartDate = format(startDate.setHours(startDate.getHours()), "yyyy-MM-dd'T'HH:mm:ss")
         const stringEndDate = format(_setEndDate(endDate), "yyyy-MM-dd'T'HH:mm:ss")
         const response = await axios.post("api/events", {
             title: title,
