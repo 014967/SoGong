@@ -219,7 +219,7 @@ app.post('/productImgDel', (req, res) => {
 //Kakao Pay API Usage
 
 //Using https and express.
-const http = require('http')
+const https = require('https')
 
 //Put your Admin Key here.
 const admin_key = process.env.KAKAO_ADMIN_KEY
@@ -238,11 +238,11 @@ const payOptions = {
   }
 }
 
-const url = 'http://3.37.127.228/#' //EC2 올리면 바꾸기
+const url = 'http://localhost:3000/#' //EC2 올리면 바꾸기
 
 app.post('/pay', (req, res) => {
 	console.log('call')
-/*  const pay = http.request(payOptions, res2 => {
+  const pay = https.request(payOptions, res2 => {
     res2.on('data', d => {
       res.send({ qr: JSON.parse(d).next_redirect_pc_url, tid: JSON.parse(d).tid })
     })
@@ -263,5 +263,5 @@ app.post('/pay', (req, res) => {
     cancel_url: `${url}/pay/cancel`,
     fail_url: `${url}/pay/cancel`
   }))
-  pay.end()*/
+  pay.end()
 });

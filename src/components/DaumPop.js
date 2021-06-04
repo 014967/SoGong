@@ -134,7 +134,7 @@ const DaumPop = ({ setOpen }) => {
                 <Input value={extraAddress} onChange={(e) => setExtraAddress(e.target.value)} />
               </div>
               <div>
-                <div>이름</div>
+                <div>받는 사람</div>
                 <Input value={username} onChange={(e) => setUsername(e.target.value)} />
               </div>
               <div>

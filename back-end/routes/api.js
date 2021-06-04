@@ -1159,4 +1159,58 @@ router.post('/purchaseStatus/:id', function(req, res, next){
  }
 */
 
+
+//Kakao Pay API Usage
+
+//Using https and express.
+const https = require('https')
+const dotenv = require('dotenv') 
+dotenv.config()
+
+//Put your Admin Key here.
+const admin_key = process.env.KAKAO_ADMIN_KEY
+
+//Using qs for parameters.
+const qs = require('qs')
+
+//Setting headers.
+const payOptions = {
+  hostname: 'kapi.kakao.com',
+  path: '/v1/payment/ready',
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/x-www-form-urlencoded;charset=utf-8',
+    'Authorization': `KakaoAK ${admin_key}`
+  }
+}
+
+const url = 'http://localhost:3000/#' //EC2 올리면 바꾸기
+
+router.post('/pay', (req, res) => {
+	console.log('call')
+  const pay = https.request(payOptions, res2 => {
+    res2.on('data', d => {
+      res.send({ qr: JSON.parse(d).next_redirect_pc_url, tid: JSON.parse(d).tid })
+    })
+  })
+  pay.on('error', error => {
+    console.error(error)
+  })
+  
+  pay.write(qs.stringify({
+    cid: 'TC0ONETIME',
+    partner_order_id: 'k_sinsa',
+    partner_user_id: req.body._id,
+    item_name: req.body.name,
+    quantity: 1,
+    total_amount: req.body.totalPrice,
+    tax_free_amount: req.body.totalPrice,
+    approval_url: `${url}/pay/success`,
+    cancel_url: `${url}/pay/cancel`,
+    fail_url: `${url}/pay/cancel`
+  }))
+  pay.end()
+});
+
+
 module.exports = router;
