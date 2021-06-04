@@ -66,31 +66,29 @@ const accessKeyId = process.env.AWS_ACCESS_KEY
 const secretAccessKey = process.env.AWS_SECRET_KEY
 console.log(process.env)
 
-// const S3 = require('aws-sdk/clients/s3')
+const S3 = require('aws-sdk/clients/s3')
 
-// const s3 = new S3({
-//    region,
-//    accessKeyId,
-//    secretAccessKey
-//   })
-
-const s3 = new aws.S3()
+const s3 = new S3({
+   region,
+   accessKeyId,
+   secretAccessKey
+  })
 
   const uploadS3Product = multer({
    storage: multerS3({
      s3: s3,
-     bucket: 'sogong17',
+     bucket: bucketName,
      acl: 'public-read',
      key: function(req, file, cb) {
       cb(null, 'products/'+new Date().valueOf() + '_'+file.originalname)
      }
    })
-  }, 'NONE')
+  })
 
   const uploadS3Event = multer({
     storage: multerS3({
       s3: s3,
-      bucket: 'sogong17',
+      bucket: bucketName,
       acl: 'public-read',
       key: function(req, file, cb) {
        cb(null, 'banners/'+new Date().valueOf() + '_'+file.originalname)
@@ -116,7 +114,13 @@ app.post('/productImg/:id', uploadS3Event.single('img'), (req, res) => {
     Product.findOne({_id: req.params.id}).then(function(product){
       console.log('successfully updated local image');
       res.send('Success');
+    })
+  })
+});
+
+// mutiple product images upload below.
 app.post('/productMutipleImg/:id', uploadS3Product.array('img', 5), (req, res) => {
+  console.log(req.files);
   if(req.files.length !== 0){
   Product.findByIdAndUpdate(
     {_id: req.params.id}, {
