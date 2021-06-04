@@ -7,6 +7,7 @@ import { WishListContext } from '../pages/App'
 import Logo from './elements/Logo'
 import Login from './Login'
 import HeaderSearchBar from './HeaderSearchBar'
+import Button from './elements/Button'
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import { LoginContext } from '../pages/App'
 
@@ -37,9 +38,14 @@ const BaseContainer = styled.div`
 
 const LoginContainer = styled.div`
   display: flex;
+  align-items: center;
+  & > * + * {
+    margin-left: 16px;
+  }
 `
 const WishList = styled.div`
   display: flex;
+  padding-bottom: 12px;
   cursor: pointer;
   margin-right: 12px;
   margin-top: 12px;
@@ -99,11 +105,24 @@ const Header = () => {
 
   const getWishList = async () => {
     const {data: wl} = await axios.get('/api/wishlist')
-    console.log(wl.wishlist)
-    setWishList(wl.wishlist.length)
+      setWishList(wl.wishlist.length)
+  }
+
+  const handleOrder = async () => {
+    history.push('/user/orderlist')
   }
 
   const handleColor = useCallback((cate) => (currentState.category === cate ? 'primary' : 'secondary'), [currentState])
+
+  useEffect(async () => {
+    if (location.pathname.includes('manager')) {
+      const { data: response } = await axios.get('/api/auth')
+        if (!response.isAdmin) {
+            alert('관리자만 접근 가능합니다.')
+            history.push('/')
+        }
+    }
+  }, [location])
 
   useEffect(() => {
     if (success) {
@@ -125,10 +144,13 @@ const Header = () => {
           <LoginContainer>
             {success && 
             <WishList onClick={handleWishList}>
-              <ShoppingCartIcon />
+              <ShoppingCartIcon style={{ fontSize: 28 }} />
               <div>{wishList}</div>
             </WishList>}
             <Login />
+            {success &&
+            <Button onClick={handleOrder}>ORDER</Button>
+            }
           </LoginContainer>
         </BaseContainer>
         {

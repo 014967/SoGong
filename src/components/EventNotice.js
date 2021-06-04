@@ -44,6 +44,7 @@ const TableHeaderContent = styled.div`
   font-size: 20px;
   text-align: center;
 `
+
 const FilterButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;

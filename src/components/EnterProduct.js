@@ -118,38 +118,32 @@ const ImgNameDiv = styled.div`
 const EnterProduct = () =>
 {
 
-    
 
     const history = useHistory();
     const location = useLocation();
 
 
 
-    const [productTitle ,setProductTitle] =useState('');
-    const [productDescription , setProductDescription] = useState('');
-    const [productImg , setProductImg] = useState(null);
+    const [productTitle, setProductTitle] =useState('');
+    const [productDescription, setProductDescription] = useState('');
+    const [productImg, setProductImg] = useState(null);
     const [imgFileName, setImgFileName] = useState("이미지는 다중 선택이 가능하며, 최대 5장까지 등록됩니다.");
     const [price, setPrice] = useState();
     const [category, setCategory] = useState("default");
-    const [stock , setStock ] = useState([]);
+    const [stock, setStock] = useState([]);
+    const [deliveryFee, setDeliveryFee] = useState(3000)
+    const [flag, setFlag] = useState(false);
   
-    const [flag ,setFlag] = useState(false);
-  
-   
-    const [file , setFile] = useState({
+    const [file, setFile] = useState({
         files : [],
     });
-
-
 
     const fileSelectedHandler = (e)=>
     {
         setFlag(true)
         setFile({ files : [ ...e.target.files]})
-        
     }
     
-
     useEffect(()=>
     {
         console.log(file)
@@ -157,21 +151,13 @@ const EnterProduct = () =>
         
     },[file])
 
-
-    
-    
     const handleImgName = () =>
     {
-        
-    
-       const result =[];
+       const result = [];
        console.log("hello")
        console.log(file.files.length);
        console.log(file.files[0].name);
-       for(let i=0; i<file.files.length ; i++)
-       {
-
-       
+       for(let i = 0; i < file.files.length ; i++) {
             result.push(
                 <FileName key ={i+1}>
                   {
@@ -180,31 +166,25 @@ const EnterProduct = () =>
                 </FileName>
             )
        }
-       
        return result;
     }
-    const handleSubmit = async (e) =>
-    {
 
-      
-        
+    const handleSubmit = async (e) => {
         e.preventDefault()
 
-        if(!productTitle || !productDescription || !file.files || !price || !stock || category==="default")
+        if(!productTitle || !productDescription || !file.files || !price || !stock || category === "default" || !deliveryFee)
         {
             
-            alert("필수 입력 사항을 입력하지 않으셨습니다");
+            alert("필수 입력 사항을 입력하지 않으셨습니다.");
             return
         }
         if(price > 200000)
         {
-            alert("가격을 20만원 이하로 책정해주세요");
+            alert("가격을 20만원 이하로 책정해주세요.");
             return
         }
         
-        console.log(productTitle, productDescription, price, stock, category)
         const formData = new FormData()
-        console.log(file.files)
         for( let i =0; i<file.files.length; i++)
         {
 
@@ -214,37 +194,24 @@ const EnterProduct = () =>
         const response = await axios.post("/api/products/", {
             name: productTitle,
             detail: productDescription,
-            price: price,
-            category :category,
-            stock : stock,
-          
-           
-            
+            price,
+            category,
+            stock,
+            deliveryFee
         }) 
         .catch((err) => console.log(err))
         
-        console.log(formData)
-        console.log(response.data._id)
         const responseImg = await axios.post(`/productMutipleImg/${response.data._id}` , formData)
        
         .catch((err) => console.log(err))
         .then(
-          
-            //setEnter({enter : false}),
-            //selected =="product",
-            history.replace(
-                {
-                    pathname : `/manager`,
-                    state : {selected : location.state.selected},
-                }
-            ),
-            
-            
+            history.replace({
+                pathname : `/manager`,
+                state : {selected : location.state.selected},
+            })
         )
-       
     }
 
-    
     const handleProductTitle = e =>
     {
         setProductTitle(e.target.value);
@@ -274,9 +241,7 @@ const EnterProduct = () =>
 
     return(
         <>
-       
           <div>
-             
                <Header>
             <Button background = "primary" onClick= { handleSubmit}>
                 상품 등록
@@ -288,46 +253,49 @@ const EnterProduct = () =>
             <Input placeholder="상품명 입력" onChange={handleProductTitle}></Input>
             </InputContainer>
             <InputContainer>
-                    <Title>카테고리*</Title>
-                    <select 
-                    value={category}
-                    onChange={handleCategory}
-                    >
-                        <option value= "default">카테고리</option>
-                        <option value="Man">남성용</option>
-                        <option value="Woman">여성용</option>
-                       
-                        <option value="Child">아동용</option>
+                <Title>카테고리*</Title>
+                <select 
+                value={category}
+                onChange={handleCategory}
+                >
+                    <option value= "default">카테고리</option>
+                    <option value="Man">남성용</option>
+                    <option value="Woman">여성용</option>
+                    
+                    <option value="Child">아동용</option>
 
-                    </select>
+                </select>
             </InputContainer>
             <InputContainer>
                     <Title>설명*</Title>
                     <Textarea placeholder="설명 입력" onChange={handleDiscription}></Textarea>
             </InputContainer>
             <InputContainer>
-                    <Title>대표 이미지*</Title>
-                    <LabelButton for="file_input">이미지 업로드</LabelButton>
-                    <FileInput type="file" accept="image/x-png,image/jpeg" id ="file_input" name="img" multiple onChange={fileSelectedHandler} />
-                    <ImgNameDiv>{
-                        flag ? 
-                        handleImgName() : 
-                        "이미지는 다중 선택이 가능하며, 최대 5장까지 등록됩니다."
-                    }</ImgNameDiv>
+                <Title>대표 이미지*</Title>
+                <LabelButton for="file_input">이미지 업로드</LabelButton>
+                <FileInput type="file" accept="image/x-png,image/jpeg" id ="file_input" name="img" multiple onChange={fileSelectedHandler} />
+                <ImgNameDiv>{
+                    flag ? 
+                    handleImgName() : 
+                    "이미지는 다중 선택이 가능하며, 최대 5장까지 등록됩니다."
+                }</ImgNameDiv>
             </InputContainer>
             <InputContainer>
                 <Title>상품 수량*</Title>
                 <Input placeholder="상품 수량 입력"  type='number' min="0" onChange={handleStock}></Input>
                 <PriceText>개</PriceText>
-                
             </InputContainer>
             <InputContainer>
-            <Title>상품 가격*</Title>
-            <Input placeholder="상품 가격 입력" type='number' min="0" max="200000" onChange={handlePrice}></Input>
-            <PriceText>원</PriceText>
+                <Title>상품 가격*</Title>
+                <Input placeholder="상품 가격 입력" type='number' min="0" max="200000" onChange={handlePrice}></Input>
+                <PriceText>원</PriceText>
             </InputContainer>
-
-            <div>*최대 20만원 까지 가능합니다.</div>
+            <div style={{marginTop: '8px', marginLeft: '200px'}}>*최대 20만원 까지 가능합니다.</div>
+            <InputContainer>
+                <Title>배송비*</Title>
+                <Input placeholder="배송비 입력" type='number' min="0" value={deliveryFee} onChange={e => setDeliveryFee(e.target.value)}></Input>
+                <PriceText>원</PriceText>
+            </InputContainer>
         </Container>
            </div>
      

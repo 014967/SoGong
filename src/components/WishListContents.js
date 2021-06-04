@@ -8,6 +8,9 @@ import Button from './elements/Button';
 import CheckBox from './elements/CheckBox'
 import { WishListContext } from '../pages/App'
 import { LoginContext } from '../pages/App'
+import Modal from '@material-ui/core/Modal';
+import Pay from './Pay'
+import { TrendingUpOutlined } from '@material-ui/icons';
 
 const Container = styled.div`
   
@@ -79,15 +82,8 @@ const TableHeaderContent = styled.div`
   font-size: 20px;
   text-align: center;
 `
+
 const ButtonsContainer = styled.div`
-  display: flex;
-  width: 100%;
-  padding-left: 64px;
-  & > * + * {
-    margin-left: 16px;
-  };
-`
-const ButtonsContainer2 = styled.div`
   display: flex;
   width: 100%;
   padding-left: 64px;
@@ -105,8 +101,9 @@ const WishListContents = () => {
   const [checkedAll, setCheckedAll] = useState(false)
   const [buttonColor, setButtonColor] = useState('disabled')
   const [quantity, setQuantity] = useState([])
+  const [open, setOpen] = useState(false)
+  const [address, setAddress] = useState(false)
   const { setWishListFlag } = useContext(WishListContext)
-  const { success } = useContext(LoginContext)
 
   const history = useHistory()
 
@@ -134,6 +131,28 @@ const WishListContents = () => {
   const handleCheckedAll = () => {
     setCheckedAll(prev => !prev)
     setChecked(prev => [...prev.fill(!checkedAll)])
+  }
+  
+  const handleOpen = async () => {
+    if (wishList.length !== 0) {
+      const { data: ad } = await axios.get('/api/delivery')
+      if (!ad.delivery) {
+        alert('등록된 배송지가 없습니다.')
+        return
+      }
+      if (ad.delivery.length === 0) {
+        alert('등록된 배송지가 없습니다.')
+        return
+      }
+      setAddress(ad.delivery[0].address + ', ' + ad.delivery[0].detailaddress)
+      setOpen(true)
+    } else {
+      alert('장바구니에 상품이 없습니다.')
+    }
+  }
+
+  const handleClose = () => {
+    setOpen(false)
   }
 
   const handleDelete = async () => {
@@ -173,11 +192,13 @@ const WishListContents = () => {
 
   useEffect(() => {
     checkLogin()
+
   }, [])
 
   useEffect(() => {
     setCheckedAll(checked.every(v => v) && wishList.length !== 0)
     setButtonColor(checked.some(v => v) ? 'secondary' : 'disabled')
+    console.log(wishList)
   }, [checked])
 
 
@@ -215,9 +236,28 @@ const WishListContents = () => {
                 }
               </b>
           </Row>
-          <ButtonsContainer2>
-          <Button background='primary'>결제하기</Button>
-          </ButtonsContainer2>
+          <ButtonsContainer>
+            <Button background='primary' onClick={handleOpen}>구매하기</Button>
+            <Modal open={open} onClose={handleClose}>
+              {
+                wishList.length !== 0 &&
+                <Pay isWishList={true} data={{
+                  img: wishList[0].product.img,
+                  product: wishList.map((p, i) => ({
+                    _id: p.id,
+                    name: p.product.name,
+                    quantity: quantity[i],
+                    price: p.product.price
+                  })),
+                  address,
+                  totalPrice: wishList.reduce((pre, cur, i) => (
+                      pre + cur.product.price * quantity[i]
+                    ), 0),
+                  deliveryFee: wishList.reduce((pre, cur) => pre > cur.product.deliveryFee ? pre : cur.product.deliveryFee, wishList[0].product.deliveryFee)
+                }} />
+              }
+            </Modal>
+          </ButtonsContainer>
           
         </ContentsWrapper>
     );

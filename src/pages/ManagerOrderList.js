@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import OrderListContents from '../components/OrderListContents'
+import ManagerOrderListContents from '../components/ManagerOrderListContents'
 
 const Wrapper = styled.div`
     display: flex;
@@ -9,12 +9,12 @@ const Wrapper = styled.div`
     padding-top: 320px;
 `
 
-const OrderList = () => {
+const ManagerOrderList = () => {
     return (
         <Wrapper>
-            <OrderListContents />
+            <ManagerOrderListContents />
         </Wrapper>
     );
 };
 
-export default OrderList;
+export default ManagerOrderList;

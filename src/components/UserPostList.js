@@ -103,7 +103,19 @@ const UserPostList = ({ setOpenP }) => {
     setOpen(false)
   }
 
-  const handleSelect = () => {
+  const handleSelect = async (post) => {
+    console.log(post)
+    const { data: res } = await axios.patch(`/api/delivery/${post.deliveryname}`, {...post, default: true}
+    // {
+    //   default: true,
+    //   deliveryname: post.deliveryname,
+    //   name: post.name,
+    //   address: post.address,
+    //   detailaddress: post.detailaddress,
+    //   zonecode: "12345",
+    //   phonenumber: "010-8282-8282"
+    // }
+    )
     setOpenP(false)
   }
 
@@ -170,7 +182,7 @@ const UserPostList = ({ setOpenP }) => {
             <Address>{`${post.address}, ${post.detailaddress}`}</Address>
             <Button>수정</Button>
             <Button onClick={() => handleDelete(post.deliveryname)}>삭제</Button>
-            <Button background="primary" onClick={handleSelect}>선택</Button>
+            <Button background="primary" onClick={() => handleSelect(post)}>선택</Button>
           </Row>
         ))}
       </Container>

@@ -115,7 +115,6 @@ const PriceText = styled.div`
 
 const AlterProduct = () =>
 {
-
     
 
     const history = useHistory();
@@ -129,20 +128,22 @@ const AlterProduct = () =>
     const [imgFileName, setImgFileName] = useState("이미지는 다중 선택이 가능하며, 최대 5장까지 등록됩니다.");
     const [price, setPrice] = useState();
     const [category, setCategory] = useState("카테고리");
-    const [stock , setStock ] = useState();
-    const [flag, setFlag ]= useState(false);
+    const [stock, setStock ] = useState();
+    const [deliveryFee, setDeliveryFee] = useState(3000)
+    const [flag, setFlag]= useState(false);
     const [file, setFile] =useState({
         files : [],
     });
-  
-
-    console.log(location);
 
     const handleDetailImg = () =>
     {
 
-        console.log(location.state.data.detailImg.length);
+        //console.log(location.state.data.detailImg.length);
         const result =[];
+        if(typeof location.state !== "undefined")
+        {
+
+        
         for(let i=0; i<location.state.data.detailImg.length ; i++)
         {
             result.push(
@@ -153,6 +154,7 @@ const AlterProduct = () =>
                 </FileName>
             )
         }
+        }
     
         return result;
     }
@@ -160,7 +162,7 @@ const AlterProduct = () =>
 
     useEffect(()=>
     {
-        if(location.state !== "undefined")
+        if(typeof location.state !== "undefined")
         {
             console.log("hello")
             setProductTitle(location.state.data.name)
@@ -169,40 +171,45 @@ const AlterProduct = () =>
             setStock(location.state.data.stock)
             setPrice(location.state.data.price)
             setImgFileName(location.state.data.img)
-       
-
+            setDeliveryFee(location.state.data.deliveryFee)
         }
-        else
-        {
-
-        }
-       
-         
         
-    },[])
+    }, [])
 
-    
-    
-
-   
-
-    const alterSubmit = async (e) =>
+    useEffect(()=>
     {
-        
+            console.log(location);
+    },[location])
+
+    const alterSubmit = async (e) => {
         e.preventDefault()
+        if(!productTitle || !productDescription || !file.files || !price || !stock || category === "default" || !deliveryFee) {
+            alert("필수 입력 사항을 입력하지 않으셨습니다.");
+            return
+        }
+
+        if(price > 200000) {
+            alert("가격을 20만원 이하로 책정해주세요.");
+            return
+        }
+
         const formData = new FormData()
+        for( let i =0; i<file.files.length; i++)
+        {
+            formData.append('img', file.files[i])
+        }
         const response = await axios.put("api/products/" +`${location.state.data._id}`,
         
         {
             name : productTitle,
             detail : productDescription,
             price : price,
-            category : category,
-            stock : stock,
+            category,
+            stock,
+            deliveryFee
         }
         ).catch((err)=> console.log('error'))
-
-        const responseImg = await axios.post(`/productMutipleImg/${response.data_id}`, formData)
+        const responseImg = await axios.post(`/productMutipleImg/${response.data._id}`, formData)
         .then(
             history.replace(
                 {
@@ -273,6 +280,9 @@ const AlterProduct = () =>
 
     useEffect(()=>
     {
+        if(typeof location.state !== "undefined"){
+
+        
         if(location.state.data.detailImg === Array(0))
         {
 
@@ -284,6 +294,12 @@ const AlterProduct = () =>
             setFlag(false)
             
         }
+    }
+    else
+    {
+        alert("잘못된 접근입니다.")
+        history.goBack()
+    }
 
     },[location.state])
  
@@ -346,20 +362,18 @@ const AlterProduct = () =>
                 
             </InputContainer>
             <InputContainer>
-            <Title>상품 가격 (20만원 이하)</Title>
-            <Input  value={price} type='number'  min="0" max="200000" onChange={handlePrice}></Input>
-            <PriceText>원</PriceText>
-
-            
+                <Title>상품 가격</Title>
+                <Input  value={price} type='number'  min="0" max="200000" onChange={handlePrice}></Input>
+                <PriceText>원</PriceText>
             </InputContainer>
-            <div>*최대 20만원 까지 가능합니다.</div>
+            <div style={{marginTop: '8px', marginLeft: '200px'}}>*최대 20만원 까지 가능합니다.</div>
+            <InputContainer>
+                <Title>배송비*</Title>
+                <Input placeholder="배송비 입력" type='number' min="0" value={deliveryFee} onChange={e => setDeliveryFee(e.target.value)}></Input>
+                <PriceText>원</PriceText>
+            </InputContainer>
         </Container>
            </div>
-       
-        
-        
-        
-
         </>
     ) 
 }
