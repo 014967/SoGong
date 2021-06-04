@@ -5,7 +5,13 @@ import Button from './elements/Button';
 import axios from 'axios';
 import {useParams , useHistory} from 'react-router-dom';
 import { CollectionsBookmarkRounded, Receipt } from '@material-ui/icons';
-
+import Title from './elements/Title'
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import ReactStars from "react-rating-stars-component";
+import StarIcon from '@material-ui/icons/Star';
+import StarBorderIcon from '@material-ui/icons/StarBorder';
 
 const Input = styled.input`
     border: 1px solid ${({ theme }) => theme.color.primary};
@@ -14,55 +20,60 @@ const Input = styled.input`
     }
     font-size: 20px;
     font-family: ${({ theme }) => theme.font.light};
-    height: 100px;
-    width: 200px;
+    height: 40px;
+    width: 320px;
     max-width: 894px;
     padding: 8px;
     resize: none;
 `
 
+const TableHeader = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  padding: 0 16px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+  margin-top: 64px;
+`
 
-const Title = styled.div`
-display: flex;
-align-items: center;
-width: 200px;
-height: 47px;
-font-size: 32px;
-font-family: ${({ theme }) => theme.font.regular};
-color: ${({ theme }) => theme.color.secondary};
+const Row = styled.div`
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 132px;
+  padding: 0 16px;
+  border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+`
+
+const TableHeaderContent = styled.div`
+  width: ${(props) => props.width};
+  font-size: 20px;
+  text-align: center;
 `
 
 
-
-const BigTitle = styled.div`
-
-`
-const InputArea = styled.div`
-display : flex`
-
-const TitleContainer = styled.div`
-display : flex;
-`
-const ReviewContainer = styled.div`
-display : flex;
+const RowContent = styled.div`
+  width: ${(props) => props.width};
+  text-align: center;
 `
 
-const ProductContainer = styled.div``
-const RecommandContainer = styled.div``
-const DeliveryContainer = styled.div``
-const ScoreContainer = styled.div``
-const CommentContainer = styled.div``
+const RadioContainer = styled(RowContent)`
+    display: flex;
+    flex-direction: column;
+`
 
-//recommend
-const Recommand = styled.div`
-display : flex`
+const Label = styled.label`
+    display: flex;
+    align-items: center;
+`
 
-//delivery
-const Delivery = styled.div``
-
-
-const RowContainer = styled.div`
-
+const ButtonContainer = styled.div`
+    display: flex;
+    margin-top: 16px;
+    & > * + * {
+        margin-left: 16px;
+    }
 `
 
 const Container = styled.div`
@@ -70,11 +81,7 @@ display: flex;
     flex-direction: column;
     padding: 64px 32px 0;
     margin-bottom: 64px;
-    margin-top : 200px;
     width: 100%;
-    & > * + * {
-        margin-top: 64px;
-    }
 `
 
 const Stars = styled.div`
@@ -98,15 +105,7 @@ const Stars = styled.div`
     color: #fcc419;
   }
 `
-const Image = styled.img`
-width : 100px;
-height : 100px;
-`
 
-const ListDiv = styled.div`
-margin-top : 100px;`
-
-const ARRAY = [0, 1, 2, 3, 4];
 const UserReview = () =>
 {
 
@@ -148,10 +147,10 @@ const UserReview = () =>
 
     }
 
-    const handleScore = (i,e) =>
+    const handleScore = (i, r) =>
     {
         setScore(prev => [...prev.map((v, index) => 
-            i === index ? e.target.value : v
+            i === index ? r : v
         )])
     }
 
@@ -160,8 +159,7 @@ const UserReview = () =>
         history.goBack();
     }
 
-    const handleSubmit = async() =>
-    {
+    const handleSubmit = async () => {
         if (recommend.some(v => !v) || deliveryRating.some(v => !v) || 
             comment.some(v => v.length === 0)) {
             alert("리뷰를 전부 작성해주세요.")
@@ -171,8 +169,6 @@ const UserReview = () =>
             alert('코멘트가 너무 깁니다.')
             return
         }
-
-        console.log(username)
         const { data : reviews } = await axios.post('/api/addreviewBypurchase', {
             reviews: productId.map((p, i) => ({
                 productId: p,
@@ -185,7 +181,7 @@ const UserReview = () =>
                 username
             }))
         })
-        
+        alert('등록되었습니다.')
         history.goBack();
     }
 
@@ -199,7 +195,7 @@ const UserReview = () =>
             console.log(product)
             setProductData(product[0].product)
             setRecommend(Array(product[0].product.length).fill(false))
-            setComment(Array(product[0].product.length).fill(false))
+            setComment(Array(product[0].product.length).fill(''))
             setDeliveryRating(Array(product[0].product.length).fill(false))
             setScore(Array(product[0].product.length).fill(5))
             setProductId(product[0].product.map(p => p._id))
@@ -216,64 +212,57 @@ const UserReview = () =>
 
 
     return(
-        <Container className ="최상위 컨테이너">
-            <Title>K-SINSA 
-                주문 리뷰</Title>
-        
-       
-        <TitleContainer>
-            <Title>상품명</Title>
-            <Title>추천</Title>
-            <Title>배송평가</Title>
-            <Title>점수</Title>
-            <Title>후기</Title>
-        </TitleContainer>
-        
-        <ListDiv>
-        
-          {  
-            productData ? productData.map((data, i) =>
-            (
-                
-                <RowContainer key={i}>
-                    <ReviewContainer>
-                        <ProductContainer>
-                            <Title>{data.name}</Title>
-                        </ProductContainer>
-                        <RecommandContainer>
-                            <Recommand>
-                                <input type="radio" value="추천" checked={recommend[i] ==="추천"} onChange={(e) =>handleRecommend(i,e)}/>
-                                            추천
-                            </Recommand>
-                            <Recommand>
-                            <input type="radio" value="적극 추천" checked={recommend[i] ==="적극 추천"} onChange={(e)=>handleRecommend(i,e)}/> 
-                                            적극 추천
-
-                            </Recommand>
-                            <Recommand>
-                            <input type="radio" value="비추천" checked={recommend[i] ==="비추천"} onChange={(e)=>handleRecommend(i,e)}/>
-                                            비추천
-                            </Recommand>
-
-                        </RecommandContainer>
-                        <DeliveryContainer>
-                            <Delivery>
-                                <input type="radio" value="보통" checked={deliveryRating[i] ==="보통"} onChange={(e)=>handleDelivery(i,e)}/>
-                                    보통
-                            </Delivery>
-                            <Delivery>
-                                <input type="radio" value="빠름"  checked={deliveryRating[i] ==="빠름"} onChange={(e)=>handleDelivery(i,e)}/>
+        <Container>
+            <Title>REVIEW</Title>
+            <TableHeader>
+              <TableHeaderContent width="200px">상품명</TableHeaderContent>
+              <TableHeaderContent width="150px">추천</TableHeaderContent>
+              <TableHeaderContent width="150px">배송평가</TableHeaderContent>
+              <TableHeaderContent width="120px">평점</TableHeaderContent>
+              <TableHeaderContent width="350px">후기</TableHeaderContent>
+            </TableHeader>
+            {  
+                productData ? productData.map((data, i) =>
+                (
+                    <Row key={i}>
+                        <RowContent width="200px">{data.name.length > 10 ? data.name.slice(0, 10) + '...' : data.name}</RowContent>
+                        <RadioContainer width="150px">
+                            <Label>
+                                <Radio value="적극 추천" checked={recommend[i] ==="적극 추천"} onChange={(e)=>handleRecommend(i,e)}/> 
+                                적극 추천
+                            </Label>
+                            <Label>
+                                <Radio value="추천" checked={recommend[i] ==="추천"} onChange={(e) =>handleRecommend(i,e)} />
+                                추천
+                            </Label>
+                            <Label>
+                                <Radio value="비추천" checked={recommend[i] ==="비추천"} onChange={(e)=>handleRecommend(i,e)}/>
+                                비추천
+                            </Label>
+                        </RadioContainer>
+                        <RadioContainer width="150px">
+                            <Label>
+                                <Radio value="매우빠름" checked={deliveryRating[i] ==="매우빠름"}  onChange={(e)=>handleDelivery(i,e)}/>
+                                    매우 빠름
+                            </Label>
+                            <Label>
+                                <Radio value="빠름"  checked={deliveryRating[i] ==="빠름"} onChange={(e)=>handleDelivery(i,e)}/>
                                     빠름
-                            </Delivery>
-                            <Delivery>
-                                <input type="radio" value="매우빠름" checked={deliveryRating[i] ==="매우빠름"}  onChange={(e)=>handleDelivery(i,e)}/>
-                                    매우빠름
-                            </Delivery>
-                                
-
-                        </DeliveryContainer>
-                        <ScoreContainer>
-                            <select
+                            </Label>
+                            <Label>
+                                <Radio value="보통" checked={deliveryRating[i] ==="보통"} onChange={(e)=>handleDelivery(i,e)}/>
+                                    보통
+                            </Label>
+                        </RadioContainer>
+                        <RowContent width="150px">
+                            <ReactStars
+                                count={5}
+                                value={5}
+                                onChange={(r) => handleScore(i, r)}
+                                size={24}
+                                activeColor="#ffd700"
+                            />
+                            {/* <select
                             value={score[i]}
                             onChange ={(e)=>handleScore(i,e)}>
                                 <option value="1">1</option>
@@ -281,33 +270,21 @@ const UserReview = () =>
                                 <option value="3">3</option>
                                 <option value="4">4</option>
                                 <option value="5">5</option>
-
-                            </select>
-                        </ScoreContainer>
-                        <CommentContainer>
-
-                        <Input placeholder="코멘트 입력(최대 20자)" type='text' onChange={(e)=>handleComment(i,e)}></Input>
-                        </CommentContainer>
-
-                    </ReviewContainer>
-                </RowContainer>
-            ))
-
-         : "로딩중" }
-         
-         
-         </ListDiv>
-    
-    
-            <div className="취소하기 등록하기 버튼">
-                <Button onClick={handleBackbutton}>취소하기</Button>
-                <Button onClick={handleSubmit}>등록하기</Button>
-            </div>
-           
+                            </select> */}
+                        </RowContent>
+                        <RowContent width="320px">
+                            <Input placeholder="코멘트 입력(최대 20자)" type='text' value={comment[i]} onChange={(e)=>handleComment(i,e)}></Input>
+                        </RowContent>
+                    </Row>
+                ))
+                : "로딩중"
+            }
+            <ButtonContainer>
+                <Button onClick={handleSubmit} background='primary'>등록</Button>
+                <Button onClick={handleBackbutton}>취소</Button>
+            </ButtonContainer>
         </Container>
     )
-
-
 }
 
 export default UserReview;

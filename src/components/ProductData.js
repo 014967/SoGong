@@ -1,5 +1,4 @@
-import react , {useState, useEffect, useContext } from 'react'
-import {useHistory, useLocation} from 'react-router'
+import React, {useState, useEffect, useContext } from 'react'
 import {useParams} from 'react-router-dom'
 import styled from 'styled-components'
 import axios from 'axios'
@@ -15,6 +14,7 @@ import Modal from '@material-ui/core/Modal';
 import UserPostList from './UserPostList'
 import { WishListContext } from '../pages/App'
 import { LoginContext } from '../pages/App'
+import StarIcon from '@material-ui/icons/Star'
 import Pay from './Pay'
 
 const TopContainer = styled.div`
@@ -44,9 +44,6 @@ margin-right : 10px;
 max-width : 500px;
 width : 500px;
 `
-const ReviewUserDate = styled.div`
-display: flex;
-`
 const ReviewUser = styled.div`
 margin-right : 10px;
 max-width : 100px;
@@ -56,6 +53,7 @@ const ReviewDate = styled.div`
 max-width : 200px;
 width : 200px;
 `
+
 const Row = styled.div`
   display: flex;
   align-items: center;
@@ -63,68 +61,58 @@ const Row = styled.div`
   height: 112px;
   padding: 0 16px;
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+  & > * {
+    text-align: center;
+  }
 `
 const ReviewHeader = styled.div`
-display :flex;
+  display :flex;
   align-items: center;
   width: 1072px;
-  height: 112px;
-  padding: 0 16px;
+  padding: 32px 16px;
   border-bottom: 1px solid ${({ theme }) => theme.color.secondary};
+  & > * {
+    text-align: center;
+  }
 `
 const HeaderRecommend = styled.div`
-margin-right : 10px;
-max-width : 150px;
-width : 150px;
-font-family: ${({ theme }) => theme.font.medium}
+  margin-right : 10px;
+  width : 150px;
+  font-family: ${({ theme }) => theme.font.medium};
 `
+
 const HeaderDelivery = styled.div`
-margin-right : 10px;
-max-width : 150px;
-width : 150px;
-font-family: ${({ theme }) => theme.font.medium}`
+  margin-right : 10px;
+  width : 150px;
+  font-family: ${({ theme }) => theme.font.medium};
+`
+
 const HeaderComment = styled.div`
-margin-right : 10px;
-max-width : 500px;
-width : 500px;
-font-family: ${({ theme }) => theme.font.medium}`
-const HeaderUser = styled.div`
-margin-right : 10px;
-max-width : 100px;
-width : 100px;
-font-family: ${({ theme }) => theme.font.medium}`
-const HeaderDate = styled.div`
-max-width : 200px;
-width : 200px;
-font-family: ${({ theme }) => theme.font.medium}`
-const HeaderUserDate = styled.div`
-display: flex;
+  margin-right : 10px;
+  width : 500px;
+  font-family: ${({ theme }) => theme.font.medium};
+  text-align: center;
 `
-const NoReview = styled.div`
-margin-top : 20px;
-align-items : center;
-justify-content: center;
+  const HeaderUser = styled.div`
+  margin-right : 10px;
+  width : 100px;
+  font-family: ${({ theme }) => theme.font.medium};`
+  const HeaderDate = styled.div`
+  width : 200px;
+  font-family: ${({ theme }) => theme.font.medium};`
+  const NoReview = styled.div`
+  margin-top : 20px;
+  align-items : center;
+  justify-content: center;
 
 `
-
-
-
-//
-
-
 
 const PageContainer = styled.div`
   display : flex;
   align-items : center;
   justify-content: center;
-  margin-top : 100px;
+  margin: 100px 0;
 `
-
-
-
-
-
-
 
 const InfoContainer = styled.div`
   display: flex;
@@ -153,17 +141,15 @@ const Price = styled.div`
   color: ${({ theme }) => theme.color.secondary};
 `
 const Review = styled.div`
-font-size: 24px;
-font-family: ${({ theme }) => theme.font.regular};
-margin-top: 16px;
-margin-bottom: 10px;
-color: ${({ theme }) => theme.color.secondary};
+  font-size: 24px;
+  font-family: ${({ theme }) => theme.font.regular};
+  margin-top: 16px;
+  margin-bottom: 10px;
+  color: ${({ theme }) => theme.color.secondary};
 `
 
 const Description = styled.div`
-  padding-left: 64px;
-  padding-right: 64px;
-  margin-bottom: 128px;
+  padding: 16px 32px 32px;
 `
 
 const Address = styled.div`
@@ -185,19 +171,13 @@ const PageButton = styled.button`
   }
 `
 
-const Score = styled.div``
-
-
-const getModalStyle = () => {
-  const top = 50
-  const left = 50
-
-  return {
-    top: `${top}%`,
-    left: `${left}%`,
-    transform: `translate(-${top}%, -${left}%)`,
-  };
-}
+const Score = styled.div`
+  display: flex;
+  align-items: center;
+  & > *:first-child {
+    color: #ffd179;
+  }
+`
 
 const useStyles = makeStyles((theme) => ({
   formControl: {
@@ -212,6 +192,21 @@ const categoryMap = {
   Child: 'KIDS',
 }
 
+const filterName = (username) => { 
+  if(typeof username !== "undefined") {
+    let reviewname = username
+    reviewname = reviewname.replace(/(?<=.{1})./gi, "*")
+    return reviewname
+  }
+}
+
+const filterScore = (score) => {
+  if(typeof score !== "undefined") {
+    let reviewScore = score;
+    reviewScore = reviewScore.toFixed(2);
+    return reviewScore;
+  }
+}
 
 const ROW_PER_PAGE = 5 
 const defaultStartDate = new Date()
@@ -226,7 +221,6 @@ const ProductData = () => {
 
   const params = useParams()
   const id = params.id
-  console.log(params)
 
   const [category, setCategory] = useState('');
   const [img, setImg] = useState('');
@@ -242,12 +236,12 @@ const ProductData = () => {
 
   //reviewData
   const [page, setPage] = useState(1);
-  const [pageNum , setPageNum] = useState(1);
-  const [reviewList , setReviewList ] = useState([]);
+  const [pageNum, setPageNum] = useState(1);
+  const [reviewList, setReviewList] = useState([]);
   const [startDate, setStartDate] = useState(defaultStartDate)
   const [endDate, setEndDate] = useState(defaultEndDate)
   const [reviewOpen, setReviewOpen] = useState([])
-  const [avgScore , setAvgScore] = useState();
+  const [avgScore, setAvgScore] = useState(0.00);
 
   const { success } = useContext(LoginContext)
   const { setWishListFlag } = useContext(WishListContext)
@@ -256,7 +250,6 @@ const ProductData = () => {
   const getProductData = async () => {
     if (id.length !== 0) {
       const { data: product } = await axios.get(`/api/products/${id}`)
-      console.log(product)
       setCategory(categoryMap[product[0].category])
       setImg(product[0].img)
       setName(product[0].name)
@@ -267,14 +260,9 @@ const ProductData = () => {
     }
   }
 
-
-
-  const handleRange = async () =>
-  {
-    const {data :res} =await axios.get(`/api/product/review/${id}`)
-    console.log(res)
-    if(res.length === 0 )
-    {
+  const handleRange = async () => {
+    const {data :res} = await axios.get(`/api/product/review/${id}`)
+    if(res.length === 0) {
       return
     }
 
@@ -283,73 +271,26 @@ const ProductData = () => {
     rangeList = rangeList.filter(data => {
       const temp = data.date.split('T')[0].split('-')
       const dataDate = new Date(temp[0], temp[1] - 1, temp[2])
-      return startDate <= dataDate && endDate >= dataDate
-      
+      return startDate <= dataDate && endDate >= dataDate 
     }).reverse()
-    console.log(rangeList)
+    
     setReviewList(rangeList)
     setPageNum(Math.ceil(rangeList.length / ROW_PER_PAGE))
-    setReviewOpen(Array(rangeList.length).fill(false))
-
-   
-
+    setReviewOpen(Array(rangeList.length).fill(false)) 
   }
 
-  const handleAvgScore = async()=>
-  {
-    const {data :res} = await axios.get(`/api/product/review/avgscore/${id}`)
+  const handleAvgScore = async () => {
+    const { data: res } = await axios.get(`/api/product/review/avgscore/${id}`)
     console.log(res)
-    if(res.length !== 0)
-    {
-
-    
-    if( typeof res[0].avg !== "undefined")
-    {
-      setAvgScore(res[0].avg)
-    }
-    else
-    {
-      setAvgScore(0)
+    if(res.length !== 0) {
+      if(typeof res[0].avg !== 'undefined') {
+        setAvgScore(res[0].avg)
+      }
+      else {
+        setAvgScore(0)
+      }
     }
   }
-   
-
-  }
-
-
-  const filterName = (username) =>
-  {
-    
-    if(typeof username !== "undefined")
-    {
-      console.log(username);
-    
-      var reviewname = username;
-
-      reviewname = reviewname.replace(/(?<=.{1})./gi, "*");
-
-      return reviewname;
-
-
-    }
-      
-    
-  }
-
-  const filterScore = (score) =>
-  {
-    if(typeof score !== "undefined")
-    {
-      console.log(score);
-      var reviewScore = score;
-      reviewScore = reviewScore.toFixed(2);
-    
-      return reviewScore;
-    }
-  }
-
-
-
 
   const getAddress = async () => {
     const { data: ad } = await axios.get('/api/delivery')
@@ -388,13 +329,11 @@ const ProductData = () => {
     
     getProductData()
     getAddress()
-    //getReviewData()
     handleAvgScore()
     handleRange()
   }, [])
 
   
-
   useEffect(() => {
     if (!open) {
       getAddress()
@@ -427,150 +366,116 @@ const ProductData = () => {
     }
   }
 
-
- 
-
-  
-
-   
-   
-
-
-
-
-    return (
-      <>
-        <Title>{category}</Title>
-        <TopContainer>
-          {(img && detailImg) ? <ProductImage img={img} detailImg={detailImg} />
-          : '...loading'}
-          <InfoContainer>
+  return (
+    <>
+      <Title>{category}</Title>
+      <TopContainer>
+        {(img && detailImg) ? <ProductImage img={img} detailImg={detailImg} />
+        : '...loading'}
+        <InfoContainer>
+          
+          <Name>{name}</Name>
+          <Score><StarIcon />
+            {
+              filterScore(avgScore)
+            }
+          </Score>
+          <Price>&#8361;{price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</Price>
+          <Address>
+            기본 배송지: {address}
+          </Address>
+          <ButtonContainer>
+            <FormControl className={classes.formControl}>
+              <InputLabel id="demo-simple-select-label">수량</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={orderStock}
+                onChange={handleOrderStock}
+              >
+                <MenuItem value={1}>1</MenuItem>
+                <MenuItem value={2}>2</MenuItem>
+                <MenuItem value={3}>3</MenuItem>
+                <MenuItem value={4}>4</MenuItem>
+                <MenuItem value={5}>5</MenuItem>
+                <MenuItem value={6}>6</MenuItem>
+                <MenuItem value={7}>7</MenuItem>
+                <MenuItem value={8}>8</MenuItem>
+                <MenuItem value={9}>9</MenuItem>
+              </Select>
+            </FormControl>
             
-            <Name>{name}</Name>
-            <Score>
-              {
-                filterScore(avgScore)
-              }
-            </Score>
-            <Price>&#8361;{price.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ",")}</Price>
-            <Address>
-              기본 배송지: {address}
-            </Address>
-            <ButtonContainer>
-              <FormControl className={classes.formControl}>
-                <InputLabel id="demo-simple-select-label">수량</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  value={orderStock}
-                  onChange={handleOrderStock}
-                >
-                  <MenuItem value={1}>1</MenuItem>
-                  <MenuItem value={2}>2</MenuItem>
-                  <MenuItem value={3}>3</MenuItem>
-                  <MenuItem value={4}>4</MenuItem>
-                  <MenuItem value={5}>5</MenuItem>
-                  <MenuItem value={6}>6</MenuItem>
-                  <MenuItem value={7}>7</MenuItem>
-                  <MenuItem value={8}>8</MenuItem>
-                  <MenuItem value={9}>9</MenuItem>
-                </Select>
-              </FormControl>
-              
-              <Button onClick={handleOpen}>
-                배송지 선택
-              </Button>
-              <Modal open={open} onClose={handleClose}>
-                <UserPostList setOpenP={setOpen}/>
-              </Modal>
-            </ButtonContainer>
-            <ButtonContainer>
-              <Button onClick={handleWishList}>
-                장바구니 담기
-              </Button>
-              <Button background='primary' onClick={handleOpenPurchase}>
-                바로 구매하기
-              </Button>
-              <Modal open={openPurchase} onClose={() => {setOpenPurchase(false)}}>
-                <Pay isWishList={false} data={{
-                  img,
-                  product: [{
-                    _id: id,
-                    name,
-                    quantity: orderStock,
-                    price
-                  }],
-                  address,
-                  totalPrice: price * orderStock,
-                  deliveryFee
-                }} />
-              </Modal>
-            </ButtonContainer>
-          </InfoContainer>
-        </TopContainer>
-        <MiddleContainer>
-        <Price>상품 설명</Price>
-        <Description>{description}</Description>
-        </MiddleContainer>
-        <BottomContainer>
-          <Review>상품 리뷰</Review>
-          <ReviewHeader>
-            <HeaderRecommend>만족도</HeaderRecommend>
-            <HeaderDelivery>배송속도</HeaderDelivery>
-            <HeaderComment>내용</HeaderComment>
-            <HeaderUserDate>
-            <HeaderUser>작성자</HeaderUser>
-            <HeaderDate>작성날짜</HeaderDate>
-
-            </HeaderUserDate>
-            
-          </ReviewHeader>
-          {
-            
-           //<ReviewListCards data ={reviewList[page - 1]}/>
-          
-           
-           reviewList.length !== 0 ? reviewList.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((data, i) => (
-            <Row key={i}>
-
-              <ReviewCircle>
-              {data.recommend}
-              </ReviewCircle>
-              <ReviewCircle>{data.deliveryrating}</ReviewCircle>
-              <ReviewComment>{data.comment}</ReviewComment>
-              <ReviewUserDate>
-                  <ReviewUser>
-                  {
-                      filterName(data.username)
-                  }
-                  </ReviewUser>                
-                  <ReviewDate>
-                  {data.date.split('T')[0]}
-                  </ReviewDate>
-                        
-              </ReviewUserDate>
-
-            </Row>
-           )) : <NoReview ><div>리뷰없음</div></NoReview>
-          }
-          
-          
-         
-          
-
-
-        </BottomContainer>
-        <PageContainer>
+            <Button onClick={handleOpen}>
+              배송지 선택
+            </Button>
+            <Modal open={open} onClose={handleClose}>
+              <UserPostList setOpenP={setOpen}/>
+            </Modal>
+          </ButtonContainer>
+          <ButtonContainer>
+            <Button onClick={handleWishList}>
+              장바구니 담기
+            </Button>
+            <Button background='primary' onClick={handleOpenPurchase}>
+              바로 구매하기
+            </Button>
+            <Modal open={openPurchase} onClose={() => {setOpenPurchase(false)}}>
+              <Pay isWishList={false} data={{
+                img,
+                product: [{
+                  _id: id,
+                  name,
+                  quantity: orderStock,
+                  price
+                }],
+                address,
+                totalPrice: price * orderStock,
+                deliveryFee
+              }} />
+            </Modal>
+          </ButtonContainer>
+        </InfoContainer>
+      </TopContainer>
+      <MiddleContainer>
+      <Review>상품 설명</Review>
+      <Description>{description}</Description>
+      </MiddleContainer>
+      <BottomContainer>
+        <Review>상품 리뷰</Review>
+        <ReviewHeader>
+          <HeaderRecommend>상품만족도</HeaderRecommend>
+          <HeaderDelivery>배송속도</HeaderDelivery>
+          <HeaderComment>내용</HeaderComment>
+          <HeaderUser>작성자</HeaderUser>
+          <HeaderDate>작성날짜</HeaderDate>
+        </ReviewHeader>
         {
-            Array(pageNum).fill(0).map((p,i)=>(
-              <PageButton key={i} 
-                  color={i + 1 === page && 'primary'}
-                  onClick={() => setPage(i + 1)}>{i + 1}</PageButton>
-            ))
+          
+          //<ReviewListCards data ={reviewList[page - 1]}/>
+        
+          
+          reviewList.length !== 0 ? reviewList.slice((page - 1) * ROW_PER_PAGE, page * ROW_PER_PAGE).map((data, i) => (
+          <Row key={i}>
+            <ReviewCircle>{data.recommend}</ReviewCircle>
+            <ReviewCircle>{data.deliveryrating}</ReviewCircle>
+            <ReviewComment>{data.comment}</ReviewComment>
+            <ReviewUser>{filterName(data.username)}</ReviewUser>                
+            <ReviewDate>{data.date.split('T')[0]}</ReviewDate>
+          </Row>
+          )) : <NoReview ><div>리뷰없음</div></NoReview>
         }
-        </PageContainer>
-
-      </>
+        
+      </BottomContainer>
+      <PageContainer>
+      {
+          Array(pageNum).fill(0).map((p, i) => (
+            <PageButton key={i} 
+                color={i + 1 === page && 'primary'}
+                onClick={() => setPage(i + 1)}>{i + 1}</PageButton>
+          ))
+      }
+      </PageContainer>
+    </>
   )
 }
 

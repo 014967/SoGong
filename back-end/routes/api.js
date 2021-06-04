@@ -1066,7 +1066,7 @@ router.get('/admin/product/review/:purchase_id', auth, function(req, res){
 */
 
 
-router.get('/product/review/avgscore/:product_id', auth, function(req, res){
+router.get('/product/review/avgscore/:product_id', function(req, res){
 
     Review.aggregate([
         {$match:{productId:req.params.product_id}},
